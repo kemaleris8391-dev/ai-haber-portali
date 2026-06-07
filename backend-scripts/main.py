@@ -261,7 +261,7 @@ def main():
                         news_data, 
                         abs_output_dir, 
                         abs_images_dir, 
-                        "Telegram Arama", 
+                        "Editörün Kalemi", 
                         "https://aihaberler.web.app"
                     )
                     

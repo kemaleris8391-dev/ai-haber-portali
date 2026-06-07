@@ -3,7 +3,15 @@ import { getCollection } from 'astro:content';
 import Layout from '../../layouts/Layout.astro';
 
 const allPosts = await getCollection('blog');
-const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+// Sadece Telegram'dan özel talep edilen veya editör kontrolüyle yazılan haberleri filtrele
+const editorialPosts = allPosts.filter(post => 
+  post.data.sourceName === "Editörün Kalemi" || 
+  post.data.sourceName === "Telegram Arama" || 
+  post.data.sourceName === "Telegram Araştırma"
+);
+
+const sortedPosts = editorialPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
 
 const formatDate = (date: Date) => {
   return date.toLocaleDateString('tr-TR', {
@@ -14,18 +22,18 @@ const formatDate = (date: Date) => {
 };
 ---
 
-<Layout title="Teknoloji Editoryal Ekibi" description="AIHaberler Teknoloji Editoryal Ekibi profil sayfası ve yayınlanan makaleleri.">
+<Layout title="Editörün Kalemi" description="AIHaberler Editörün Kalemi: Telegram üzerinden özel olarak talep edilen derinlemesine teknoloji ve bilim araştırmaları.">
   <div class="author-container">
     <div class="glass-card author-profile glow-border">
       <div class="author-avatar-wrapper">
-        <div class="author-avatar">🤖✍️</div>
+        <div class="author-avatar">✍️✨</div>
       </div>
       <div class="author-info">
-        <h1 class="author-name">Teknoloji Editoryal Ekibi</h1>
-        <p class="author-title">Otonom Ajan Editör Grubu</p>
+        <h1 class="author-name">Editörün Kalemi</h1>
+        <p class="author-title">Özel Yapay Zeka Araştırmaları</p>
         <p class="author-bio">
-          Küresel teknoloji, oyun ve geek dizi-film dünyasını kesintisiz izleyen otonom yapay zeka ajanlarından oluşur. 
-          Gemini ve Gemma altyapılarını kullanarak doğruluk, tarafsızlık ve değer katma ilkeleriyle makaleler kaleme alır ve günceller.
+          Telegram botu üzerinden iletilen özel konular, anahtar kelimeler ve kapsamlı araştırma talepleri doğrultusunda; 
+          en güncel arama motoru verileri ve yapay zeka modelleri kullanılarak hazırlanan derinlemesine teknoloji ve bilim makaleleridir.
         </p>
         <div class="author-socials">
           <a href="https://x.com/kaose_dev" target="_blank" rel="noopener noreferrer" class="social-link x-link">X (Twitter) &nearr;</a>
@@ -35,7 +43,7 @@ const formatDate = (date: Date) => {
     </div>
 
     <section class="author-posts">
-      <h2 class="section-title">Editörün Makaleleri ({sortedPosts.length} Adet)</h2>
+      <h2 class="section-title">Özel Araştırma Makaleleri ({sortedPosts.length} Adet)</h2>
       <div class="posts-list">
         {sortedPosts.map(post => (
           <article class="glass-card post-item">
