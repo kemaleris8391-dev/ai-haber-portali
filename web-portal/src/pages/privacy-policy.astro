@@ -1,0 +1,122 @@
+---
+import Layout from '../layouts/Layout.astro';
+const brandName = import.meta.env.PUBLIC_BRAND_NAME || "AIHaberler";
+const contactEmail = import.meta.env.PUBLIC_CONTACT_EMAIL || "kemaleris8391@gmail.com";
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || "https://aihaberler.web.app";
+const domain = siteUrl.replace(/^https?:\/\//, '');
+---
+
+<Layout title="Gizlilik Politikası" description={`${brandName} gizlilik ve çerez politikası.`}>
+  <div class="policy-container">
+    <header class="policy-header">
+      <h1 class="policy-title">Gizlilik Politikası</h1>
+      <p class="policy-tagline">Son Güncelleme: 4 Haziran 2026</p>
+    </header>
+
+    <div class="glass-card policy-content">
+      <p>
+        {brandName} ("biz", "bize" veya "bizim"), {domain} web sitemizi ziyaret eden kullanıcıların gizliliğini korumayı taahhüt eder. 
+        Bu Gizlilik Politikası, web sitemizi kullandığınızda bilgilerinizin nasıl toplandığını, kullanıldığını ve korunduğunu açıklar.
+      </p>
+
+      <h2>1. Toplanan Bilgiler</h2>
+      <p>Portalımız tamamen otonom olarak çalışır ve kullanıcılarımızdan doğrudan herhangi bir kişisel veri (isim, e-posta, telefon vb.) talep etmez veya üyelik sistemi barındırmaz. Ancak aşağıdaki durumlarda dolaylı veriler toplanabilir:</p>
+      <ul>
+        <li><strong>Analiz Verileri:</strong> Google Analytics veya Firebase Analitik araçları aracılığıyla site trafiğini, kullanıcı davranışlarını, ziyaret sürelerini ve cihaz/tarayıcı türlerini analiz etmek amacıyla anonim kullanım verileri toplanabilir.</li>
+        <li><strong>Reklam Çerezleri:</strong> Google AdSense reklam ağını kullanmaktayız. Google, sitemizde reklam sunmak için çerezlerden (cookies) yararlanır.</li>
+      </ul>
+
+      <h2>2. Çerezler (Cookies)</h2>
+      <p>
+        Çerezler, web tarayıcınız tarafından bilgisayarınıza veya mobil cihazınıza kaydedilen küçük metin dosyalarıdır. 
+        Çerezleri, kullanıcı deneyimini iyileştirmek, site trafiğini analiz etmek ve ilgi alanlarınıza göre kişiselleştirilmiş reklamlar sunmak amacıyla kullanırız. 
+        Tarayıcı ayarlarınızdan çerezleri tamamen devre dışı bırakabilir veya çerez gönderildiğinde uyarılmayı seçebilirsiniz.
+      </p>
+
+      <h2>3. Bilgi Paylaşımı ve Üçüncü Taraflar</h2>
+      <p>
+        Kullanıcılardan toplanan anonim analiz veya reklam verileri, yasal zorunluluklar haricinde üçüncü şahıslarla paylaşılmaz veya satılmaz. 
+        Sitemizde yer alan dış bağlantılar (orijinal haber kaynakları vb.) kendi gizlilik politikalarına sahiptir ve bu sitelerin içeriklerinden {brandName} sorumlu değildir.
+      </p>
+
+      <h2>4. İletişim</h2>
+      <p>
+        Bu Gizlilik Politikası ile ilgili herhangi bir sorunuz veya geri bildiriminiz olması durumunda bizimle <a href={`mailto:${contactEmail}`} class="cyan-link">{contactEmail}</a> adresinden veya <a href="/iletisim" class="cyan-link">iletişim sayfamızdan</a> irtibata geçebilirsiniz.
+      </p>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .policy-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem 0;
+  }
+
+  .policy-header {
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 2rem;
+  }
+
+  .policy-title {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .policy-tagline {
+    color: var(--text-secondary);
+    font-size: 1.15rem;
+  }
+
+  .policy-content {
+    padding: 2.5rem;
+    color: var(--text-secondary);
+    line-height: 1.7;
+  }
+
+  .policy-content h2 {
+    font-size: 1.5rem;
+    color: #ffffff;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 0.5rem;
+  }
+
+  .policy-content p {
+    margin-bottom: 1.25rem;
+  }
+
+  .policy-content ul {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .policy-content strong {
+    color: #ffffff;
+  }
+
+  .cyan-link {
+    color: var(--color-cyan);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .cyan-link:hover {
+    color: var(--color-purple);
+  }
+
+  @media (max-width: 768px) {
+    .policy-content {
+      padding: 1.5rem;
+    }
+  }
+</style>

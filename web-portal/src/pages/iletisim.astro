@@ -1,8 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
+const brandName = import.meta.env.PUBLIC_BRAND_NAME || "AIHaberler";
+const contactEmail = import.meta.env.PUBLIC_CONTACT_EMAIL || "kemaleris8391@gmail.com";
 ---
 
-<Layout title="İletişim" description="AIHaberler: Görüş, öneri ve yayın talepleriniz için bizimle iletişime geçin.">
+<Layout title="İletişim" description={`${brandName}: Görüş, öneri ve yayın talepleriniz için bizimle iletişime geçin.`}>
   <div class="contact-container">
     <header class="contact-header">
       <h1 class="contact-title">İletişim</h1>
@@ -18,7 +20,7 @@ import Layout from '../layouts/Layout.astro';
           <div class="info-icon">✉️</div>
           <div class="info-details">
             <h3>E-Posta</h3>
-            <p><a href="mailto:kemaleris8391@gmail.com" class="cyan-link">kemaleris8391@gmail.com</a></p>
+            <p><a href={`mailto:${contactEmail}`} class="cyan-link">{contactEmail}</a></p>
           </div>
         </div>
 

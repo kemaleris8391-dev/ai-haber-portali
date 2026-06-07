@@ -96,6 +96,13 @@ jobs:
         cd web-portal
         npm ci
 
+    - name: Export Environment Variables from Firestore
+      if: steps.git-check.outputs.changes == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      env:
+        FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+      run: |
+        python backend-scripts/export_env_from_firestore.py
+
     - name: Build Web Portal
       if: steps.git-check.outputs.changes == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
       env:
@@ -103,6 +110,7 @@ jobs:
       run: |
         cd web-portal
         npm run build
+        cp dist/privacy-policy/index.html dist/privacy-policy.html || true
 
     - name: Deploy to Firebase Hosting
       if: steps.git-check.outputs.changes == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'

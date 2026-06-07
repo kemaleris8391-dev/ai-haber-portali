@@ -25,3 +25,5 @@ _backups/
 SOURCE_CODE_BACKUP.md
 
 .vercel
+
+backend-scripts/prompts_config.json

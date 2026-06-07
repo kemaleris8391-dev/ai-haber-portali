@@ -25,8 +25,8 @@ const {
 	articleData
 } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site || 'https://aihaberler.web.app');
-const siteName = "AIHABERLER";
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || import.meta.env.PUBLIC_SITE_URL || 'https://aihaberler.web.app');
+const siteName = import.meta.env.PUBLIC_BRAND_NAME || "AIHABERLER";
 const adsenseClientId = import.meta.env.PUBLIC_ADSENSE_CLIENT_ID;
 
 // Dynamic categories extraction
@@ -108,7 +108,7 @@ const jsonLd = type === 'article' && articleData ? {
 		
 		<!-- SEO Meta Etiketleri -->
 		<title>{title} | {siteName}</title>
-		<meta name="title" content={`${title} | {siteName}`} />
+		<meta name="title" content={`${title} | ${siteName}`} />
 		<meta name="description" content={description} />
 		<meta name="keywords" content={keywords.join(', ')} />
 		
@@ -154,7 +154,7 @@ const jsonLd = type === 'article' && articleData ? {
 				<nav class="navbar" id="main-nav">
 					<div class="logo-container">
 						<a href="/" class="logo-link" id="logo">
-							<span class="logo-text">AI</span><span>HABERLER</span>
+							<span class="logo-text">{siteName.slice(0, 2)}</span><span>{siteName.slice(2)}</span>
 						</a>
 						<span class="logo-separator">|</span>
 						<span class="logo-slogan">Geleceğin Haberciliği: Otonom kontrol, Özgün İçerik, Teyitli Gerçek.</span>
@@ -178,7 +178,7 @@ const jsonLd = type === 'article' && articleData ? {
 				<div class="footer-content">
 					<div class="footer-brand">
 						<a href="/" class="logo-link">
-							<span class="logo-text">AI</span><span>HABERLER</span>
+							<span class="logo-text">{siteName.slice(0, 2)}</span><span>{siteName.slice(2)}</span>
 						</a>
 						<p class="footer-desc">
 							Gündemi yapay zekanın gücüyle yakalayın: Teknoloji ve bilim dünyasından gelişmeleri, haberleri MetaKalem doğruluğuyla derleyen otonom haber merkeziniz.
@@ -205,7 +205,7 @@ const jsonLd = type === 'article' && articleData ? {
 					</div>
 				</div>
 				<div class="footer-bottom">
-					<p>&copy; {new Date().getFullYear()} AIHaberler. Tüm hakları saklıdır. Bu portal tamamen otonom yapay zeka ajanları tarafından yönetilmektedir.</p>
+					<p>&copy; {new Date().getFullYear()} {siteName}. Tüm hakları saklıdır. Bu portal tamamen otonom yapay zeka ajanları tarafından yönetilmektedir.</p>
 				</div>
 			</footer>
 		</div>
