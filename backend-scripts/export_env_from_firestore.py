@@ -44,12 +44,14 @@ def export_settings():
                 for line in lines:
                     if not line.startswith("PUBLIC_BRAND_NAME=") and \
                        not line.startswith("PUBLIC_CONTACT_EMAIL=") and \
-                       not line.startswith("PUBLIC_SITE_URL="):
+                       not line.startswith("PUBLIC_SITE_URL=") and \
+                       not line.startswith("PUBLIC_ADSENSE_CLIENT_ID="):
                         env_content.append(line.strip())
         
         env_content.append(f'PUBLIC_BRAND_NAME="{site_settings.get("PUBLIC_BRAND_NAME", "")}"')
         env_content.append(f'PUBLIC_CONTACT_EMAIL="{site_settings.get("PUBLIC_CONTACT_EMAIL", "")}"')
         env_content.append(f'PUBLIC_SITE_URL="{site_settings.get("PUBLIC_SITE_URL", "")}"')
+        env_content.append(f'PUBLIC_ADSENSE_CLIENT_ID="{site_settings.get("PUBLIC_ADSENSE_CLIENT_ID", "")}"')
 
         with open(env_path, "w", encoding="utf-8") as f:
             f.write("\n".join(env_content) + "\n")
