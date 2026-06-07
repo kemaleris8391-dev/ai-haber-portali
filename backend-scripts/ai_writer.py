@@ -91,48 +91,57 @@ def rotate_key():
         print(f"UYARI: API anahtarı bir sonraki ile değiştiriliyor. (Yeni Sıra: {current_key_idx + 1}/{len(API_KEYS)})")
 
 def rewrite_news_with_ai(raw_title, raw_summary, category, raw_link, model_name="gemma-4-31b-it"):
-    """Gemini API kullanarak haberi özgünleştirir. Hata (429/403/500) durumunda anahtar rotasyonu ve backoff yapar."""
+    """Gemini API kullanarak haberi özgünleştirir. Hata (429/403/500) durumunda model fallback ve anahtar rotasyonu yapar."""
     prompt = PROMPTS_CONFIG.get("rewrite_prompt", "")
     if not prompt:
         raise ValueError("prompts_config.json içinden rewrite_prompt okunamadı!")
     prompt = prompt.replace("{raw_title}", raw_title).replace("{raw_summary}", raw_summary).replace("{category}", category).replace("{raw_link}", raw_link)
     max_retries = len(API_KEYS) if API_KEYS else 3
     last_error = "Bilinmeyen API Hatası"
+    
+    # gemma-4-31b-it birincil olmak üzere, hata durumunda denenecek fallback modelleri
+    models_to_try = [model_name, "gemma-4-26b-a4b", "gemma-4-26b-it"]
+    
     for attempt in range(max_retries):
         client = get_next_client()
-        try:
-            response = client.models.generate_content(
-                model=model_name,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    response_mime_type="application/json"
+        
+        for current_model in models_to_try:
+            try:
+                print(f"Haber özgünleştirme deneniyor: Model={current_model}")
+                response = client.models.generate_content(
+                    model=current_model,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json"
+                    )
                 )
-            )
-            if not response.text:
-                raise ValueError("Model bos yanit dondu. Güvenlik filtresi (Safety Block) tetiklenmis olabilir.")
-            data = json.loads(response.text)
-            return data
-        except Exception as e:
-            last_error = str(e)
-            print(f"Hata (Deneme {attempt + 1}/{max_retries}): {last_error}")
-            
-            # Başarısız olan API anahtarını maskeleyip listeye ekle
-            failed_key = API_KEYS[current_key_idx] if API_KEYS else "GEMINI_API_KEY"
-            masked = mask_key(failed_key)
-            if (masked, last_error) not in FAILED_KEYS_THIS_RUN:
-                FAILED_KEYS_THIS_RUN.append((masked, last_error))
-            
-            # API anahtarı geçersizse veya kalıcı hata ise beklemeden hemen sonraki anahtara geç (Fast Rotation)
-            is_permanent = "API key not valid" in last_error or "NOT_FOUND" in last_error or "400" in last_error or "403" in last_error
-            rotate_key()
-            
-            if attempt < max_retries - 1:
-                if not is_permanent and "429" in last_error:
-                    wait_time = (attempt + 1) * 2
-                    print(f"Gecici Hız Limiti (429) algilandi. {wait_time} saniye bekleniyor...")
-                    time.sleep(wait_time)
-                else:
-                    print("Kalıcı veya gecersiz anahtar hatası. Beklemeden sonraki anahtarla deneniyor...")
+                if not response.text:
+                    raise ValueError("Model bos yanit dondu. Güvenlik filtresi (Safety Block) tetiklenmis olabilir.")
+                data = json.loads(response.text)
+                return data
+            except Exception as e:
+                last_error = str(e)
+                print(f"Model {current_model} hatası: {last_error}")
+                # Hata durumunda bir sonraki model seçeneğini dene
+                continue
+                
+        # Eğer bu anahtarda hiçbir model çalışmadıysa anahtar rotasyonu yap
+        print(f"Hata (Anahtar Denemesi {attempt + 1}/{max_retries}): {last_error}")
+        failed_key = API_KEYS[current_key_idx] if API_KEYS else "GEMINI_API_KEY"
+        masked = mask_key(failed_key)
+        if (masked, last_error) not in FAILED_KEYS_THIS_RUN:
+            FAILED_KEYS_THIS_RUN.append((masked, last_error))
+        
+        is_permanent = "API key not valid" in last_error or "NOT_FOUND" in last_error or "400" in last_error or "403" in last_error
+        rotate_key()
+        
+        if attempt < max_retries - 1:
+            if not is_permanent and "429" in last_error:
+                wait_time = (attempt + 1) * 2
+                print(f"Gecici Hız Limiti (429) algilandi. {wait_time} saniye bekleniyor...")
+                time.sleep(wait_time)
+            else:
+                print("Sonraki anahtarla deneniyor...")
                 
     raise Exception(f"Gemini AI Yazim Hatası: {last_error}")
 
@@ -160,67 +169,76 @@ def check_news_semantic_duplicates(candidates, existing_titles, model_name="gemm
     max_retries = len(API_KEYS) if API_KEYS else 3
     last_error = "Bilinmeyen API Hatası"
     
-    # 1. Aşama: Birincil Model (Gemma) ile Değerlendirme
+    # gemma-4-31b-it birincil olmak üzere, hata durumunda denenecek fallback modelleri
+    models_to_try = [model_name, "gemma-4-26b-a4b", "gemma-4-26b-it"]
+    
     for attempt in range(max_retries):
         client = get_next_client()
-        try:
-            print(f"Gemma ile yayın öncesi kural ve mükerrerlik analizi yapılıyor (Deneme {attempt + 1}/{max_retries})...")
-            response = client.models.generate_content(
-                model=model_name,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    response_mime_type="application/json"
+        
+        for current_model in models_to_try:
+            try:
+                print(f"Gemma ile yayın öncesi kural ve mükerrerlik analizi yapılıyor: Model={current_model} (Deneme {attempt + 1}/{max_retries})...")
+                response = client.models.generate_content(
+                    model=current_model,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json"
+                    )
                 )
-            )
-            
-            if not response.text:
-                raise ValueError("Model boş yanıt döndü.")
                 
-            data = json.loads(response.text)
-            results = data.get("results", [])
-            
-            rejected_ids = []
-            for res in results:
-                c_id = res.get("id")
-                is_compliant = res.get("is_compliant", True)
-                is_duplicate = res.get("is_duplicate", False)
-                reason = res.get("reason", "Açıklama belirtilmedi.")
+                if not response.text:
+                    raise ValueError("Model boş yanıt döndü.")
+                    
+                data = json.loads(response.text)
+                results = data.get("results", [])
                 
-                # Başlığı loglamak için adaylardan bulalım
-                title_str = "Bilinmeyen Başlık"
-                try:
-                    title_str = next(c['title'] for c in candidates if c['id'] == c_id)
-                except StopIteration:
-                    pass
+                rejected_ids = []
+                for res in results:
+                    c_id = res.get("id")
+                    is_compliant = res.get("is_compliant", True)
+                    is_duplicate = res.get("is_duplicate", False)
+                    reason = res.get("reason", "Açıklama belirtilmedi.")
+                    
+                    # Başlığı loglamak için adaylardan bulalım
+                    title_str = "Bilinmeyen Başlık"
+                    try:
+                        title_str = next(c['title'] for c in candidates if c['id'] == c_id)
+                    except StopIteration:
+                        pass
+                    
+                    if not is_compliant:
+                        rejected_ids.append(c_id)
+                        print(f"🛡️ AI Filtresi (Politika Dışı) Elendi: '{title_str}' -> Gerekçe: {reason}")
+                    elif is_duplicate:
+                        rejected_ids.append(c_id)
+                        print(f"🔍 AI Filtresi (Mükerrer/Kopya) Elendi: '{title_str}' -> Gerekçe: {reason}")
+                    else:
+                        print(f"✅ AI Filtresi (Onaylandı): '{title_str}' -> Gerekçe: {reason}")
+                               
+                return rejected_ids
                 
-                if not is_compliant:
-                    rejected_ids.append(c_id)
-                    print(f"🛡️ AI Filtresi (Politika Dışı) Elendi: '{title_str}' -> Gerekçe: {reason}")
-                elif is_duplicate:
-                    rejected_ids.append(c_id)
-                    print(f"🔍 AI Filtresi (Mükerrer/Kopya) Elendi: '{title_str}' -> Gerekçe: {reason}")
-                else:
-                    print(f"✅ AI Filtresi (Onaylandı): '{title_str}' -> Gerekçe: {reason}")
-                           
-            return rejected_ids
-            
-        except Exception as e:
-            last_error = str(e)
-            print(f"AI Semantik Değerlendirme Hatası (Deneme {attempt + 1}/{max_retries}): {last_error}")
-            
-            failed_key = API_KEYS[current_key_idx] if API_KEYS else "GEMINI_API_KEY"
-            masked = mask_key(failed_key)
-            if (masked, last_error) not in FAILED_KEYS_THIS_RUN:
-                FAILED_KEYS_THIS_RUN.append((masked, last_error))
+            except Exception as e:
+                last_error = str(e)
+                print(f"Model {current_model} semantik değerlendirme hatası: {last_error}")
+                continue
                 
-            is_permanent = "API key not valid" in last_error or "NOT_FOUND" in last_error or "400" in last_error or "403" in last_error
-            rotate_key()
+        # Eğer bu anahtarda hiçbir model çalışmadıysa anahtar rotasyonu yap
+        print(f"AI Semantik Değerlendirme Hatası (Deneme {attempt + 1}/{max_retries}): {last_error}")
+        failed_key = API_KEYS[current_key_idx] if API_KEYS else "GEMINI_API_KEY"
+        masked = mask_key(failed_key)
+        if (masked, last_error) not in FAILED_KEYS_THIS_RUN:
+            FAILED_KEYS_THIS_RUN.append((masked, last_error))
             
-            if attempt < max_retries - 1:
-                if not is_permanent and "429" in last_error:
-                    wait_time = (attempt + 1) * 2
-                    print(f"Hız limiti beklemesi: {wait_time} sn...")
-                    time.sleep(wait_time)
+        is_permanent = "API key not valid" in last_error or "NOT_FOUND" in last_error or "400" in last_error or "403" in last_error
+        rotate_key()
+        
+        if attempt < max_retries - 1:
+            if not is_permanent and "429" in last_error:
+                wait_time = (attempt + 1) * 2
+                print(f"Hız limiti beklemesi: {wait_time} sn...")
+                time.sleep(wait_time)
+            else:
+                print("Sonraki anahtarla deneniyor...")
             
     print(f"KRİTİK UYARI: Toplu semantik doğrulama tamamen başarısız oldu. Geri çekilme: Tüm adaylar onaylanıyor. Detay: {last_error}")
     return []
