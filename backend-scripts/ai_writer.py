@@ -100,7 +100,7 @@ def rewrite_news_with_ai(raw_title, raw_summary, category, raw_link, model_name=
     last_error = "Bilinmeyen API Hatası"
     
     # gemma-4-31b-it birincil olmak üzere, hata durumunda denenecek fallback modelleri
-    models_to_try = [model_name, "gemma-4-26b-a4b", "gemma-4-26b-it"]
+    models_to_try = [model_name, "gemma-4-26b-a4b-it", "gemma-4-26b-it"]
     
     for attempt in range(max_retries):
         client = get_next_client()
@@ -108,13 +108,30 @@ def rewrite_news_with_ai(raw_title, raw_summary, category, raw_link, model_name=
         for current_model in models_to_try:
             try:
                 print(f"Haber özgünleştirme deneniyor: Model={current_model}")
-                response = client.models.generate_content(
-                    model=current_model,
-                    contents=prompt,
-                    config=types.GenerateContentConfig(
-                        response_mime_type="application/json"
+                
+                # Önce thinking_config ile en kaliteli sonucu almaya çalış
+                try:
+                    response = client.models.generate_content(
+                        model=current_model,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(
+                            response_mime_type="application/json",
+                            thinking_config=types.ThinkingConfig(
+                                thinking_level="HIGH"
+                            )
+                        )
                     )
-                )
+                except Exception as thinking_err:
+                    # Eğer model veya API sürümü thinking_config desteklemiyorsa normal modda dene
+                    print(f"Model {current_model} thinking_config hatası ({thinking_err}). Normal modda deneniyor...")
+                    response = client.models.generate_content(
+                        model=current_model,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(
+                            response_mime_type="application/json"
+                        )
+                    )
+                    
                 if not response.text:
                     raise ValueError("Model bos yanit dondu. Güvenlik filtresi (Safety Block) tetiklenmis olabilir.")
                 data = json.loads(response.text)
@@ -170,7 +187,7 @@ def check_news_semantic_duplicates(candidates, existing_titles, model_name="gemm
     last_error = "Bilinmeyen API Hatası"
     
     # gemma-4-31b-it birincil olmak üzere, hata durumunda denenecek fallback modelleri
-    models_to_try = [model_name, "gemma-4-26b-a4b", "gemma-4-26b-it"]
+    models_to_try = [model_name, "gemma-4-26b-a4b-it", "gemma-4-26b-it"]
     
     for attempt in range(max_retries):
         client = get_next_client()
@@ -178,13 +195,29 @@ def check_news_semantic_duplicates(candidates, existing_titles, model_name="gemm
         for current_model in models_to_try:
             try:
                 print(f"Gemma ile yayın öncesi kural ve mükerrerlik analizi yapılıyor: Model={current_model} (Deneme {attempt + 1}/{max_retries})...")
-                response = client.models.generate_content(
-                    model=current_model,
-                    contents=prompt,
-                    config=types.GenerateContentConfig(
-                        response_mime_type="application/json"
+                
+                # Önce thinking_config ile en kaliteli sonucu almaya çalış
+                try:
+                    response = client.models.generate_content(
+                        model=current_model,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(
+                            response_mime_type="application/json",
+                            thinking_config=types.ThinkingConfig(
+                                thinking_level="HIGH"
+                            )
+                        )
                     )
-                )
+                except Exception as thinking_err:
+                    # Eğer model veya API sürümü thinking_config desteklemiyorsa normal modda dene
+                    print(f"Model {current_model} thinking_config hatası ({thinking_err}). Normal modda deneniyor...")
+                    response = client.models.generate_content(
+                        model=current_model,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(
+                            response_mime_type="application/json"
+                        )
+                    )
                 
                 if not response.text:
                     raise ValueError("Model boş yanıt döndü.")
