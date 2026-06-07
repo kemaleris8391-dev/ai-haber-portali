@@ -1,0 +1,267 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+
+export async function getStaticPaths({ paginate }) {
+  const allPosts = await getCollection('blog');
+  const categories = [...new Set(allPosts.map(post => post.data.category).filter(Boolean))];
+  const defaultCategories = ['teknoloji', 'oyun', 'dizi-film', 'kuantum-evreni'];
+  const uniqueCategories = [...new Set([...defaultCategories, ...categories])];
+  
+  return uniqueCategories.flatMap(category => {
+    const filteredPosts = allPosts
+      .filter(post => post.data.category === category)
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+      
+    // Eğer kategori boşsa bile 1 sayfa üretelim
+    if (filteredPosts.length === 0) {
+      return paginate([], { params: { category }, pageSize: 13 });
+    }
+    
+    return paginate(filteredPosts, {
+      params: { category },
+      pageSize: 13
+    });
+  });
+}
+
+const { category } = Astro.params;
+const { page } = Astro.props;
+
+const formatDate = (date: Date) => {
+  return date.toLocaleDateString('tr-TR', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+};
+
+const categoryTitles: Record<string, string> = {
+  'teknoloji': 'Teknoloji Haberleri',
+  'oyun': 'Oyun Dünyası',
+  'dizi-film': 'Dizi & Film Dünyası',
+  'kuantum-evreni': 'Kuantum Evreni'
+};
+
+const formatCategoryName = (cat: string) => {
+  return cat.charAt(0).toUpperCase() + cat.slice(1).replace('-', ' ');
+};
+
+const categoryTitle = categoryTitles[category] || `${formatCategoryName(category)} Haberleri`;
+---
+
+<Layout title={categoryTitle} description={`${categoryTitle} kategorisindeki en son gelişmeler, incelemeler ve yapay zeka analizleri.`}>
+  <div class="category-container">
+    <header class="category-header">
+      <h1 class="category-title">{categoryTitle}</h1>
+      <p class="category-desc">
+        {category === 'teknoloji' && "Bilişim dünyası, yapay zeka, donanım, yazılım ve teknoloji devlerinden en yeni haberler."}
+        {category === 'oyun' && "PC, konsol, mobil oyun dünyasından son gelişmeler, güncellemeler ve oyun incelemeleri."}
+        {category === 'dizi-film' && "Popüler dizi ve sinema yapımları, vizyona girecek filmler ve son yayınlanan fragmanlar."}
+        {!['teknoloji', 'oyun', 'dizi-film'].includes(category) && `${formatCategoryName(category)} kategorisindeki en güncel gelişmeler, yapay zeka analizleri ve haberler.`}
+      </p>
+    </header>
+
+    {page.data.length > 0 ? (
+      <>
+        <div class="news-grid">
+          {page.data.map((post) => (
+            <article class="glass-card news-card" id={`post-${post.id}`}>
+              <div class="card-image-container">
+                <img src={post.data.heroImage} alt={post.data.title} class="card-image" loading="lazy" width="600" height="338" />
+                <span class={`badge-category badge-${post.data.category} card-badge`}>{post.data.category}</span>
+              </div>
+              <div class="card-content">
+                <div class="post-meta">
+                  <time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+                </div>
+                <h2 class="card-title">{post.data.title}</h2>
+                <p class="card-desc">{post.data.description}</p>
+                <a href={`/blog/${post.id}`} class="card-link" id={`link-${post.id}`}>Haber Detayı &rarr;</a>
+              </div>
+            </article>
+          ))}
+        </div>
+
+        {page.lastPage > 1 && (
+          <nav class="pagination-nav" aria-label="Sayfalama">
+            {page.url.prev ? (
+              <a href={page.url.prev} class="btn-neon pagination-btn">&larr; Önceki</a>
+            ) : (
+              <span class="btn-neon pagination-btn disabled">&larr; Önceki</span>
+            )}
+            
+            <span class="pagination-info">
+              Sayfa {page.currentPage} / {page.lastPage}
+            </span>
+            
+            {page.url.next ? (
+              <a href={page.url.next} class="btn-neon pagination-btn">Sonraki &rarr;</a>
+            ) : (
+              <span class="btn-neon pagination-btn disabled">Sonraki &rarr;</span>
+            )}
+          </nav>
+        )}
+      </>
+    ) : (
+      <div class="glass-card empty-category-state">
+        <h3>Henüz İçerik Yok</h3>
+        <p>Bu kategoriye ait haberler yapay zeka editörümüz tarafından yakında eklenecektir.</p>
+        <a href="/" class="btn-neon" id="back-home-empty-btn">Ana Sayfaya Dön</a>
+      </div>
+    )}
+  </div>
+</Layout>
+
+<style>
+  .category-container {
+    padding: 1rem 0;
+  }
+
+  .category-header {
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 2rem;
+  }
+
+  .category-title {
+    font-size: 2.5rem;
+    margin-bottom: 0.75rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .category-desc {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    max-width: 700px;
+  }
+
+  /* Grid Styles */
+  .news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+  }
+
+  .news-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .card-image-container {
+    position: relative;
+    height: 200px;
+    overflow: hidden;
+  }
+
+  .card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition-smooth);
+  }
+
+  .news-card:hover .card-image {
+    transform: scale(1.05);
+  }
+
+  .card-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 10;
+  }
+
+  .card-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    flex: 1;
+  }
+
+  .card-title {
+    font-size: 1.3rem;
+    line-height: 1.4;
+    transition: var(--transition-smooth);
+  }
+
+  .news-card:hover .card-title {
+    color: var(--color-purple);
+  }
+
+  .card-desc {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .card-link {
+    color: var(--color-cyan);
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: var(--transition-smooth);
+    margin-top: auto;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .card-link:hover {
+    color: var(--color-purple);
+    transform: translateX(4px);
+  }
+
+  /* Empty State */
+  .empty-category-state {
+    text-align: center;
+    padding: 5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .empty-category-state h3 {
+    font-size: 1.8rem;
+    color: #ffffff;
+  }
+
+  .empty-category-state p {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+
+  /* Pagination Styles */
+  .pagination-nav {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .pagination-info {
+    color: var(--text-secondary);
+    font-weight: 500;
+    font-size: 1.1rem;
+  }
+
+  .pagination-btn.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+</style>

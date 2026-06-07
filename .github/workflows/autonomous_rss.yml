@@ -1,0 +1,117 @@
+name: Autonomous RSS & Deploy
+
+on:
+  schedule:
+    # Her 10 dakikada bir tetiklenir (Firestore üzerinden aralık kontrolü yapacak)
+    - cron: '*/10 * * * *'
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    # Manuel çalıştırmayı destekler
+    inputs:
+      force:
+        description: 'Süre kontrolünü atla ve taramayı zorla (--force)'
+        required: false
+        type: boolean
+        default: false
+      cleanup:
+        description: 'Temizlik işlemini zorla tetikle (--cleanup)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+        cache: 'pip'
+
+    - name: Install Python Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r backend-scripts/requirements.txt
+
+    - name: Run RSS & AI Pipeline
+      env:
+        GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
+        PEXELS_API_KEY: ${{ secrets.PEXELS_API_KEY }}
+        TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+        TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+      run: |
+        # Eğer force veya cleanup parametresi seçildiyse ilgili argümanı ekle
+        if [ "${{ github.event.inputs.cleanup }}" = "true" ]; then
+          python backend-scripts/main.py --cleanup
+        elif [ "${{ github.event.inputs.force }}" = "true" ]; then
+          python backend-scripts/main.py --force
+        else
+          python backend-scripts/main.py
+        fi
+
+    - name: Check for Changes
+      id: git-check
+      run: |
+        git status --porcelain
+        # Eğer değişiklik varsa output set et
+        if [ -n "$(git status --porcelain)" ]; then
+          echo "changes=true" >> $GITHUB_OUTPUT
+        else
+          echo "changes=false" >> $GITHUB_OUTPUT
+        fi
+
+    - name: Commit & Push Changes (Pre-Build Sync)
+      if: steps.git-check.outputs.changes == 'true'
+      run: |
+        git config --global user.name "kemaleris8391-dev"
+        git config --global user.email "kemaleris8391@gmail.com"
+        git add .
+        git commit -m "Auto: yeni haberler eklendi [skip ci]"
+        git pull --rebase origin main
+        git push origin HEAD:${{ github.ref }}
+
+    - name: Setup NodeJS
+      if: steps.git-check.outputs.changes == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+        cache: 'npm'
+        cache-dependency-path: web-portal/package-lock.json
+
+    - name: Install Web Dependencies
+      if: steps.git-check.outputs.changes == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      run: |
+        cd web-portal
+        npm ci
+
+    - name: Build Web Portal
+      if: steps.git-check.outputs.changes == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      env:
+        PUBLIC_ADSENSE_CLIENT_ID: ${{ secrets.PUBLIC_ADSENSE_CLIENT_ID }}
+      run: |
+        cd web-portal
+        npm run build
+
+    - name: Deploy to Firebase Hosting
+      if: steps.git-check.outputs.changes == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      uses: FirebaseExtended/action-hosting-deploy@v0
+      with:
+        repoToken: '${{ secrets.GITHUB_TOKEN }}'
+        firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}'
+        projectId: aihaberler
+        channelId: live
+        entryPoint: web-portal
+
+

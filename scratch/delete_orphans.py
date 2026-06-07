@@ -1,0 +1,52 @@
+import os
+import re
+import sys
+
+# Reconfigure stdout to use utf-8 to handle unicode characters on Windows terminal
+if hasattr(sys.stdout, 'reconfigure'):
+    sys.stdout.reconfigure(encoding='utf-8')
+
+workspace_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+blog_dir = os.path.join(workspace_root, "web-portal", "src", "content", "blog")
+img_dir = os.path.join(workspace_root, "web-portal", "public", "images", "news")
+
+def delete_orphans():
+    md_files = [f for f in os.listdir(blog_dir) if f.endswith(".md")]
+    referenced_images = set()
+    
+    for filename in md_files:
+        filepath = os.path.join(blog_dir, filename)
+        with open(filepath, "r", encoding="utf-8") as f:
+            content = f.read()
+            # Find heroImage: "/images/news/..."
+            match = re.search(r'heroImage:\s*["\']/images/news/(.*?)["\']', content)
+            if match:
+                referenced_images.add(match.group(1))
+            else:
+                # also try without /images/news/
+                match_any = re.search(r'heroImage:\s*["\'](.*?)["\']', content)
+                if match_any:
+                    img_name = os.path.basename(match_any.group(1))
+                    referenced_images.add(img_name)
+                    
+    all_images = set(os.listdir(img_dir))
+    orphaned_images = all_images - referenced_images
+    
+    print(f"Total active blog posts: {len(md_files)}")
+    print(f"Total images in directory: {len(all_images)}")
+    print(f"Found {len(orphaned_images)} orphaned images.")
+    
+    deleted_count = 0
+    for img in sorted(orphaned_images):
+        img_path = os.path.join(img_dir, img)
+        try:
+            os.remove(img_path)
+            print(f"Deleted: {img}")
+            deleted_count += 1
+        except Exception as e:
+            print(f"Failed to delete {img}: {e}")
+            
+    print(f"\nCleanup complete. Successfully deleted {deleted_count} files.")
+
+if __name__ == "__main__":
+    delete_orphans()

@@ -1,0 +1,17 @@
+---
+title: "DivX: Bir Zamanların Video Sıkıştırma Kralı Neden Tahtından İndi?"
+description: "DivX codec'in geçmişteki eşsiz popülaritesini ve günümüzde neden H.264 ve HEVC gibi modern codec'ler karşısında geri planda kaldığını inceliyoruz."
+pubDate: "2026-05-31T22:42:09"
+heroImage: "/images/news/divx-bir-zamanlarin-video-sikistirma-krali-neden-tahtindan-i.webp"
+category: "teknoloji"
+tags: ["DivX", "video codec", "sıkıştırma", "H.264", "teknoloji tarihi"]
+sourceName: "Telegram Arama"
+sourceUrl: "https://aihaberler.web.app"
+---
+2000'li yılların başında dijital video dünyasında bir devrim yaratan ve dosya paylaşım kültürünü derinden etkileyen DivX codec, bir zamanlar milyonlarca kullanıcının vazgeçilmeziydi. Üstün sıkıştırma yöntemi ve kalite kaybını en aza indiren tekniği sayesinde, DVD kalitesindeki uzun metrajlı filmleri nispeten küçük boyutlarda CD'lere sığdırmayı mümkün kılıyordu. İnternet hızlarının ve depolama kapasitelerinin günümüzdeki kadar gelişmiş olmadığı bir dönemde, DivX, yüksek kaliteli video içeriklerinin kolayca depolanabilmesini, paylaşılabilmesini ve indirilebilmesini sağlayarak adeta bir altın çağ yaşadı. Bu sayede, DivX Networks (şimdiki adıyla DivX, Inc.) tarafından geliştirilen bu teknoloji, Windows ve Macintosh ortamlarında yaygın bir şekilde kullanıldı ve 2013 yılına gelindiğinde dünya genelinde 1 milyardan fazla DivX Sertifikalı oynatma cihazına ulaşıldı.
+
+DivX'in popülaritesinin arkasında yatan temel neden, o dönem için çığır açan sıkıştırma oranlarıydı. Bir filmi kaliteden ödün vermeden, hatta 1080p HD çözünürlüğe kadar, orijinal boyutunun 12'de birine kadar küçültebilmesi, onu rakiplerinden ayıran en önemli özellikti. Ayrıca, DivX'in açık kaynaklı bir proje olan OpenDivX üzerinden gelişmesi ve daha sonra ticari bir ürün haline gelmesi, geniş bir geliştirici ve kullanıcı topluluğu tarafından benimsenmesine olanak sağladı. Ancak, DivX markasının, 1990'ların sonunda başarısız olan "DIVX" (Digital Video Express) adlı video kiralama sisteminden tamamen farklı bir teknoloji olduğunu belirtmek önemlidir; codec'in ilk versiyonlarındaki gülen yüz emojisi, bu başarısız sisteme yapılan esprili bir göndermeydi.
+
+Günümüzde ise DivX, eskisi kadar sık karşımıza çıkmıyor. Bu durumun başlıca nedeni, video sıkıştırma teknolojilerindeki hızlı ilerleme ve H.264 (MPEG-4 AVC) ile H.265 (HEVC) gibi daha gelişmiş ve verimli codec'lerin yükselişi oldu. H.264, aynı kalitedeki videoları DivX'e göre daha düşük bit hızlarında ve dolayısıyla daha küçük dosya boyutlarında sunarak yeni bir standart belirledi. Ayrıca, Netflix, YouTube gibi popüler video akış hizmetlerinin ve mobil cihazların H.264/AVC ve HEVC gibi donanım hızlandırmalı codec'leri önceliklendirmesi, DivX'in pazar payını önemli ölçüde azalttı. Modern video iş akışları, dosya tabanlı yönetimden çok bulut tabanlı çözümlere odaklanmış durumda, bu da DivX gibi geleneksel codec'lerin geri planda kalmasına neden oldu.
+
+DivX, tamamen ortadan kalkmış olmasa da, günümüzde daha çok eski içerikler ve özel donanım uyumluluğu gerektiren durumlar için bir köprü görevi görüyor. DivX, Inc. firması hala DivX Plus HD (H.264 tabanlı) ve DivX HEVC Ultra HD gibi yeni nesil codec'leri ve yazılım çözümlerini sunmaya devam etse de, genel kullanımdaki egemenliğini H.264 ve HEVC gibi standartlara kaptırmış durumda. Yeni projeler için genellikle daha geniş uyumluluk ve performans sunan modern formatlar tercih ediliyor.

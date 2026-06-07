@@ -1,0 +1,722 @@
+import os
+import re
+import json
+import io
+import time
+import requests
+from datetime import datetime, timezone, timedelta
+TR_TZ = timezone(timedelta(hours=3))
+from dotenv import load_dotenv
+from google import genai
+from google.genai import types
+from PIL import Image
+
+# .env dosyasını yükle
+load_dotenv(override=True)
+
+def slugify(text):
+    """Metni SEO dostu URL slug haline getirir."""
+    # Türkçe karakter dönüşümleri
+    tr_map = str.maketrans("çğıöşüÇĞİÖŞÜ", "cgiosucgiosu")
+    text = text.translate(tr_map)
+    text = text.lower()
+    # Sadece İngilizce ASCII harf, sayı, boşluk ve tirelere izin ver
+    text = re.sub(r"[^a-z0-9\s-]", "", text)
+    text = re.sub(r"[\s_-]+", "-", text)
+    text = re.sub(r"^-+|-+$", "", text)
+    # Windows MAX_PATH (dosya yolu sınırı) koruması için 60 karakterle kısıtla
+    text = text[:60]
+    # Kırpma sonrası sonda kalan tireleri temizle
+    text = re.sub(r"-+$", "", text)
+    return text
+
+# .env dosyasından gelen çoklu API anahtarlarını yükle
+API_KEYS = []
+keys_str = os.getenv("GEMINI_API_KEYS")
+if keys_str:
+    API_KEYS = [k.strip() for k in keys_str.split(",") if k.strip()]
+
+current_key_idx = 0
+FAILED_KEYS_THIS_RUN = [] # Her çalışmada başarısız olan (masked_key, error_msg) ikililerini tutar
+DOWNLOADED_PHOTO_IDS = set() # Aynı çalışmada mükerrer görsel indirilmesini engellemek için
+
+# .env dosyasından gelen çoklu Pexels API anahtarlarını yükle
+PEXELS_API_KEYS = []
+pexels_keys_str = os.getenv("PEXELS_API_KEY")
+if pexels_keys_str:
+    PEXELS_API_KEYS = [k.strip() for k in pexels_keys_str.split(",") if k.strip()]
+
+current_pexels_key_idx = 0
+
+def rotate_pexels_key():
+    global current_pexels_key_idx
+    if PEXELS_API_KEYS:
+        current_pexels_key_idx = (current_pexels_key_idx + 1) % len(PEXELS_API_KEYS)
+        print(f"UYARI: Pexels API anahtarı bir sonraki ile değiştiriliyor. (Yeni Sıra: {current_pexels_key_idx + 1}/{len(PEXELS_API_KEYS)})")
+
+
+def mask_key(key):
+    """API anahtarının sondan 6 karakteri hariç diğer kısımlarını maskeler."""
+    if not key:
+        return "Bilinmeyen Key"
+    key_str = str(key).strip()
+    if len(key_str) <= 6:
+        return key_str
+    return f"...{key_str[-6:]}"
+
+def get_next_client():
+    global current_key_idx
+    if not API_KEYS:
+        # Fallback: Klasik GEMINI_API_KEY dene
+        fallback_key = os.getenv("GEMINI_API_KEY")
+        if fallback_key:
+            return genai.Client(api_key=fallback_key.strip())
+        print("UYARI: GEMINI_API_KEYS veya GEMINI_API_KEY bulunamadı!")
+        return genai.Client()
+        
+    api_key = API_KEYS[current_key_idx]
+    print(f"Bilgi: API Anahtarı {current_key_idx + 1}/{len(API_KEYS)} kullanılıyor. (Baslangic: {api_key[:10]}...)")
+    return genai.Client(api_key=api_key)
+
+def rotate_key():
+    global current_key_idx
+    if API_KEYS:
+        current_key_idx = (current_key_idx + 1) % len(API_KEYS)
+        print(f"UYARI: API anahtarı bir sonraki ile değiştiriliyor. (Yeni Sıra: {current_key_idx + 1}/{len(API_KEYS)})")
+
+def rewrite_news_with_ai(raw_title, raw_summary, category, raw_link, model_name="gemma-4-31b-it"):
+    """Gemini API kullanarak haberi özgünleştirir. Hata (429/403/500) durumunda anahtar rotasyonu ve backoff yapar."""
+    prompt = f"""
+Aşağıdaki haber başlığı ve özetini analiz et. Bu haberi tamamen özgün, Türkçe, akıcı, SEO dostu ve profesyonel bir teknoloji/oyun/sinema editörü üslubuyla yeniden yaz. 
+
+Yazım Tarzı ve Doğruluk Kuralları (MANDATORY):
+1. **İlgi Çekici ve Sürükleyici Dil:** Donuk ve makine dili yerine okuyucunun dikkatini ilk cümleden yakalayan, canlı, dinamik ve profesyonel bir üslup kullan.
+2. **Konuda Tutucu (Strict Focus):** Haberin odağından kesinlikle sapma. Girdi olarak verilen konunun dışına çıkma, konuyu gereksiz yere dağıtma veya alakasız teknolojilerden bahsetme. Sadece haberin ana konusuna derinlemesine ve tutarlı bir şekilde odaklan.
+3. **KESİNLİKLE YALAN HABER YAPMA (Zero Fabrication):** Asla uydurma veriler, uydurma tarihler, hayali kaynaklar veya yanlış iddialar üretme. Girdi haberinde yer alan gerçek olgulara ve doğrulanabilir verilere %100 sadık kal.
+4. **Clickbait Olmayan Merak Uyandırıcı Başlık:** Clickbait (tık tuzağı veya aldatıcı) olmayan ama merak uyandıran, profesyonel, okuma potansiyeli yüksek Türkçe başlıklar oluştur.
+5. **Türkçe Dil ve Çeviri Hassasiyeti:** Girdi haber başlığı veya özeti İngilizce (veya başka bir dilde) ise, haberi anlam kaybı olmadan tamamen Türkçe diline çevirip yeniden yaz. Gerekli yerlerde veya teknik terminolojide (örneğin "CPU", "ray tracing", "pipeline" gibi) İngilizce terimleri olduğu gibi kullanabilirsin ancak haberin genel dili akıcı, anlaşılır ve tamamen Türkçe olmalıdır.
+
+Hayadi Güvenlik ve İçerik Kuralları (MANDATORY):
+1. KESİNLİKLE siyaset, politika, devletlerarası krizler, dini konular, toplumsal tartışmalar, yasal ihtilaflar, kişisel karalamalar veya suçlamalar gibi hassas ve yasal risk barındıran konulara girme.
+2. Haberlerin odağı sadece saf teknoloji, bilimsel buluşlar, oyun güncellemeleri, yeni dizi/film duyuruları, fragmanlar ve kuantum fiziği/bilgisayarları/teknolojileri olmalıdır.
+3. Dizi-Film kategorisi altındaki haberler SADECE bilim kurgu, fantastik, oyun uyarlamaları, dijital yayın teknolojileri (Netflix/Disney+ vb. teknik haberleri) veya sinemada yapay zeka/CGI kullanımıyla ilgili olmalıdır. Yerel/standart aşk dizileri, magazin haberleri, alakasız dram veya genel sinema dedikoduları KESİNLİKLE haber yapılmamalıdır.
+4. EĞER GİRDİ HABERİ BU BELİRTİLEN SINIRLARIN (Teknoloji, Oyun, Bilim, Kuantum, Geek Dizi/Film) DIŞINDAYSA, kesinlikle makale yazma ve sadece aşağıdaki hata formatında JSON dön:
+{{
+  "error": "Bu konu/haber portalımızın odak alanı (Teknoloji, Oyun, Bilim Kurgu/Geek Dizi-Film, Kuantum) dışındadır."
+}}
+5. Suya sabuna dokunmayan, tamamen tarafsız, objektif, yasal açıdan %100 güvenli, sadece bilgilendirici ve nötr bir dil kullan.
+6. Kaynak haberde politik veya hukuki bir tartışma/polemik varsa, bu kısımları tamamen temizle ve konuyu yalnızca nesnel teknolojik/endüstriyel boyutuyla ele al.
+
+Genel Yapı:
+1. Haber içeriği en az 3-4 paragraflık detaylı ve doyurucu bir metin olmalıdır.
+2. İçeriği paragraflara böl. Okumayı kolaylaştırmak için ara başlıklar (markdown ## veya ### olarak) kullanabilirsin.
+3. Haberin en sonuna mutlaka "### Editörün Yorumu" başlığı altında, okuyucuyla bağ kuran, samimi ve objektif 1-2 cümlelik kısa bir değerlendirme ekle.
+4. "Editörün Yorumu" paragrafının BİTİMİNDE, haberin orijinal kaynağını kesinlikle şu Markdown formatında ekle: `[Haberin Orijinal Kaynağı]({raw_link})`. Kaynak linki için asla "Link burada", "haberin devamı" gibi ifadeler kullanma.
+5. Haber için en fazla 160 karakterlik bir SEO meta açıklaması (description) oluştur.
+6. Haberle ilgili 5 adet Türkçe etiket (keywords) belirle.
+7. Pexels görsel arama motoru için haberin ana konusunu, markasını ve modelini içeren İngilizce 2-3 kelimelik net ve nokta atışı bir görsel arama sorgusu (pexels_query) yaz. Örnek: "playstation 5 console" (sadece "playstation" yazma), "intel arc gpu" (sadece "gpu" yazma), "quantum computing chip" (sadece "quantum" yazma), "volkswagen ID electric car" (sadece "car" yazma).
+
+Girdi Haber Başlığı: {raw_title}
+Girdi Haber Özeti: {raw_summary}
+Haber Kategorisi: {category}
+
+Çıktıyı aşağıdaki JSON formatında ver (Hata durumunda yukarıdaki hata JSON formatını kullanın):
+{{
+  "title": "...",
+  "content": "...",
+  "description": "...",
+  "keywords": ["tag1", "tag2", ...],
+  "image_prompt": "A detailed 3D concept render of the topic",
+  "pexels_query": "..."
+}}
+"""
+    max_retries = len(API_KEYS) if API_KEYS else 3
+    last_error = "Bilinmeyen API Hatası"
+    for attempt in range(max_retries):
+        client = get_next_client()
+        try:
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json"
+                )
+            )
+            if not response.text:
+                raise ValueError("Model bos yanit dondu. Güvenlik filtresi (Safety Block) tetiklenmis olabilir.")
+            data = json.loads(response.text)
+            return data
+        except Exception as e:
+            last_error = str(e)
+            print(f"Hata (Deneme {attempt + 1}/{max_retries}): {last_error}")
+            
+            # Başarısız olan API anahtarını maskeleyip listeye ekle
+            failed_key = API_KEYS[current_key_idx] if API_KEYS else "GEMINI_API_KEY"
+            masked = mask_key(failed_key)
+            if (masked, last_error) not in FAILED_KEYS_THIS_RUN:
+                FAILED_KEYS_THIS_RUN.append((masked, last_error))
+            
+            # API anahtarı geçersizse veya kalıcı hata ise beklemeden hemen sonraki anahtara geç (Fast Rotation)
+            is_permanent = "API key not valid" in last_error or "NOT_FOUND" in last_error or "400" in last_error or "403" in last_error
+            rotate_key()
+            
+            if attempt < max_retries - 1:
+                if not is_permanent and "429" in last_error:
+                    wait_time = (attempt + 1) * 2
+                    print(f"Gecici Hız Limiti (429) algilandi. {wait_time} saniye bekleniyor...")
+                    time.sleep(wait_time)
+                else:
+                    print("Kalıcı veya gecersiz anahtar hatası. Beklemeden sonraki anahtarla deneniyor...")
+                
+    raise Exception(f"Gemini AI Yazim Hatası: {last_error}")
+
+def check_news_semantic_duplicates(candidates, existing_titles, model_name="gemma-4-31b-it"):
+    """
+    Gemma kullanarak aday haberlerin hem yayın politikasına uygunluğunu (kural)
+    hem de mevcut haberlerle ve kendi aralarında mükerrer (kopya) olup olmadığını kontrol eder.
+    Adaylar bir sözlük listesidir: [{'id': 1, 'title': '...', 'summary': '...', 'category': '...'}, ...]
+    Geriye elenen (mükerrer veya politika dışı olan) adayların ID listesini döner.
+    """
+    if not candidates:
+        return []
+        
+    recent_existing = existing_titles or []
+    
+    prompt = f"""
+Aşağıda sitemizde son 24 saatte yayınlanmış olan haberlerin başlıkları (Mevcut Haberler) ve yeni eklenmek istenen aday haberlerin detayları (Yeni Adaylar - Başlık, Özet ve Kategori olarak) verilmiştir.
+
+GÖREV:
+Yeni aday haberlerin her birini analiz et. Her aday haber için şu iki kontrolü yap:
+
+1. YAYIN POLİTİKASI UYGUNLUK KONTROLÜ (is_compliant):
+   Aday haberin portalımızın yayın politikasına uygun olup olmadığını denetle.
+   - Yayın Politikası Odak Alanları: Sadece teknoloji, bilimsel buluşlar, yapay zeka, uzay araştırmaları, kuantum dünyası/bilgisayarları, oyun dünyası (güncellemeler, yeni oyunlar, donanımlar vb.), geek film/dizi duyuruları (bilim kurgu, fantastik, oyun uyarlamaları, sinema teknolojileri) ile ilgili olmalıdır.
+   - Politika Dışı (Uygunsuz) Alanlar: Siyaset, politika, genel borsa/yatırım/kripto para (teknolojik altyapısı dışındaki genel finans/fiyat haberleri), standart aşk/dram dizileri veya genel magazin dedikoduları, genel otomotiv incelemeleri (elektrikli/otonom araç teknolojileri dışındaki standart araçlar), yasal uyuşmazlıklar, suç, toplumsal tartışmalar veya polemikler KESİNLİKLE elenmelidir (is_compliant: false).
+
+2. MÜKERRERLİK KONTROLÜ (is_duplicate):
+   - Aday haberi sitemizde son 24 saatte yayınlanmış olan "Mevcut Haberler" başlıkları ile karşılaştır. Eğer aday haber, mevcut haberlerden herhangi biriyle semantik (anlamsal) olarak aynı gelişmeyi, lansmanı, duyuruyu veya olayı ele alıyorsa (farklı kelimelerle ifade edilmiş olsa bile semantik olarak aynı gelişme ise), bu haberi mükerrer (is_duplicate: true) olarak işaretle.
+   - Aday haberleri kendi aralarında da karşılaştır. Eğer aday haberler arasında semantik olarak aynı konuyu/gelişmeyi ele alan birden fazla haber varsa, sadece bir tanesini onaylayıp (is_duplicate: false), diğerlerini mükerrer (is_duplicate: true) olarak işaretle.
+
+Mevcut Haberler (Son 24 Saat, Sadece Başlıklar):
+{json.dumps(recent_existing, ensure_ascii=False, indent=2)}
+
+Yeni Adaylar (Ham Adaylar - Başlık, Kategori ve Özet):
+{json.dumps([{"id": c["id"], "title": c["title"], "category": c.get("category"), "summary": c.get("summary")} for c in candidates], ensure_ascii=False, indent=2)}
+
+Çıktıyı kesinlikle aşağıdaki JSON formatında ver (başka açıklama ekleme):
+{{
+  "results": [
+    {{
+      "id": 1,
+      "is_compliant": true,
+      "is_duplicate": false,
+      "reason": "Gerekçe yazınız (uygun ve özgün veya elenme nedeni)"
+    }}
+  ]
+}}
+"""
+    
+    max_retries = len(API_KEYS) if API_KEYS else 3
+    last_error = "Bilinmeyen API Hatası"
+    
+    # 1. Aşama: Birincil Model (Gemma) ile Değerlendirme
+    for attempt in range(max_retries):
+        client = get_next_client()
+        try:
+            print(f"Gemma ile yayın öncesi kural ve mükerrerlik analizi yapılıyor (Deneme {attempt + 1}/{max_retries})...")
+            response = client.models.generate_content(
+                model=model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json"
+                )
+            )
+            
+            if not response.text:
+                raise ValueError("Model boş yanıt döndü.")
+                
+            data = json.loads(response.text)
+            results = data.get("results", [])
+            
+            rejected_ids = []
+            for res in results:
+                c_id = res.get("id")
+                is_compliant = res.get("is_compliant", True)
+                is_duplicate = res.get("is_duplicate", False)
+                reason = res.get("reason", "Açıklama belirtilmedi.")
+                
+                # Başlığı loglamak için adaylardan bulalım
+                title_str = "Bilinmeyen Başlık"
+                try:
+                    title_str = next(c['title'] for c in candidates if c['id'] == c_id)
+                except StopIteration:
+                    pass
+                
+                if not is_compliant:
+                    rejected_ids.append(c_id)
+                    print(f"🛡️ AI Filtresi (Politika Dışı) Elendi: '{title_str}' -> Gerekçe: {reason}")
+                elif is_duplicate:
+                    rejected_ids.append(c_id)
+                    print(f"🔍 AI Filtresi (Mükerrer/Kopya) Elendi: '{title_str}' -> Gerekçe: {reason}")
+                else:
+                    print(f"✅ AI Filtresi (Onaylandı): '{title_str}' -> Gerekçe: {reason}")
+                           
+            return rejected_ids
+            
+        except Exception as e:
+            last_error = str(e)
+            print(f"AI Semantik Değerlendirme Hatası (Deneme {attempt + 1}/{max_retries}): {last_error}")
+            
+            failed_key = API_KEYS[current_key_idx] if API_KEYS else "GEMINI_API_KEY"
+            masked = mask_key(failed_key)
+            if (masked, last_error) not in FAILED_KEYS_THIS_RUN:
+                FAILED_KEYS_THIS_RUN.append((masked, last_error))
+                
+            is_permanent = "API key not valid" in last_error or "NOT_FOUND" in last_error or "400" in last_error or "403" in last_error
+            rotate_key()
+            
+            if attempt < max_retries - 1:
+                if not is_permanent and "429" in last_error:
+                    wait_time = (attempt + 1) * 2
+                    print(f"Hız limiti beklemesi: {wait_time} sn...")
+                    time.sleep(wait_time)
+            
+    print(f"KRİTİK UYARI: Toplu semantik doğrulama tamamen başarısız oldu. Geri çekilme: Tüm adaylar onaylanıyor. Detay: {last_error}")
+    return []
+
+
+
+def generate_image_with_imagen(image_prompt, output_path, model_name="imagen-3.0-generate-002"):
+    """Imagen API kullanarak haber için 16:9 görsel üretir ve kaydeder."""
+    max_retries = len(API_KEYS) if API_KEYS else 3
+    last_error = "Görsel üretilemedi"
+    for attempt in range(max_retries):
+        client = get_next_client()
+        try:
+            print(f"Imagen ile görsel üretiliyor. Prompt: {image_prompt}")
+            result = client.models.generate_images(
+                model=model_name,
+                prompt=image_prompt,
+                config=types.GenerateImagesConfig(
+                    number_of_images=1,
+                    aspect_ratio="16:9",
+                    output_mime_type="image/jpeg"
+                )
+            )
+            
+            if not result.generated_images:
+                raise ValueError("Imagen bos görsel kümesi döndürdü.")
+                
+            for generated_image in result.generated_images:
+                image_bytes = generated_image.image.image_bytes
+                image = Image.open(io.BytesIO(image_bytes))
+                
+                # Klasör yoksa oluştur
+                os.makedirs(os.path.dirname(output_path), exist_ok=True)
+                image.save(output_path, "JPEG")
+                print(f"Görsel başarıyla kaydedildi: {output_path}")
+                return True
+        except Exception as e:
+            last_error = str(e)
+            print(f"Hata (Imagen - Deneme {attempt + 1}/{max_retries}): {last_error}")
+            
+            # Imagen modeli ücretsiz planda desteklenmiyorsa veya API anahtarı geçersizse boşuna 8 kere deneme, direkt Fast Fail yap!
+            is_unsupported = "not found" in last_error.lower() or "not supported" in last_error.lower() or "404" in last_error
+            is_permanent = "API key not valid" in last_error or "400" in last_error or "403" in last_error or is_unsupported
+            
+            rotate_key()
+            
+            if is_unsupported:
+                print("BİLGİ: Imagen modeli bu API anahtarlarıyla desteklenmiyor (Ücretsiz Sürüm). Hızlıca Pexels Fallback adımına geçiliyor...")
+                break
+                
+            if attempt < max_retries - 1:
+                if not is_permanent and "429" in last_error:
+                    wait_time = (attempt + 1) * 2
+                    print(f"Gecici Hız Limiti (429) algilandi. {wait_time} saniye bekleniyor...")
+                    time.sleep(wait_time)
+                else:
+                    print("Beklemeden sonraki anahtar deneniyor...")
+                
+    raise Exception(f"Imagen Görsel Hatası: {last_error}")
+
+def fetch_pexels_image(query, output_path):
+    """Pexels API üzerinden telifsiz görsel arar ve kaydeder."""
+    global current_pexels_key_idx
+    if not PEXELS_API_KEYS:
+        print("UYARI: PEXELS_API_KEY bulunamadı!")
+        return False
+        
+    max_attempts = len(PEXELS_API_KEYS)
+    for attempt in range(max_attempts):
+        api_key = PEXELS_API_KEYS[current_pexels_key_idx]
+        print(f"Pexels üzerinden görsel aranıyor (Anahtar {current_pexels_key_idx + 1}/{len(PEXELS_API_KEYS)}): '{query}'")
+        headers = {"Authorization": api_key.strip()}
+        url = f"https://api.pexels.com/v1/search?query={query}&per_page=5&orientation=landscape"
+        try:
+            response = requests.get(url, headers=headers, timeout=10)
+            if response.status_code == 200:
+                data = response.json()
+                if data.get("photos") and len(data["photos"]) > 0:
+                    # Aynı çalışma zamanı içinde mükerrer görsel indirilmesini engelle
+                    selected_photo = None
+                    for photo in data["photos"]:
+                        photo_id = photo.get("id")
+                        if photo_id not in DOWNLOADED_PHOTO_IDS:
+                            selected_photo = photo
+                            DOWNLOADED_PHOTO_IDS.add(photo_id)
+                            break
+                    
+                    # Eğer hepsi daha önce indirildiyse ilk görseli fallback olarak kullan
+                    if not selected_photo:
+                        selected_photo = data["photos"][0]
+                        
+                    photo_url = selected_photo["src"]["large2x"]
+                    img_response = requests.get(photo_url, timeout=10)
+                    if img_response.status_code == 200:
+                        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+                        with open(output_path, "wb") as f:
+                            f.write(img_response.content)
+                        print(f"Pexels görseli başarıyla indirildi: {output_path} (ID: {selected_photo.get('id')})")
+                        return True
+            
+            print(f"Hata: Pexels API isteği başarısız oldu. Durum Kodu: {response.status_code} (Anahtar: {mask_key(api_key)})")
+            if attempt < max_attempts - 1:
+                rotate_pexels_key()
+        except Exception as e:
+            print(f"Hata: Pexels görseli çekilemedi. Detay: {e}")
+            if attempt < max_attempts - 1:
+                rotate_pexels_key()
+                
+    return False
+
+def convert_to_optimized_webp(input_path, output_path, max_width=1200, quality=82):
+    """
+    Herhangi bir formattaki görseli (JPG, PNG, WebP, GIF vb.) optimize edilmiş WebP formatına dönüştürür.
+    - Google Keşfet minimum genişlik şartı: 1200px (bunu korur, küçük görselleri büyütmez).
+    - Kalite: 82 (gözle fark edilemez kayıp, dosya boyutu ~%60-70 küçülür).
+    - EXIF ve ICC profil verilerini temizleyerek dosya boyutunu daha da düşürür.
+    """
+    try:
+        img = Image.open(input_path)
+        
+        # Şeffaf (RGBA/P) görselleri RGB'ye çevir (WebP lossy için gerekli)
+        if img.mode in ("RGBA", "P", "LA"):
+            background = Image.new("RGB", img.size, (18, 18, 18))  # Sitenin koyu arka plan rengi
+            if img.mode == "P":
+                img = img.convert("RGBA")
+            background.paste(img, mask=img.split()[-1] if img.mode == "RGBA" else None)
+            img = background
+        elif img.mode != "RGB":
+            img = img.convert("RGB")
+        
+        # Genişlik 1200px'den büyükse orantılı küçült (Google Keşfet için 1200px yeterli)
+        w, h = img.size
+        if w > max_width:
+            ratio = max_width / w
+            new_h = int(h * ratio)
+            img = img.resize((max_width, new_h), Image.LANCZOS)
+            print(f"  Görsel boyutlandırıldı: {w}x{h} → {max_width}x{new_h}")
+        
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+        img.save(output_path, "WEBP", quality=quality, method=4)
+        
+        # Boyut karşılaştırması logla
+        original_size = os.path.getsize(input_path) / 1024  # KB
+        webp_size = os.path.getsize(output_path) / 1024  # KB
+        savings = ((original_size - webp_size) / original_size * 100) if original_size > 0 else 0
+        print(f"  WebP Optimizasyonu: {original_size:.0f}KB → {webp_size:.0f}KB (-%{savings:.0f} tasarruf)")
+        return True
+    except Exception as e:
+        print(f"  WebP dönüşüm hatası: {e}")
+        return False
+
+def save_news_as_markdown(news_data, output_dir, images_dir, source_name, source_url, og_image=None):
+    """Haber verilerini Astro blog uyumlu Markdown olarak kaydeder."""
+    title = news_data["title"].replace('"', "'")
+    content = news_data["content"]
+    description = news_data["description"].replace('"', "'")
+    keywords = news_data["keywords"]
+    category = news_data.get("category", "genel")
+    
+    slug = slugify(title)
+    date_str = datetime.now(TR_TZ).strftime("%Y-%m-%d")
+    
+    # Görsel adı ve yolları (WebP formatı)
+    image_filename = f"{slug}.webp"
+    temp_download_path = os.path.join(images_dir, f"{slug}_temp_raw")  # Geçici indirme dosyası
+    image_local_path = os.path.join(images_dir, image_filename)
+    # Astro public klasörüne göre görsel yolu (örn: /images/news/slug.webp)
+    astro_image_path = f"/images/news/{image_filename}"
+    
+    # Doğrudan Pexels Telifsiz Görsel Arama
+    pexels_query = news_data.get("pexels_query", category)
+    success = False
+
+    # 1. Aşama: Orijinal Haber Görseli (og:image) Denemesi
+    if og_image:
+        try:
+            print(f"Orijinal görsel indiriliyor: {og_image}")
+            headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"}
+            res = requests.get(og_image, headers=headers, timeout=10)
+            if res.status_code == 200:
+                os.makedirs(os.path.dirname(temp_download_path), exist_ok=True)
+                with open(temp_download_path, "wb") as f:
+                    f.write(res.content)
+                # WebP'ye dönüştür ve optimize et
+                if convert_to_optimized_webp(temp_download_path, image_local_path):
+                    success = True
+                    print(f"Orijinal görsel başarıyla WebP'ye dönüştürüldü.")
+                else:
+                    print(f"Orijinal görsel WebP dönüşümü başarısız. Pexels fallback...")
+                # Geçici dosyayı temizle
+                if os.path.exists(temp_download_path):
+                    os.remove(temp_download_path)
+            else:
+                print(f"Orijinal görsel HTTP {res.status_code} hatası verdi.")
+        except Exception as e:
+            print(f"og:image indirme hatası: {e}. Pexels fallback uygulanıyor...")
+            if os.path.exists(temp_download_path):
+                os.remove(temp_download_path)
+
+    # 2. Aşama: Pexels Fallback
+    if not success:
+        try:
+            # Pexels görseli de önce geçici dosyaya indirilir, sonra WebP'ye dönüştürülür
+            pexels_downloaded = fetch_pexels_image(pexels_query, temp_download_path)
+            if pexels_downloaded:
+                if convert_to_optimized_webp(temp_download_path, image_local_path):
+                    success = True
+                else:
+                    # WebP dönüşümü başarısız olursa ham dosyayı doğrudan kullan
+                    import shutil
+                    shutil.move(temp_download_path, image_local_path)
+                    success = True
+                # Geçici dosyayı temizle
+                if os.path.exists(temp_download_path):
+                    os.remove(temp_download_path)
+        except Exception as e:
+            print(f"Pexels görseli cekilemedi: {e}")
+            if os.path.exists(temp_download_path):
+                os.remove(temp_download_path)
+        
+    if not success:
+        # Pexels de başarısız olursa default-news.png ata
+        print("Pexels görseli çekilemedi. Fallback default-news.png ataniyor.")
+        astro_image_path = "/images/default-news.png"
+    
+    # Markdown İçeriği
+    markdown_content = f"""---
+title: "{title}"
+description: "{description}"
+pubDate: "{datetime.now(TR_TZ).strftime('%Y-%m-%dT%H:%M:%S')}"
+heroImage: "{astro_image_path}"
+category: "{category}"
+tags: {json.dumps(keywords, ensure_ascii=False)}
+sourceName: "{source_name}"
+sourceUrl: "{source_url}"
+---
+{content}
+"""
+    
+    # Markdown dosyasını kaydet
+    os.makedirs(output_dir, exist_ok=True)
+    file_path = os.path.join(output_dir, f"{slug}.md")
+    
+    with open(file_path, "w", encoding="utf-8") as f:
+        f.write(markdown_content)
+        
+    print(f"Haber Markdown dosyası oluşturuldu: {file_path}")
+    return file_path
+
+def process_single_news(raw_news, config):
+    """Tek bir haberi Gemini ile işler, görselini üretir ve kaydeder."""
+    print(f"\nİşleniyor: {raw_news['title']}")
+    
+    try:
+        # 1. AI ile yeniden yaz
+        ai_data = rewrite_news_with_ai(
+            raw_news["title"], 
+            raw_news["summary"], 
+            raw_news["category"],
+            raw_news["link"],
+            model_name=config["gemini"]["model"]
+        )
+        
+        if not ai_data:
+            return False, "Model bos veya gecersiz JSON döndürdü."
+            
+        if "error" in ai_data:
+            return False, f"Haber kapsam dışı olduğu için elendi: {ai_data['error']}"
+            
+        # Kategori bilgisini ekle
+        ai_data["category"] = raw_news["category"]
+        
+        # Regex Temizliği: AI halüsinasyonlarını temizle ("Link burada", "haberin detayı için tıklayın" vb.)
+        content = ai_data.get("content", "")
+        # "[Link burada](...)" veya benzeri kalıpları ve cümleleri yakala
+        content = re.sub(r'(?i)(buradan\s+ulaşabilirsiniz|link\s+burada|haberin\s+tamamı|detaylar\s+için\s+tıklayın|orijinal\s+habere\s+gitmek\s+için).*?(?=\n|$)', '', content)
+        content = re.sub(r'\[(?:Link burada|Tıklayın|Orijinal Haber)\]\([^)]+\)', '', content)
+        ai_data["content"] = content.strip()
+        
+        # Klasör yollarını al
+        output_dir = config["settings"]["output_dir"]
+        images_dir = config["settings"]["images_dir"]
+        
+        # Göreceli yolları tam yola çevir (backend-scripts klasörüne göre)
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        abs_output_dir = os.path.abspath(os.path.join(base_dir, output_dir))
+        abs_images_dir = os.path.abspath(os.path.join(base_dir, images_dir))
+        
+        # 2. Markdown ve Görsel olarak kaydeder
+        save_news_as_markdown(
+            ai_data, 
+            abs_output_dir, 
+            abs_images_dir, 
+            raw_news["source"], 
+            raw_news["link"],
+            raw_news.get("og_image")
+        )
+        return True, slugify(ai_data["title"])
+    except Exception as e:
+        return False, str(e)
+
+def research_topic_with_gemini(user_prompt):
+    """Gemini 2.5 Flash ve Google Search Grounding kullanarak konuyu araştırıp haber yazar."""
+    stripped_prompt = user_prompt.strip()
+    is_single_url = not " " in stripped_prompt and (stripped_prompt.startswith("http://") or stripped_prompt.startswith("https://"))
+    
+    # Detaylı araştırma tespiti: Uzunluğu 200'den büyükse ve sadece tek bir URL değilse
+    is_detailed_research = len(stripped_prompt) > 200 and not is_single_url
+    
+    if is_detailed_research:
+        prompt = f"""
+Aşağıda kullanıcı tarafından sunulan detaylı araştırma raporunu/metnini incele. Bu metne dayanarak tamamen özgün, Türkçe, akıcı, SEO dostu ve profesyonel bir teknoloji/oyun/sinema/bilim editörü üslubuyla bir haber makalesi yaz.
+
+KRİTİK BİLGİ KAYNAĞI ÖNCELİĞİ KURALI (MANDATORY - %100 UYULMALIDIR):
+1. Makaleyi **SADECE VE SADECE** aşağıda verilen araştırma metnindeki bilgilere ve verilere dayanarak yaz.
+2. Dışarıdan, internetten veya genel bilgilerden kafana göre **KESİNLİKLE yeni olgular, yeni veriler, hayali olaylar, tarihler veya detaylar ekleme**.
+3. Kullanıcının sunduğu araştırma metnindeki tüm teknik detaylara, verilere, tarihlere ve açıklamalara %100 sadık kal.
+4. Eğer verilen metinde olmayan bir konu veya detay hakkında haber yapılması isteniyorsa veya metin çok kısıtlıysa, sadece mevcut bilgileri işle, kesinlikle spekülasyon veya hayal ürünü bilgi üretme (Zero Fabrication).
+
+Yazım Tarzı ve Doğruluk Kuralları (MANDATORY):
+1. **İlgi Çekici ve Sürükleyici Dil:** Donuk ve makine dili yerine okuyucunun dikkatini ilk cümleden yakalayan, canlı, dinamik ve profesyonel bir üslup kullan.
+2. **Konuda Tutucu (Strict Focus):** Haberin odağından kesinlikle sapma. Girdi olarak verilen konunun dışına çıkma, konuyu gereksiz yere dağıtma veya alakasız teknolojilerden bahsetme. Sadece haberin ana konusuna derinlemesine ve tutarlı bir şekilde odaklan.
+3. **Clickbait Olmayan Merak Uyandırıcı Başlık:** Clickbait (tık tuzağı veya aldatıcı) olmayan ama merak uyandıran, profesyonel, okuma potansiyeli yüksek Türkçe başlıklar oluştur.
+4. **Türkçe Dil ve Çeviri Hassasiyeti:** Araştırma metni veya kaynaklar İngilizce (veya başka bir dilde) ise, haberi anlam kaybı olmadan tamamen Türkçe diline çevirip yaz. Gerekli yerlerde veya teknik terminolojide İngilizce terimleri kullanabilirsin ancak makale tamamen Türkçe olmalıdır.
+
+Hayati Güvenlik ve İçerik Kuralları (MANDATORY):
+1. KESİNLİKLE siyaset, politika, devletlerarası krizler, dini konular, toplumsal tartışmalar, yasal ihtilaflar, kişisel karalamalar veya suçlamalar gibi hassas ve yasal risk barındıran konulara girme.
+2. Haberlerin odağı sadece saf teknoloji, bilimsel buluşlar, oyun güncellemeleri, yeni dizi/film duyuruları, fragmanlar ve kuantum fiziği/bilgisayarları/teknolojileri olmalıdır.
+3. Dizi-Film kategorisi altındaki haberler SADECE bilim kurgu, fantastik, oyun uyarlamaları, dijital yayın teknolojileri (Netflix/Disney+ vb. teknik haberleri) veya sinemada yapay zeka/CGI kullanımıyla ilgili olmalıdır. Yerel/standart aşk dizileri, magazin haberleri, alakasız dram veya genel sinema dedikoduları KESİNLİKLE haber yapılmamalıdır.
+4. EĞER GİRDİ HABERİ VEYA ARAŞTIRMA KONUSU BU BELİRTİLEN SINIRLARIN DIŞINDAYSA, kesinlikle makale yazma ve sadece aşağıdaki hata formatında JSON dön:
+{{
+  "error": "Bu konu/haber portalımızın odak alanı (Teknoloji, Oyun, Bilim Kurgu/Geek Dizi-Film, Kuantum) dışındadır."
+}}
+5. Suya sabuna dokunmayan, tamamen tarafsız, objektif, yasal açıdan %100 güvenli, sadece bilgilendirici ve nötr bir dil kullan.
+6. Kaynak haberde veya arama sonuçlarında politik veya hukuki bir tartışma/polemik varsa, bu kısımları tamamen temizle ve konuyu yalnızca nesnel teknolojik/endüstriyel boyutuyla ele al.
+
+Genel Yapı:
+1. Haber içeriği en az 3-4 paragraflık detaylı ve doyurucu bir metin olmalıdır. Ara başlıklar (markdown ## veya ### olarak) kullanabilirsin.
+2. Haber için en fazla 160 karakterlik bir SEO meta açıklaması (description) oluştur.
+3. Haber kategorisini konuya göre tam olarak şu dördünden biri olarak belirle: "teknoloji", "oyun", "dizi-film" veya "kuantum-evreni". Başka bir kategori adı kesinlikle kullanma.
+4. Haberle ilgili 5 adet Türkçe etiket (keywords) belirle.
+5. Pexels görsel arama motoru için haberin ana konusunu, markasını ve modelini içeren İngilizce 2-3 kelimelik net ve nokta atışı bir görsel arama sorgusu (pexels_query) yaz. Örnek: "playstation 5 console" (sadece "playstation" yazma), "intel arc gpu" (sadece "gpu" yazma), "quantum computing chip" (sadece "quantum" yazma), "volkswagen ID electric car" (sadece "car" yazma).
+
+Kullanıcının Sunduğu Detaylı Araştırma Metni:
+{user_prompt}
+
+Çıktıyı MUTLAKA ```json ``` kod bloğu içinde, geçerli ve temiz bir JSON formatında ver. JSON formatı şu şekilde olmalıdır (Hata durumunda yukarıdaki hata JSON formatını kullanın):
+{{
+  "title": "...",
+  "content": "...",
+  "description": "...",
+  "category": "...",
+  "keywords": ["tag1", "tag2", ...],
+  "image_prompt": "A detailed 3D concept render of the topic",
+  "pexels_query": "..."
+}}
+"""
+    else:
+        prompt = f"""
+Aşağıda kullanıcı tarafından verilen konuyu veya araştırma metnini incele. Bu konuyu Google Search kullanarak detaylıca araştır ve konundan tamamen özgün, Türkçe, akıcı, SEO dostu ve profesyonel bir teknoloji/oyun/sinema/bilim editörü üslubuyla bir haber makalesi yaz.
+
+Yazım Tarzı ve Doğruluk Kuralları (MANDATORY):
+1. **İlgi Çekici ve Sürükleyici Dil:** Donuk ve makine dili yerine okuyucunun dikkatini ilk cümleden yakalayan, canlı, dinamik ve profesyonel bir üslup kullan.
+2. **Konuda Tutucu (Strict Focus):** Haberin odağından kesinlikle sapma. Girdi olarak verilen konunun dışına çıkma, konuyu gereksiz yere dağıtma veya alakasız teknolojilerden bahsetme. Sadece haberin ana konusuna derinlemesine ve tutarlı bir şekilde odaklan.
+3. **KESİNLİKLE YALAN HABER YAPMA (Zero Fabrication):** Asla uydurma veriler, uydurma tarihler, hayali kaynaklar veya yanlış iddialar üretme. Arama sonuçlarındaki gerçek olgulara ve doğrulanabilir verilere %100 sadık kal.
+4. **Clickbait Olmayan Merak Uyandırıcı Başlık:** Clickbait (tık tuzağı veya aldatıcı) olmayan ama merak uyandıran, profesyonel, okuma potansiyeli yüksek Türkçe başlıklar oluştur.
+5. **Türkçe Dil ve Çeviri Hassasiyeti:** Araştırma kaynakları İngilizce (veya başka bir dilde) ise, haberi anlam kaybı olmadan tamamen Türkçe diline çevirip yaz. Gerekli yerlerde veya teknik terminolojide İngilizce terimleri kullanabilirsin ancak makale tamamen Türkçe olmalıdır.
+
+Hayati Güvenlik ve İçerik Kuralları (MANDATORY):
+1. KESİNLİKLE siyaset, politika, devletlerarası krizler, dini konular, toplumsal tartışmalar, yasal ihtilaflar, kişisel karalamalar veya suçlamalar gibi hassas ve yasal risk barındıran konulara girme.
+2. Haberlerin odağı sadece saf teknoloji, bilimsel buluşlar, oyun güncellemeleri, yeni dizi/film duyuruları, fragmanlar ve kuantum fiziği/bilgisayarları/teknolojileri olmalıdır.
+3. Dizi-Film kategorisi altındaki haberler SADECE bilim kurgu, fantastik, oyun uyarlamaları, dijital yayın teknolojileri (Netflix/Disney+ vb. teknik haberleri) veya sinemada yapay zeka/CGI kullanımıyla ilgili olmalıdır. Yerel/standart aşk dizileri, magazin haberleri, alakasız dram veya genel sinema dedikoduları KESİNLİKLE haber yapılmamalıdır.
+4. EĞER GİRDİ HABERİ VEYA ARAŞTIRMA KONUSU BU BELİRTİLEN SINIRLARIN DIŞINDAYSA, kesinlikle makale yazma ve sadece aşağıdaki hata formatında JSON dön:
+{{
+  "error": "Bu konu/haber portalımızın odak alanı (Teknoloji, Oyun, Bilim Kurgu/Geek Dizi-Film, Kuantum) dışındadır."
+}}
+5. Suya sabuna dokunmayan, tamamen tarafsız, objektif, yasal açıdan %100 güvenli, sadece bilgilendirici ve nötr bir dil kullan.
+6. Kaynak haberde veya arama sonuçlarında politik veya hukuki bir tartışma/polemik varsa, bu kısımları tamamen temizle ve konuyu yalnızca nesnel teknolojik/endüstriyel boyutuyla ele al.
+
+Genel Yapı:
+1. Haber içeriği en az 3-4 paragraflık detaylı ve doyurucu bir metin olmalıdır. Ara başlıklar (markdown ## veya ### olarak) kullanabilirsin.
+2. Haber için en fazla 160 karakterlik bir SEO meta açıklaması (description) oluştur.
+3. Haber kategorisini konuya göre tam olarak şu dördünden biri olarak belirle: "teknoloji", "oyun", "dizi-film" veya "kuantum-evreni". Başka bir kategori adı kesinlikle kullanma.
+4. Haberle ilgili 5 adet Türkçe etiket (keywords) belirle.
+5. Pexels görsel arama motoru için haberin ana konusunu, markasını ve modelini içeren İngilizce 2-3 kelimelik net ve nokta atışı bir görsel arama sorgusu (pexels_query) yaz. Örnek: "playstation 5 console" (sadece "playstation" yazma), "intel arc gpu" (sadece "gpu" yazma), "quantum computing chip" (sadece "quantum" yazma), "volkswagen ID electric car" (sadece "car" yazma).
+
+Araştırılacak Konu / Girdi: {user_prompt}
+
+Çıktıyı MUTLAKA ```json ``` kod bloğu içinde, geçerli ve temiz bir JSON formatında ver. JSON formatı şu şekilde olmalıdır (Hata durumunda yukarıdaki hata JSON formatını kullanın):
+{{
+  "title": "...",
+  "content": "...",
+  "description": "...",
+  "category": "...",
+  "keywords": ["tag1", "tag2", ...],
+  "image_prompt": "A detailed 3D concept render of the topic",
+  "pexels_query": "..."
+}}
+"""
+
+    max_retries = len(API_KEYS) if API_KEYS else 3
+    for attempt in range(max_retries):
+        client = get_next_client()
+        try:
+            if is_detailed_research:
+                print(f"Gemini ile konu yazılıyor (Detaylı araştırma metni algılandı, Google Search devre dışı)...")
+                response = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=prompt
+                )
+            else:
+                print(f"Gemini ile konu araştırılıyor (Google Search Grounding aktif)...")
+                response = client.models.generate_content(
+                    model="gemini-2.5-flash",
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        tools=[{"google_search": {}}]
+                    )
+                )
+            
+            text = response.text
+            if "```json" in text:
+                text = text.split("```json")[1].split("```")[0].strip()
+            elif "```" in text:
+                text = text.split("```")[1].split("```")[0].strip()
+                
+            data = json.loads(text.strip())
+            return data
+        except Exception as e:
+            err_msg = str(e)
+            print(f"Hata (Gemini Araştırma - Deneme {attempt + 1}/{max_retries}): {err_msg}")
+            
+            # Başarısız olan API anahtarını maskeleyip listeye ekle
+            failed_key = API_KEYS[current_key_idx] if API_KEYS else "GEMINI_API_KEY"
+            masked = mask_key(failed_key)
+            if (masked, err_msg) not in FAILED_KEYS_THIS_RUN:
+                FAILED_KEYS_THIS_RUN.append((masked, err_msg))
+                
+            rotate_key()
+    return None

@@ -1,0 +1,136 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const orgJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Tech & Game News AI",
+  "alternateName": "AIHABERLER",
+  "url": "https://aihaberler.web.app",
+  "logo": "https://aihaberler.web.app/favicon.svg",
+  "description": "Yapay zeka otonom yazarları ve editoryal ekipleriyle teknoloji, oyun ve sinema dünyasından en son haberleri sunan yeni nesil haber portalı.",
+  "sameAs": [
+    "https://x.com/kaose_dev",
+    "https://linkedin.com/company/kaose-dev"
+  ]
+};
+---
+
+<Layout title="Hakkımızda" description="AIHaberler: Yapay zekanın kalemiyle geleceğin otonom teknoloji, oyun ve dizi/film portalı.">
+  <!-- JSON-LD Organization Schema -->
+  <script type="application/ld+json" set:html={JSON.stringify(orgJsonLd)} />
+
+  <div class="about-container">
+    <header class="about-header">
+      <h1 class="about-title">Hakkımızda</h1>
+      <p class="about-tagline">Geleceğin Haberciliği: Otonom kontrol, Özgün İçerik, Teyitli Gerçek.</p>
+    </header>
+
+    <div class="glass-card about-card glow-border">
+      <h2>Biz Kimiz?</h2>
+      <p>
+        AIHaberler, teknoloji, dijital oyunlar, bilim kurgu, fantastik dizi ve film dünyasındaki gelişmeleri 
+        insan müdahalesi olmaksızın takip eden, analiz eden ve özgün içeriklere dönüştüren <strong>tamamen otonom bir haber portalıdır</strong>. 
+        Altyapımız, Kaose Development tarafından geliştirilen gelişmiş AI ajan mimarileri üzerine inşa edilmiştir.
+      </p>
+
+      <h2>Teknolojik Altyapımız</h2>
+      <p>
+        Sistemimiz, küresel RSS kanallarını anlık olarak tarayarak haber adaylarını toplar. 
+        Toplanan adaylar, <strong>Gemma 31B Semantik Arama Filtresi</strong> ile analiz edilerek mükerrer veya düşük kaliteli içerikler otomatik olarak elenir. 
+        Seçilen nitelikli haberler, <strong>Gemini 2.5 Pro ve Flash API</strong> modelleri aracılığıyla, clickbait'ten uzak, tarafsız, nesnel ve zenginleştirilmiş Türkçe haber makalelerine dönüştürülür.
+      </p>
+
+      <h2>Neden Otonom Habercilik?</h2>
+      <p>
+        Hızın ve bilginin doğruluğunun kritik olduğu dijital çağda, insan yanlılığından uzak, tamamen nesnel, 
+        güvenli ve katma değer sağlayan içerikleri okuyuculara anında ulaştırmayı hedefliyoruz. 
+        Tüm süreçlerimizde şeffaflık, editoryal doğruluk ve E-E-A-T (Deneyim, Uzmanlık, Yetkinlik, Güvenilirlik) standartlarına sıkı sıkıya bağlıyız.
+      </p>
+
+      <div class="about-footer-info">
+        <p><strong>Yayıncı:</strong> Kaose Development</p>
+        <p><strong>İletişim:</strong> <a href="/iletisim" class="cyan-link">İletişim Sayfası &rarr;</a></p>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .about-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem 0;
+  }
+
+  .about-header {
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 2rem;
+  }
+
+  .about-title {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .about-tagline {
+    color: var(--text-secondary);
+    font-size: 1.15rem;
+  }
+
+  .about-card {
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .about-card h2 {
+    font-size: 1.6rem;
+    color: #ffffff;
+    margin-top: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 0.5rem;
+  }
+
+  .about-card p {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    font-size: 1.05rem;
+  }
+
+  .about-footer-info {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+  }
+
+  .cyan-link {
+    color: var(--color-cyan);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .cyan-link:hover {
+    color: var(--color-purple);
+  }
+
+  @media (max-width: 768px) {
+    .about-card {
+      padding: 1.5rem;
+    }
+    .about-footer-info {
+      flex-direction: column;
+    }
+  }
+</style>

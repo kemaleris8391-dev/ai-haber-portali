@@ -1,0 +1,361 @@
+import sys
+import os
+
+# Windows CP1254 terminal emoji encoding fix
+if sys.platform.startswith('win'):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    except AttributeError:
+        pass
+import time
+import traceback
+from dotenv import load_dotenv
+
+# Çalışma dizinini backend-scripts olarak ayarla
+base_dir = os.path.dirname(os.path.abspath(__file__))
+os.chdir(base_dir)
+sys.path.append(base_dir)
+
+load_dotenv(override=True)
+from fetcher import fetch_new_news, load_config
+from ai_writer import process_single_news
+from telegram_notifier import send_error, send_success
+import firebase_helper
+import re
+
+def rebuild_posts_index_locally():
+    print("Rebuilding posts index locally from workspace files...")
+    blog_dir = os.path.abspath(os.path.join(base_dir, "../web-portal/src/content/blog"))
+    if not os.path.exists(blog_dir):
+        print(f"Error: blog directory not found: {blog_dir}")
+        return
+        
+    md_files = [f for f in os.listdir(blog_dir) if f.endswith(".md")]
+    posts = {}
+    
+    for idx, f_name in enumerate(md_files, start=1):
+        f_path = os.path.join(blog_dir, f_name)
+        try:
+            with open(f_path, "r", encoding="utf-8") as f:
+                content = f.read(1500) # Read frontmatter
+                
+            title = "Bilinmeyen Haber"
+            pub_date = "2026-05-30"
+            hero_image = "/images/default-news.png"
+            category = "teknoloji"
+            
+            title_match = re.search(r'^title:\s*["\']?(.*?)["\']?\s*$', content, re.MULTILINE)
+            pub_match = re.search(r'^pubDate:\s*["\']?(.*?)["\']?\s*$', content, re.MULTILINE)
+            image_match = re.search(r'^heroImage:\s*["\']?(.*?)["\']?\s*$', content, re.MULTILINE)
+            category_match = re.search(r'^category:\s*["\']?(.*?)["\']?\s*$', content, re.MULTILINE)
+            
+            if title_match:
+                title = title_match.group(1).strip()
+            pub_datetime = ""
+            if pub_match:
+                pub_val = pub_match.group(1).strip()
+                if len(pub_val) >= 10:
+                    pub_date = pub_val[:10]
+                if len(pub_val) >= 16:
+                    pub_datetime = pub_val
+            if image_match:
+                hero_image = image_match.group(1).strip()
+            if category_match:
+                category = category_match.group(1).strip().lower()
+                
+            p_id = f"p{idx}"
+            posts[p_id] = {
+                "slug": f_name,
+                "title": title,
+                "date": pub_date,
+                "pubDateTime": pub_datetime,
+                "image": hero_image,
+                "category": category,
+                "sha": "" # SHA is empty, fetched dynamically when deleting!
+            }
+        except Exception as e:
+            print(f"Error indexing local file {f_name}: {e}")
+            
+    index_data = {
+        "last_updated": time.time(),
+        "posts": posts
+    }
+    
+    try:
+        db = firebase_helper.init_firebase()
+        db.collection("system_config").document("posts_index").set(index_data)
+        print(f"Success: Local posts index successfully written to Firestore. Total indexed: {len(posts)}")
+    except Exception as fs_err:
+        print(f"Error saving posts index to Firestore: {fs_err}")
+
+def main():
+    # 1. Parametre Kontrolü
+    force_run = "--force" in sys.argv
+    cleanup_force = "--cleanup" in sys.argv
+    
+    # 1.5. Eğer sadece temizlik isteniyorsa
+    if cleanup_force:
+        print("Sadece otonom temizlik tetiklendi. RSS taraması atlanıyor.")
+        try:
+            config = load_config()
+            
+            # Otonom temizliği zorla çalıştır
+            from auto_cleanup import run_auto_cleanup_if_needed
+            run_auto_cleanup_if_needed(config, force=True)
+            
+            # İndeksi yeniden oluştur
+            rebuild_posts_index_locally()
+            
+        except Exception as cleanup_err:
+            import traceback
+            print(f"Otonom temizlik sırasında hata oluştu: {cleanup_err}")
+            traceback.print_exc()
+            send_error("Otonom Temizlik Hatası", f"Hata: {cleanup_err}\n{traceback.format_exc()}")
+            sys.exit(1)
+        sys.exit(0)
+    
+    # 2. Firestore Zamanlayıcı Kontrolü
+    try:
+        scheduler_config = firebase_helper.get_scheduler_config()
+        interval = scheduler_config["interval_minutes"]
+        last_run = scheduler_config["last_run_time"]
+        is_running = scheduler_config["is_running"]
+        is_active = scheduler_config.get("is_active", True)
+        
+        now = time.time()
+        elapsed_minutes = (now - last_run) / 60.0
+        
+        if not force_run:
+            # Otonom Zamanlayıcı Aktiflik (Başlatma/Durdurma) Kontrolü
+            if not is_active:
+                print("Bulut otonom zamanlayıcı devre dışı (Durdurulmuş). Tarama atlanıyor.")
+                sys.exit(0)
+                
+            # Süre kontrolü
+            if elapsed_minutes < interval:
+                remaining = int(interval - elapsed_minutes)
+                print(f"Otonom tarama için henüz süre dolmadı. Kalan: {remaining} dakika. Akış sonlandırılıyor.")
+                sys.exit(0)
+                
+            # Mükerrer çalışma (lock) kontrolü
+            # Eğer 15 dakikadan uzun süredir kilitliyse muhtemelen kilit asılı kalmıştır, kilidi yok say
+            if is_running and elapsed_minutes < 15.0:
+                print("Başka bir tarama/derleme işlemi şu anda aktif. Çakışmayı önlemek için sonlandırılıyor.")
+                sys.exit(0)
+                
+        # Kilidi aktif et
+        firebase_helper.update_scheduler_config(is_running=True)
+        print(f"Tarama başlatılıyor. Tetikleme: {'Manuel (--force)' if force_run else 'Otonom (Süre doldu)'}")
+        
+    except Exception as e:
+        print(f"Firestore zamanlayıcı kontrolü başarısız oldu: {e}")
+        # Hata durumunda eğer force ise devam et, değilse güvenli çıkış yap
+        if not force_run:
+            sys.exit(1)
+
+    # 3. Config yükle
+    try:
+        config = load_config()
+    except Exception as e:
+        err_msg = f"Config yüklenemedi: {e}\n{traceback.format_exc()}"
+        print(f"Hata: {err_msg}")
+        send_error("Haber Portalı Config Hatası", err_msg)
+        firebase_helper.update_scheduler_config(is_running=False)
+        sys.exit(1)
+        
+    # 3.5 Otonom Temizlik Periyot Kontrolü
+    try:
+        from auto_cleanup import run_auto_cleanup_if_needed
+        run_auto_cleanup_if_needed(config, force=False)
+    except Exception as cleanup_err:
+        print(f"Otonom temizlik kontrolü sırasında hata: {cleanup_err}")
+        traceback.print_exc()
+        
+    # 4. Yeni haberleri çek
+    try:
+        new_news = fetch_new_news()
+    except Exception as e:
+        err_msg = f"Haberler çekilirken hata oluştu: {e}\n{traceback.format_exc()}"
+        print(f"Hata: {err_msg}")
+        send_error("Haber Portalı RSS Çekme Hatası", err_msg)
+        firebase_helper.update_scheduler_config(is_running=False)
+        sys.exit(1)
+
+    # 4.5 Firestore'daki bekleyen özel haber taleplerini çek
+    pending_requests = []
+    try:
+        pending_requests = firebase_helper.get_pending_custom_requests()
+    except Exception as e:
+        print(f"Özel haber talepleri Firestore'dan alınamadı: {e}")
+
+    # Eğer hem yeni RSS haberi yoksa hem de bekleyen özel talep yoksa kilidi kaldır ve çık
+    if not new_news and not pending_requests:
+        print("İşlenecek yeni RSS haberi veya özel talep bulunamadı. Akış sonlandırılıyor.")
+        try:
+            rebuild_posts_index_locally()
+        except Exception as idx_err:
+            print(f"Error rebuilding index on dry-run: {idx_err}")
+        firebase_helper.update_scheduler_config(last_run_time=time.time(), is_running=False)
+        
+        # Eğer kullanıcı manuel tetiklediyse bilgi mesajı gönderelim (otomatik çalışmada spam olmaması için gönderilmez)
+        if force_run:
+            info_msg = (
+                "ℹ️ <b>Haber Tarama Raporu</b>\n\n"
+                "Tarama işlemi başarıyla tamamlandı ancak <b>yayınlanacak yeni bir haber bulunamadı.</b>\n\n"
+                "🔍 <b>Olası Nedenler:</b>\n"
+                "• RSS kaynaklarında henüz yeni bir içerik paylaşılmamış olabilir.\n"
+                "• Veya çekilen tüm aday haberler, sitemizdeki mevcut haberlerle semantik benzerlik gösterdiği için <b>Gemma 31B Semantik Filtresi</b> tarafından mükerrer kabul edilip başarıyla elenmiştir.\n\n"
+                "🔗 <b>Canlı Portal:</b> <a href='https://aihaberler.web.app'>aihaberler.web.app</a>"
+            )
+            send_success("Haber Tarama Raporu - Yeni Haber Yok", info_msg)
+            
+        sys.exit(0)
+
+        
+    # 5. API Anahtarları kontrolü
+    if not os.getenv("GEMINI_API_KEYS") and not os.getenv("GEMINI_API_KEY"):
+        err_msg = "GEMINI_API_KEYS veya GEMINI_API_KEY ortam değişkeni tanımlı değil. Lütfen .env dosyasını kontrol edin."
+        print(f"HATA: {err_msg}")
+        send_error("Haber Portalı Başlatma Hatası", err_msg)
+        firebase_helper.update_scheduler_config(is_running=False)
+        sys.exit(1)
+        
+    # 6. Haberleri sırayla işle
+    success_count = 0
+    failed_news = []
+    success_news = []
+    
+    # API hata listesini temizle
+    import ai_writer
+    ai_writer.FAILED_KEYS_THIS_RUN = []
+    
+    # 6.1 Önce bekleyen özel haber taleplerini işle
+    if pending_requests:
+        print(f"\n[{len(pending_requests)}] adet bekleyen özel haber talebi işleniyor...")
+        try:
+            from ai_writer import research_topic_with_gemini, save_news_as_markdown, slugify
+            
+            output_dir = config["settings"]["output_dir"]
+            images_dir = config["settings"]["images_dir"]
+            
+            abs_output_dir = os.path.abspath(os.path.join(base_dir, output_dir))
+            abs_images_dir = os.path.abspath(os.path.join(base_dir, images_dir))
+            
+            for req in pending_requests:
+                topic = req["topic"]
+                doc_id = req["id"]
+                print(f"Özel Haber Talebi İşleniyor: '{topic}'")
+                
+                try:
+                    # 1. Gemini Search Grounding ile araştır ve yaz
+                    news_data = research_topic_with_gemini(topic)
+                    if not news_data:
+                        raise ValueError("Gemini araştırma sonucunda boş veri döndü.")
+                        
+                    category = news_data.get("category", "teknoloji")
+                    title = news_data.get("title", "Yeni Haber")
+                    
+                    # 2. Markdown ve Görsel olarak kaydet
+                    save_news_as_markdown(
+                        news_data, 
+                        abs_output_dir, 
+                        abs_images_dir, 
+                        "Telegram Arama", 
+                        "https://aihaberler.web.app"
+                    )
+                    
+                    # 3. Firestore'da tamamlandı yap
+                    firebase_helper.mark_custom_request_completed(doc_id)
+                    
+                    # 4. Raporlama
+                    success_count += 1
+                    slug = slugify(title)
+                    success_news.append((f"[Özel Talep] {title}", slug))
+                    
+                except Exception as e:
+                    err_msg = f"Özel haber yazımı başarısız: {e}"
+                    print(err_msg)
+                    failed_news.append((f"[Talep] {topic}", err_msg))
+                    # Hata olsa bile kuyruğu kilitlemesin, tamamlandı işaretle
+                    firebase_helper.mark_custom_request_completed(doc_id)
+        except Exception as e:
+            print(f"Özel haber talebi işlenirken genel hata: {e}")
+            
+    # 6.2 RSS haberlerini işle
+    
+    for idx, raw_news in enumerate(new_news, start=1):
+        print(f"\n[{idx}/{len(new_news)}] Haber İşleniyor...")
+        try:
+            success, result_val = process_single_news(raw_news, config)
+            if success:
+                success_count += 1
+                slug = result_val
+                success_news.append((raw_news.get("title", "Yeni Haber"), slug))
+            else:
+                failed_news.append((raw_news.get("title", "Bilinmeyen Başlık"), result_val or "Yazım veya görsel üretim adımı başarısız oldu."))
+        except Exception as e:
+            err_msg = f"Haber işlenirken beklenmedik hata oluştu: {e}"
+            print(err_msg)
+            failed_news.append((raw_news.get("title", "Bilinmeyen Başlık"), err_msg))
+            
+    print(f"\nAkış Tamamlandı. {len(new_news)} haberden {success_count} tanesi başarıyla yazıldı ve kaydedildi.")
+    
+    # 7. Sonuçları Kaydet ve Kilidi Kaldır
+    # Haber üretimi başarılı olsun veya olmasın tarama yapıldı, last_run_time güncellenmeli
+    try:
+        rebuild_posts_index_locally()
+    except Exception as idx_err:
+        print(f"Error rebuilding index on pipeline end: {idx_err}")
+    firebase_helper.update_scheduler_config(last_run_time=time.time(), is_running=False)
+    
+    # 8. Raporlama ve Hata Bildirimi (Telegram)
+    report_msg = ""
+    if success_news:
+        success_details = "\n".join([f"- <a href='https://aihaberler.web.app/blog/{s}'>{t}</a>" for t, s in success_news])
+        report_msg += f"✅ <b>Başarıyla Yayınlanan Haberler ({len(success_news)} adet):</b>\n{success_details}\n\n"
+        
+    if failed_news:
+        failed_details = "\n".join([f"- <b>{t}</b>: {d}" for t, d in failed_news])
+        report_msg += f"❌ <b>Başarısız Olan Haberler ({len(failed_news)} adet):</b>\n{failed_details}\n\n"
+        
+    # Eğer bu çalışmada hata alan API anahtarları varsa rapora ekle
+    if ai_writer.FAILED_KEYS_THIS_RUN:
+        keys_details = "\n".join([f"- 🔑 <code>{k}</code>: {err[:60]}..." for k, err in ai_writer.FAILED_KEYS_THIS_RUN])
+        report_msg += f"⚠️ <b>Hata Alan API Anahtarları (Sondan 6 Hane):</b>\n{keys_details}\n\n"
+    
+    # Kara liste istatistiklerini ekle
+    try:
+        blacklist_size = len(firebase_helper.get_blacklisted_links())
+        report_msg += f"🛡️ <b>Kara Liste Durumu:</b> Toplam {blacklist_size} engellenmiş link\n\n"
+    except Exception:
+        pass
+        
+    if report_msg:
+        # En alta canlı site linkini ekle
+        report_msg += "🔗 <b>Canlı Haber Sitesi:</b> <a href='https://aihaberler.web.app'>aihaberler.web.app</a>\n"
+        
+        if failed_news:
+            send_error(
+                "Haber Portalı Akışı - Rapor", 
+                report_msg
+            )
+        else:
+            send_success(
+                "Haber Portalı Akışı - Başarılı!", 
+                report_msg
+            )
+
+if __name__ == "__main__":
+    try:
+        main()
+    except Exception as e:
+        err_msg = f"Sistemde kritik bir hata oluştu: {e}\n{traceback.format_exc()}"
+        print(f"KRİTİK HATA: {err_msg}")
+        send_error("Haber Portalı Kritik Çalışma Hatası", err_msg)
+        # Kritik hata olsa dahi kilidi güvenli kaldır
+        try:
+            firebase_helper.update_scheduler_config(is_running=False)
+        except:
+            pass
+        sys.exit(1)

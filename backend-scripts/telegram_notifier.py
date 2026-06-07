@@ -1,0 +1,52 @@
+import os
+import requests
+from dotenv import load_dotenv
+
+# .env dosyasını yükle
+load_dotenv(override=True)
+
+TELEGRAM_BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+TELEGRAM_CHAT_ID = os.getenv("TELEGRAM_CHAT_ID")
+
+def send_message(text):
+    """Belirtilen Telegram Chat ID'sine HTML formatında mesaj gönderir."""
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        print("UYARI: Telegram Bot Token veya Chat ID .env dosyasında tanımlı değil. Bildirim gönderilemedi.")
+        return False
+        
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN.strip()}/sendMessage"
+    payload = {
+        "chat_id": TELEGRAM_CHAT_ID.strip(),
+        "text": text,
+        "parse_mode": "HTML",
+        "disable_web_page_preview": False
+    }
+    
+    try:
+        response = requests.post(url, json=payload, timeout=10)
+        if response.status_code == 200:
+            return True
+        else:
+            print(f"Hata: Telegram API yanıtı başarısız. Kod: {response.status_code}, Detay: {response.text}")
+            return False
+    except Exception as e:
+        print(f"Hata: Telegram mesajı gönderilemedi. Detay: {e}")
+        return False
+
+def send_error(error_title, error_detail):
+    """Detaylı hata bildirimini Telegram'a kod bloğu ile birlikte gönderir."""
+    emoji = "🚨"
+    message = (
+        f"{emoji} <b>{error_title}</b>\n\n"
+        f"<b>Hata Detayı:</b>\n"
+        f"<code>{error_detail}</code>"
+    )
+    return send_message(message)
+
+def send_success(success_title, details=""):
+    """Başarı mesajını Telegram'a gönderir."""
+    emoji = "✅"
+    message = f"{emoji} <b>{success_title}</b>\n"
+    if details:
+        message += f"\n{details}"
+    return send_message(message)

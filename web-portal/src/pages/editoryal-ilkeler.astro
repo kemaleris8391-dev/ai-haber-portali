@@ -1,0 +1,126 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Yayın İlkeleri" description="AIHaberler: Editoryal yayın ilkelerimiz, yapay zeka içerik üretim politikamız ve şeffaflık kurallarımız.">
+  <div class="principles-container">
+    <header class="principles-header">
+      <h1 class="principles-title">Yayın İlkeleri</h1>
+      <p class="principles-tagline">Şeffaflık, doğruluk ve yapay zeka haberciliği standartlarımız.</p>
+    </header>
+
+    <div class="glass-card principles-card glow-border">
+      <h2>Yapay Zeka (AI) İçerik Politikamız</h2>
+      <p>
+        AIHaberler üzerindeki tüm içerikler, <strong>otonom yapay zeka modelleri (Gemini API)</strong> tarafından 
+        kaynak verilerin taranması, derlenmesi ve özgünleştirilmesiyle oluşturulmaktadır. 
+        Google'ın "Yapay Zeka ile Üretilen İçerik Yönergesi" doğrultusunda, AI kullanımını gizlemek yerine okuyucularımıza karşı tamamen şeffaf olmayı seçiyoruz.
+      </p>
+
+      <h2>Mükerrer ve Ölçeklendirilmiş Spam Karşıtlığı</h2>
+      <p>
+        Aynı konuyu tekrar tekrar yazarak (paraphrasing/spinleme) arama motorlarını manipüle etmeye yönelik "Ölçeklendirilmiş İçerik İstismarı" (Scaled Content Abuse) politikalarına kesinlikle karşıyız.
+        Bu amaçla kurulan otonom hattımız, aday haberleri sisteme almadan önce <strong>Gemma 31B Semantik Analiz Modeli</strong> ile 3 aşamalı elenmeye tabi tutar. 
+        Sadece sitemize değer katan, tamamen yeni ve benzersiz haber konularının yayına girmesine izin verilir.
+      </p>
+
+      <h2>Doğruluk ve Yalan Haber Kontrolü (Zero Fabrication)</h2>
+      <p>
+        Yapay zeka modellerinin "halüsinasyon" (uydurma veri üretme) riskinin farkındayız. 
+        Yazım ajanlarımıza (prompts) uyguladığımız katı yönergeler (MANDATORY RULES) sayesinde:
+      </p>
+      <ul>
+        <li>Haberlerde yer alan tüm isimler, tarihler, cihaz özellikleri ve fiyatlar sadece orijinal kaynakta bulunan doğrulanmış verilere dayanır.</li>
+        <li>Spekülatif, doğrulanmamış ve asılsız iddiaların haberleştirilmesine izin verilmez.</li>
+        <li>Hassas, politik, dini veya toplumsal tartışma içeren yasal riskli konulara kesinlikle girilmez.</li>
+      </ul>
+
+      <h2>İçerik Odak Alanımız (Strict Focus)</h2>
+      <p>
+        Portalımızın editoryal odağı sınırlıdır. Sadece <strong>Saf Teknoloji, Donanım, Yapay Zeka, Bilimsel Buluşlar, Dijital Oyun Dünyası ve Geek Sinema/Dizi</strong> (bilim kurgu, fantastik, oyun uyarlamaları, CGI vb.) haberleri yayınlanır. Genel magazin, aşk dizileri veya politika haberleri süzgecimizden geçemez.
+      </p>
+
+      <h2>Hata Bildirimi ve Düzeltme</h2>
+      <p>
+        Otonom süreçlerimizden kaynaklanan herhangi bir yanlış bilgi veya telif hakkı ihlali durumunda, okuyucularımızın bildirimlerini önemsiyoruz. 
+        Bildirimlerinizi inceleyerek hatalı içeriği anında yayından kaldırıyor veya güncelliyoruz.
+        Bize ulaşmak için <a href="/iletisim" class="cyan-link">İletişim sayfamızı</a> kullanabilirsiniz.
+      </p>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .principles-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem 0;
+  }
+
+  .principles-header {
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 2rem;
+  }
+
+  .principles-title {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .principles-tagline {
+    color: var(--text-secondary);
+    font-size: 1.15rem;
+  }
+
+  .principles-card {
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .principles-card h2 {
+    font-size: 1.6rem;
+    color: #ffffff;
+    margin-top: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 0.5rem;
+  }
+
+  .principles-card p {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    font-size: 1.05rem;
+  }
+
+  .principles-card ul {
+    list-style: square;
+    padding-left: 1.5rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+
+  .principles-card li {
+    margin-bottom: 0.5rem;
+  }
+
+  .cyan-link {
+    color: var(--color-cyan);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .cyan-link:hover {
+    color: var(--color-purple);
+  }
+
+  @media (max-width: 768px) {
+    .principles-card {
+      padding: 1.5rem;
+    }
+  }
+</style>

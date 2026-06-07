@@ -1,0 +1,45 @@
+{
+  "sources": [
+    {
+      "name": "Webtekno",
+      "url": "https://www.webtekno.com/rss.xml",
+      "category": "teknoloji"
+    },
+    {
+      "name": "DonanimHaber",
+      "url": "https://www.donanimhaber.com/rss/tum/",
+      "category": "teknoloji"
+    },
+    {
+      "name": "IGN Turkiye",
+      "url": "https://tr.ign.com/feed.xml",
+      "category": "oyun"
+    },
+    {
+      "name": "LOG",
+      "url": "https://www.log.com.tr/feed/",
+      "category": "teknoloji"
+    },
+    {
+      "name": "Beyazperde",
+      "url": "https://www.beyazperde.com/rss/haberler.xml",
+      "category": "dizi-film"
+    },
+    {
+      "name": "Kayip Rihtim",
+      "url": "https://kayiprihtim.com/feed/",
+      "category": "dizi-film"
+    }
+  ],
+  "gemini": {
+    "model": "gemma-4-31b-it",
+    "image_model": "imagen-3.0-generate-002",
+    "temperature": 0.7
+  },
+  "settings": {
+    "max_news_per_source_run": 2,
+    "db_path": "news_db.json",
+    "output_dir": "../web-portal/src/content/blog",
+    "images_dir": "../web-portal/public/images/news"
+  }
+}

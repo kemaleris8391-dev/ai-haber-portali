@@ -1,0 +1,128 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Gizlilik Politikası" description="AIHaberler Gizlilik Politikası: Ziyaretçi verilerinin işlenmesi, korunması ve çerez kullanımları hakkında bilgilendirme.">
+  <div class="policy-container">
+    <header class="policy-header">
+      <h1 class="policy-title">Gizlilik Politikası</h1>
+      <p class="policy-tagline">Veri gizliliğiniz ve güvenliğiniz bizim için önemlidir.</p>
+    </header>
+
+    <div class="glass-card policy-card glow-border">
+      <p><strong>Son Güncelleme:</strong> {new Date().toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+      
+      <h2>1. Toplanan Bilgiler</h2>
+      <p>
+        AIHaberler portalı tamamen otonom olarak çalışır ve kullanıcılarımızdan doğrudan herhangi bir kişisel veri (isim, e-posta, telefon vb.) talep etmez. Sitemizde üyelik veya yorum sistemi bulunmamaktadır.
+        Ancak sitemizi ziyaretiniz sırasında aşağıdaki dolaylı veriler toplanabilir:
+      </p>
+      <ul>
+        <li><strong>Analiz Verileri:</strong> Google Analytics veya Firebase Analitik araçları aracılığıyla site trafiğini, kullanıcı davranışlarını ve cihaz/tarayıcı türlerini analiz etmek amacıyla anonim kullanım verileri.</li>
+        <li><strong>Reklam Çerezleri:</strong> Google AdSense reklam ağı tarafından reklam sunumunu optimize etmek amacıyla kullanılan tarayıcı çerezleri.</li>
+      </ul>
+
+      <h2>2. Bilgilerin Kullanımı</h2>
+      <p>
+        Toplanan anonim veriler yalnızca şu amaçlarla kullanılır:
+      </p>
+      <ul>
+        <li>Web sitemizin teknik performansını artırmak ve sayfa yükleme hızlarını optimize etmek.</li>
+        <li>Kullanıcılarımızın ilgi gösterdiği kategori ve haber türlerini analiz ederek, otonom yapay zeka ajanlarımızın haber seçim algoritmalarını geliştirmek.</li>
+        <li>İlgi alanlarınıza daha uygun reklamlar sunabilmek.</li>
+      </ul>
+
+      <h2>3. Bilgi Paylaşımı ve Üçüncü Taraflar</h2>
+      <p>
+        Kullanıcılardan toplanan anonim analiz veya reklam verileri, yasal zorunluluklar (mahkeme kararları vb.) haricinde üçüncü şahıslarla paylaşılmaz veya satılmaz. 
+        Sitemizde yer alan dış bağlantılar (örneğin orijinal haber kaynakları) kendi gizlilik politikalarına sahiptir ve bu sitelerin içeriklerinden AIHaberler sorumlu değildir.
+      </p>
+
+      <h2>4. Veri Güvenliği</h2>
+      <p>
+        Sistemimiz Google Firebase altyapısında barındırılmaktadır ve tüm veri aktarımları standart SSL (HTTPS) protokolü ile şifrelenmektedir. 
+        Her ne kadar kullanıcı verisi depolamasak da, sitemizin teknik güvenliği düzenli olarak denetlenmektedir.
+      </p>
+
+      <h2>5. İletişim</h2>
+      <p>
+        Gizlilik Politikamız ile ilgili her türlü soru, görüş veya veri silme talepleriniz için <a href="/iletisim" class="cyan-link">İletişim</a> sayfamız üzerinden bize ulaşabilirsiniz.
+      </p>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .policy-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem 0;
+  }
+
+  .policy-header {
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 2rem;
+  }
+
+  .policy-title {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .policy-tagline {
+    color: var(--text-secondary);
+    font-size: 1.15rem;
+  }
+
+  .policy-card {
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .policy-card h2 {
+    font-size: 1.6rem;
+    color: #ffffff;
+    margin-top: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 0.5rem;
+  }
+
+  .policy-card p {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    font-size: 1.05rem;
+  }
+
+  .policy-card ul {
+    list-style: square;
+    padding-left: 1.5rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+
+  .policy-card li {
+    margin-bottom: 0.5rem;
+  }
+
+  .cyan-link {
+    color: var(--color-cyan);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .cyan-link:hover {
+    color: var(--color-purple);
+  }
+
+  @media (max-width: 768px) {
+    .policy-card {
+      padding: 1.5rem;
+    }
+  }
+</style>

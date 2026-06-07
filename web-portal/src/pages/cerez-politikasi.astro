@@ -1,0 +1,122 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Çerez Politikası" description="AIHaberler Çerez (Cookie) Politikası: Çerezlerin kullanım amaçları, türleri ve nasıl yönetilebileceği hakkında detaylı bilgiler.">
+  <div class="policy-container">
+    <header class="policy-header">
+      <h1 class="policy-title">Çerez Politikası</h1>
+      <p class="policy-tagline">Web deneyiminizi kişiselleştirmek için çerezleri (cookies) nasıl kullandığımız hakkında.</p>
+    </header>
+
+    <div class="glass-card policy-card glow-border">
+      <p><strong>Son Güncelleme:</strong> {new Date().toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+      
+      <h2>1. Çerez (Cookie) Nedir?</h2>
+      <p>
+        Çerezler, ziyaret ettiğiniz web siteleri tarafından bilgisayarınıza veya mobil cihazınıza kaydedilen küçük metin dosyalarıdır. 
+        Web sitelerinin daha verimli çalışmasını sağlamak, kullanıcı deneyimini iyileştirmek ve site sahiplerine raporlama yapabilmek amacıyla yaygın olarak kullanılırlar.
+      </p>
+
+      <h2>2. Hangi Tür Çerezleri Kullanıyoruz?</h2>
+      <p>
+        AIHaberler portalı, kendi sunucusunda kullanıcıyı doğrudan tanımaya yönelik (hesap veya oturum çerezleri) saklamaz. Ancak aşağıdaki çerez türleri kullanılmaktadır:
+      </p>
+      <ul>
+        <li><strong>Zorunlu Çerezler:</strong> Sitenin temel fonksiyonlarının (sayfa gezinimi ve teknik altyapı) düzgün çalışabilmesi için teknik olarak gerekli olan çerezlerdir.</li>
+        <li><strong>Analitik Çerezler (Google Analytics/Firebase):</strong> Ziyaretçilerin siteyi nasıl kullandığını (hangi haberlerin daha çok okunduğunu, sitede ne kadar süre kalındığını) analiz etmemizi sağlar. Bu veriler tamamen anonimleştirilmiştir.</li>
+        <li><strong>Reklam ve Pazarlama Çerezleri (Google AdSense):</strong> Kullanıcıların ilgi alanlarına uygun reklamlar sunmak, aynı reklamın tekrar gösterimini sınırlamak ve reklam kampanyalarının etkinliğini ölçmek için kullanılır.</li>
+      </ul>
+
+      <h2>3. Çerezleri Nasıl Kontrol Edebilirsiniz?</h2>
+      <p>
+        Tarayıcınızın ayarlarını değiştirerek çerezleri dilediğiniz gibi kontrol edebilir veya silebilirsiniz. Çoğu web tarayıcısı, çerezlerin bilgisayarınıza kaydedilmesini engelleme seçeneği sunar. 
+        Ancak, çerezleri devre dışı bırakmanız durumunda sitemizdeki bazı özellikler düzgün çalışmayabilir.
+      </p>
+      <p>
+        Reklam çerezlerini kişiselleştirmek veya kapatmak için Google'ın <a href="https://adssettings.google.com/" target="_blank" rel="noopener noreferrer" class="cyan-link">Reklam Ayarları</a> sayfasını ziyaret edebilirsiniz.
+      </p>
+
+      <h2>4. Politika Değişiklikleri</h2>
+      <p>
+        Teknolojik gelişmeler veya yasal gereklilikler doğrultusunda Çerez Politikamızda güncellemeler yapabiliriz. 
+        Değişiklikler bu sayfa üzerinden duyurulacaktır. Daha fazla bilgi için <a href="/gizlilik-politikasi" class="cyan-link">Gizlilik Politikamızı</a> okuyabilirsiniz.
+      </p>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .policy-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem 0;
+  }
+
+  .policy-header {
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 2rem;
+  }
+
+  .policy-title {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .policy-tagline {
+    color: var(--text-secondary);
+    font-size: 1.15rem;
+  }
+
+  .policy-card {
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .policy-card h2 {
+    font-size: 1.6rem;
+    color: #ffffff;
+    margin-top: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 0.5rem;
+  }
+
+  .policy-card p {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    font-size: 1.05rem;
+  }
+
+  .policy-card ul {
+    list-style: square;
+    padding-left: 1.5rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+  }
+
+  .policy-card li {
+    margin-bottom: 0.5rem;
+  }
+
+  .cyan-link {
+    color: var(--color-cyan);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .cyan-link:hover {
+    color: var(--color-purple);
+  }
+
+  @media (max-width: 768px) {
+    .policy-card {
+      padding: 1.5rem;
+    }
+  }
+</style>

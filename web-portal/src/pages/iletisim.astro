@@ -1,0 +1,196 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="İletişim" description="AIHaberler: Görüş, öneri ve yayın talepleriniz için bizimle iletişime geçin.">
+  <div class="contact-container">
+    <header class="contact-header">
+      <h1 class="contact-title">İletişim</h1>
+      <p class="contact-tagline">Portalımızla ilgili her türlü soru, öneri ve iş birliği talepleri için bize ulaşın.</p>
+    </header>
+
+    <div class="contact-grid">
+      <!-- İletişim Bilgileri -->
+      <div class="glass-card contact-info-card glow-border">
+        <h2>İletişim Kanallarımız</h2>
+        
+        <div class="info-item">
+          <div class="info-icon">✉️</div>
+          <div class="info-details">
+            <h3>E-Posta</h3>
+            <p><a href="mailto:kemaleris8391@gmail.com" class="cyan-link">kemaleris8391@gmail.com</a></p>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-icon">🏢</div>
+          <div class="info-details">
+            <h3>Yayıncı</h3>
+            <p>Kaose Development</p>
+          </div>
+        </div>
+
+        <div class="info-item">
+          <div class="info-icon">📍</div>
+          <div class="info-details">
+            <h3>Konum</h3>
+            <p>İstanbul, Türkiye</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- İletişim Formu -->
+      <div class="glass-card contact-form-card">
+        <h2>Mesaj Gönderin</h2>
+        <form class="contact-form" onsubmit="event.preventDefault(); alert('Mesajınız başarıyla iletildi (Simülasyon).');">
+          <div class="form-group">
+            <label for="name">Adınız Soyadınız</label>
+            <input type="text" id="name" required placeholder="Örn: Ahmet Yılmaz" />
+          </div>
+
+          <div class="form-group">
+            <label for="email">E-Posta Adresiniz</label>
+            <input type="email" id="email" required placeholder="Örn: ahmet@mail.com" />
+          </div>
+
+          <div class="form-group">
+            <label for="message">Mesajınız</label>
+            <textarea id="message" rows="5" required placeholder="Mesajınızı buraya yazın..."></textarea>
+          </div>
+
+          <button type="submit" class="btn-neon" id="submit-contact-btn">Mesajı İlet</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</Layout>
+
+<style>
+  .contact-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 1rem 0;
+  }
+
+  .contact-header {
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 2rem;
+  }
+
+  .contact-title {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .contact-tagline {
+    color: var(--text-secondary);
+    font-size: 1.15rem;
+  }
+
+  .contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 2rem;
+  }
+
+  .contact-info-card, .contact-form-card {
+    padding: 2.5rem;
+  }
+
+  .contact-grid h2 {
+    font-size: 1.5rem;
+    color: #ffffff;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding-bottom: 0.5rem;
+  }
+
+  .info-item {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    align-items: flex-start;
+  }
+
+  .info-icon {
+    font-size: 1.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem;
+    border-radius: 12px;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .info-details h3 {
+    font-size: 1.1rem;
+    color: #ffffff;
+    margin-bottom: 0.25rem;
+  }
+
+  .info-details p {
+    color: var(--text-secondary);
+  }
+
+  .cyan-link {
+    color: var(--color-cyan);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .cyan-link:hover {
+    color: var(--color-purple);
+  }
+
+  /* Form Styles */
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .form-group label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+
+  .form-group input, .form-group textarea {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid var(--border-color);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    color: #ffffff;
+    font-family: inherit;
+    font-size: 0.95rem;
+    transition: var(--transition-smooth);
+  }
+
+  .form-group input:focus, .form-group textarea:focus {
+    outline: none;
+    border-color: var(--color-cyan);
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.15);
+  }
+
+  @media (max-width: 900px) {
+    .contact-grid {
+      grid-template-columns: 1fr;
+    }
+    .contact-info-card, .contact-form-card {
+      padding: 1.5rem;
+    }
+  }
+</style>
