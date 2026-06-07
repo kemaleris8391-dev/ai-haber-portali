@@ -46,6 +46,13 @@ if "%GEMINI_API_KEY%"=="" (
     exit /b 1
 )
 
+:: Firestore'dan güncel ayarları ve promptları çek
+echo Firestore'dan güncel ayarlar ve promptlar indiriliyor...
+python export_env_from_firestore.py
+if %ERRORLEVEL% NEQ 0 (
+    echo [UYARI] Firestore'dan güncel ayarlar indirilemedi, mevcut yerel dosyalarla devam ediliyor.
+)
+
 :: Ana betiği çalıştır
 python main.py
 if %ERRORLEVEL% NEQ 0 (
