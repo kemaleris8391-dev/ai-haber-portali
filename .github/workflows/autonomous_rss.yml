@@ -44,6 +44,12 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r backend-scripts/requirements.txt
 
+    - name: Export Environment Variables and Prompts from Firestore
+      env:
+        FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+      run: |
+        python backend-scripts/export_env_from_firestore.py
+
     - name: Run RSS & AI Pipeline
       env:
         GEMINI_API_KEYS: ${{ secrets.GEMINI_API_KEYS }}
@@ -95,13 +101,6 @@ jobs:
       run: |
         cd web-portal
         npm ci
-
-    - name: Export Environment Variables from Firestore
-      if: steps.git-check.outputs.changes == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-      env:
-        FIREBASE_SERVICE_ACCOUNT_KEY: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
-      run: |
-        python backend-scripts/export_env_from_firestore.py
 
     - name: Build Web Portal
       if: steps.git-check.outputs.changes == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
