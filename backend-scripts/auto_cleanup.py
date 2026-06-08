@@ -41,6 +41,57 @@ def rotate_key():
     if API_KEYS:
         current_key_idx = (current_key_idx + 1) % len(API_KEYS)
 
+def clean_title_for_comparison(title):
+    import re
+    title = title.lower()
+    title = re.sub(r"'[a-z0-9ıışşğğççööüü]*", "", title)
+    tr_map = str.maketrans("çğıöşü", "cgiosu")
+    title = title.translate(tr_map)
+    title = re.sub(r'[^\w\s]', '', title)
+    return title
+
+def get_word_set(title):
+    cleaned = clean_title_for_comparison(title)
+    words = set(cleaned.split())
+    stop_words = {
+        "ve", "veya", "bir", "ile", "de", "da", "icin", "en", "bu", "o", "ise", "ki", 
+        "yeni", "dev", "hakkinda", "neler", "nelerdir", "mi", "mu", "milyon", "milyar", 
+        "kisi", "adet", "son", "ilk", "a", "an", "the", "of", "and", "in", "on", "at", "for"
+    }
+    return words - stop_words
+
+def get_char_ngrams(title, n_list=[3, 4]):
+    cleaned = "".join(clean_title_for_comparison(title).split())
+    ngrams = set()
+    for n in n_list:
+        if len(cleaned) >= n:
+            for i in range(len(cleaned) - n + 1):
+                ngrams.add(cleaned[i:i+n])
+    return ngrams
+
+def check_mathematical_similarity(title1, title2, word_threshold=0.45, char_threshold=0.55):
+    words1 = get_word_set(title1)
+    words2 = get_word_set(title2)
+    
+    if not words1 or not words2:
+        return False
+        
+    # Word Jaccard
+    intersection_w = words1.intersection(words2)
+    union_w = words1.union(words2)
+    word_sim = len(intersection_w) / len(union_w) if union_w else 0.0
+    
+    # Char N-Gram Jaccard
+    chars1 = get_char_ngrams(title1)
+    chars2 = get_char_ngrams(title2)
+    char_sim = 0.0
+    if chars1 and chars2:
+        intersection_c = chars1.intersection(chars2)
+        union_c = chars1.union(chars2)
+        char_sim = len(intersection_c) / len(union_c) if union_c else 0.0
+        
+    return word_sim >= word_threshold or char_sim >= char_threshold
+
 def clean_body_text(content):
     # Frontmatter'ı ayır
     parts = content.split('---')
@@ -158,34 +209,37 @@ GÖREV:
     max_retries = len(API_KEYS) if API_KEYS else 3
     last_error = ""
     
-    # Gemma ile deneyelim
-    for attempt in range(max_retries):
-        client = get_next_client()
-        try:
-            masked_key = f"...{API_KEYS[current_key_idx][-6:]}" if API_KEYS else "default"
-            print(f"Yapay Zeka analizi yapılıyor. Model: {model_name} (Key: {masked_key})")
-            response = client.models.generate_content(
-                model=model_name,
-                contents=prompt,
-                config=types.GenerateContentConfig(
-                    response_mime_type="application/json"
+    # Sırasıyla denenecek modeller
+    models_to_try = [model_name, "gemma-4-26b-a4b-it", "gemma-4-26b-it", "gemini-2.5-flash", "gemini-1.5-flash"]
+    
+    for current_model in models_to_try:
+        for attempt in range(max_retries):
+            client = get_next_client()
+            try:
+                masked_key = f"...{API_KEYS[current_key_idx][-6:]}" if API_KEYS else "default"
+                print(f"Yapay Zeka analizi yapılıyor. Model: {current_model} (Key: {masked_key})")
+                response = client.models.generate_content(
+                    model=current_model,
+                    contents=prompt,
+                    config=types.GenerateContentConfig(
+                        response_mime_type="application/json"
+                    )
                 )
-            )
-            if response.text:
-                try:
-                    return json.loads(response.text.strip()), model_name
-                except Exception:
-                    clean_text = response.text.replace("```json", "").replace("```", "").strip()
-                    return json.loads(clean_text), model_name
-        except Exception as e:
-            last_error = str(e)
-            print(f"Hata (Deneme {attempt + 1}/{max_retries}): {last_error}")
-            rotate_key()
-            if "429" in last_error or "Quota" in last_error:
-                time.sleep(2)
+                if response.text:
+                    try:
+                        return json.loads(response.text.strip()), current_model
+                    except Exception:
+                        clean_text = response.text.replace("```json", "").replace("```", "").strip()
+                        return json.loads(clean_text), current_model
+            except Exception as e:
+                last_error = str(e)
+                print(f"Model {current_model} ile Hata (Deneme {attempt + 1}/{max_retries}): {last_error}")
+                rotate_key()
+                if "429" in last_error or "Quota" in last_error:
+                    time.sleep(2)
                 
-    # Gemma başarısız olduysa doğrudan hata fırlatalım
-    raise Exception(f"Gemma model denemeleri başarısız oldu. Son hata: {last_error}")
+    # Tüm denemeler başarısız olduysa hata fırlatalım
+    raise Exception(f"AI model denemeleri başarısız oldu. Son hata: {last_error}")
 
 def delete_post_files(blog_dir, public_images_dir, filename, content):
     """Haber dosyasını ve ilişkili kapak resmini diskten siler."""
@@ -272,40 +326,73 @@ def run_auto_cleanup_if_needed(config_dict, force=False):
             )
         return
         
-    print(f"Son {interval_hours} saatte yayınlanan {total_recent} haber analiz ediliyor...")
+    # Kronolojik olarak sırala (en eski haber orijinal kabul edilsin)
+    recent_news.sort(key=lambda x: x.get("pubDate", ""))
     
-    # 2. Tüm haberleri tek bir pakette analiz et (veya 100 limitli tek batch)
-    batch_size = 100
-    batches = [recent_news[i:i + batch_size] for i in range(0, total_recent, batch_size)]
+    # Yerel Matematiksel Jaccard / N-Gram Ön-Benzerlik Kontrolü
+    pre_filtered_duplicates = {}
+    news_to_analyze = []
     
+    print("Yerel matematiksel benzerlik ön-taraması başlatılıyor...")
+    for idx, item in enumerate(recent_news):
+        is_dup = False
+        duplicate_parent = ""
+        # Kendinden önceki (daha eski) haberlerle karşılaştır
+        for prev_item in recent_news[:idx]:
+            if prev_item["filename"] in pre_filtered_duplicates:
+                continue # Zaten mükerrer olanla kıyaslama yapma
+            if check_mathematical_similarity(item["title"], prev_item["title"]):
+                is_dup = True
+                duplicate_parent = prev_item["filename"]
+                break
+                
+        if is_dup:
+            print(f"Pre-Filter: '{item['title']}' haberi, '{duplicate_parent}' ile benzer bulundu (Mükerrer).")
+            pre_filtered_duplicates[item["filename"]] = f"Matematiksel Mükerrer ({duplicate_parent} ile çakışıyor)"
+        else:
+            news_to_analyze.append(item)
+            
+    total_to_analyze = len(news_to_analyze)
+    print(f"Matematiksel ön-tarama sonucu: {len(pre_filtered_duplicates)} haber elendi. {total_to_analyze} haber AI analizine gönderilecek.")
+    
+    # 2. Kalan haberleri paketler halinde analiz et (25 limitli batch'ler)
     all_results = []
     models_used = set()
     
-    for i, batch in enumerate(batches, 1):
-        print(f"Haber paketi gönderiliyor ({len(batch)} haber)...")
-        batch_input = [
-            {
-                "filename": item["filename"],
-                "title": item["title"],
-                "category": item["category"],
-                "pubDate": item["pubDate"],
-                "snippet": item["snippet"]
-            } for item in batch
-        ]
+    if total_to_analyze > 0:
+        batch_size = 25
+        batches = [news_to_analyze[i:i + batch_size] for i in range(0, total_to_analyze, batch_size)]
         
-        try:
-            res, used_model = evaluate_batch_with_llm(batch_input, model_name="gemma-4-31b-it")
-            models_used.add(used_model)
-            if "results" in res:
-                all_results.extend(res["results"])
-        except Exception as e:
-            print(f"Haber paketi işlenirken hata oluştu: {e}")
+        for i, batch in enumerate(batches, 1):
+            print(f"Haber paketi gönderiliyor ({i}/{len(batches)}) ({len(batch)} haber)...")
+            batch_input = [
+                {
+                    "filename": item["filename"],
+                    "title": item["title"],
+                    "category": item["category"],
+                    "pubDate": item["pubDate"],
+                    "snippet": item["snippet"]
+                } for item in batch
+            ]
+            
+            try:
+                res, used_model = evaluate_batch_with_llm(batch_input, model_name="gemma-4-31b-it")
+                models_used.add(used_model)
+                if "results" in res:
+                    all_results.extend(res["results"])
+            except Exception as e:
+                print(f"Haber paketi işlenirken hata oluştu: {e}")
+    else:
+        print("AI analizine gönderilecek haber kalmadı. Sadece ön-filtre silmeleri uygulanacak.")
             
     # 3. Sonuçları değerlendirip silmeleri uygulayalım
     deleted_posts = []
     deleted_images_count = 0
     
     news_map = {item["filename"]: item for item in recent_news}
+    
+    # Silineceklerin listesini topla
+    to_delete_list = []
     
     for result in all_results:
         filename = result.get("filename")
@@ -327,16 +414,43 @@ def run_auto_cleanup_if_needed(config_dict, force=False):
             delete_reason = f"Mükerrer ({duplicate_of} haberi ile çakışıyor): {reason}"
             
         if should_delete:
-            item = news_map[filename]
-            success, img_del = delete_post_files(blog_dir, public_images_dir, filename, item["content"])
-            if success:
-                deleted_posts.append({
-                    "title": item["title"],
-                    "filename": filename,
-                    "reason": delete_reason
-                })
-                if img_del:
-                    deleted_images_count += 1
+            to_delete_list.append((filename, delete_reason))
+            
+    # Ön-filtre ile elenen matematiksel mükerrerleri de silme listesine ekle
+    for filename, delete_reason in pre_filtered_duplicates.items():
+        if filename not in [x[0] for x in to_delete_list]:
+            to_delete_list.append((filename, delete_reason))
+            
+    # Paralel asenkron dosya silme (ThreadPoolExecutor)
+    import concurrent.futures
+    if to_delete_list:
+        print(f"Paralel silme işlemi başlatılıyor ({len(to_delete_list)} dosya)...")
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as executor:
+            futures = {
+                executor.submit(
+                    delete_post_files,
+                    blog_dir,
+                    public_images_dir,
+                    filename,
+                    news_map[filename]["content"]
+                ): (filename, delete_reason) for filename, delete_reason in to_delete_list
+            }
+            
+            for future in concurrent.futures.as_completed(futures):
+                filename, delete_reason = futures[future]
+                try:
+                    success, img_del = future.result()
+                    if success:
+                        item = news_map[filename]
+                        deleted_posts.append({
+                            "title": item["title"],
+                            "filename": filename,
+                            "reason": delete_reason
+                        })
+                        if img_del:
+                            deleted_images_count += 1
+                except Exception as del_err:
+                    print(f"HATA: {filename} silinirken sorun oluştu: {del_err}")
                     
     # 4. Rapor ve Bildirim gönder
     firebase_helper.update_cleanup_config(last_cleanup_time=now)
@@ -375,6 +489,8 @@ def run_auto_cleanup_if_needed(config_dict, force=False):
 
 if __name__ == "__main__":
     # Test etmek için direkt çalıştırılabilir
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    os.chdir(base_dir)
     from fetcher import load_config
     config = load_config()
     run_auto_cleanup_if_needed(config, force=True)

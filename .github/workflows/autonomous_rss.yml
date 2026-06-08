@@ -88,6 +88,18 @@ jobs:
         git pull --rebase origin main
         git push origin HEAD:${{ github.ref }}
 
+    - name: Cache Astro Build
+      if: steps.git-check.outputs.changes == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      uses: actions/cache@v4
+      with:
+        path: |
+          web-portal/.astro
+          web-portal/node_modules/.cache
+        key: ${{ runner.os }}-astro-build-${{ hashFiles('web-portal/package-lock.json') }}-${{ github.run_id }}
+        restore-keys: |
+          ${{ runner.os }}-astro-build-${{ hashFiles('web-portal/package-lock.json') }}-
+          ${{ runner.os }}-astro-build-
+
     - name: Setup NodeJS
       if: steps.git-check.outputs.changes == 'true' || github.event_name == 'push' || github.event_name == 'workflow_dispatch'
       uses: actions/setup-node@v4
