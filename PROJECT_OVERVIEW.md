@@ -230,3 +230,31 @@ Bu bölümde, son geliştirme seansında Google Discover uyumu, E-E-A-T (Deneyim
 
 ### E. GitHub Actions Push Tetikleme İyileştirmesi:
 * `.github/workflows/autonomous_rss.yml` dosyasına `push` olay tetikleyicisi eklendi. Artık sisteme bir kod değişikliği (Astro dosyaları veya workflow yapılandırması) pushlandığında, **yeni haber üretilmemiş olsa bile Firebase Hosting'e deploy yapılması (Astro Build + Deploy) koşulsuz olarak tetiklenmektedir.**
+
+---
+
+## 13. Gizlilik Geçişi, Model Fallback ve "Editörün Kalemi" Güncellemeleri (Haziran 2026)
+
+Bu bölümde, projenin güvenlik yapısını artırmak, LLM model başarısını yükseltmek ve kullanıcıya özel içerikleri ayırmak adına son seanslarda gerçekleştirilen kritik yapısal ve mimari güncellemeler özetlenmiştir:
+
+### A. Firebase Gizlilik Geçişi & Firestore Entegrasyonu:
+* **Hassas Verilerin Taşınması:** Sistem promptları (haber özgünleştirme, semantik filtre vb.), marka isimleri, e-posta adresleri gibi gizli olması gereken tüm veriler kod tabanından tamamen temizlenerek Firebase Firestore veritabanına (`system_config/site_settings` ve `system_config/gemini_prompts` belgelerine) taşınmıştır.
+* **Dinamik Ortam İhracatçısı (`export_env_from_firestore.py`):** GitHub Actions veya yerel sunucu her çalışmaya başladığında, Firestore'a bağlanarak bu gizli ayarları çeker ve `.gitignore` içinde korunan geçici `.env` ve `prompts_config.json` dosyalarını dinamik olarak oluşturur.
+* **Çalışma Sırası İyileştirmesi:** Actions iş akışındaki (`autonomous_rss.yml`) okuma hatalarını önlemek için bu ihracat adımının RSS & AI Pipeline adımından **ÖNCE** çalışması sağlanmıştır.
+* **Yerel Senkronizasyon (`run_pipeline.bat`):** Yerel testlerin bulutla birebir aynı çalışabilmesi amacıyla, yerel betiğe de `export_env_from_firestore.py` adımı entegre edilmiş, internet kesintilerinde yerel önbellek dosyalarıyla devam edebilen hata toleransı eklenmiştir.
+
+### B. Birincil Model Gemma 4 31B & Model Fallback Döngüsü:
+* **Birincil Model:** Haber yazımı ve semantik mükerrer filtreleme işlemlerinde en güncel ve kararlı model olan **`gemma-4-31b-it`** modeli birincil olarak ayarlanmıştır.
+* **Model Fallback (Yedek Döngü):** Birincil modelde kota veya API hatası alınması durumunda sistemin çökmesini engellemek için sırasıyla **`gemma-4-26b-a4b-it`** ve **`gemma-4-26b-it`** modellerine otomatik sığınan (fallback) bir döngü mekanizması entegre edilmiştir.
+* **Düşünme Yapılandırması (`ThinkingConfig`):** Haber kalitesini artırmak için modellere **`thinking_config (thinking_level=HIGH)`** yeteneği eklenmiştir. Uyumsuz modellerde bu özelliğin otomatik devre dışı kalmasını sağlayan hata toleransı kurulmuştur.
+
+### C. Sıfır Secrets AdSense Entegrasyonu:
+* **Dinamik AdSense Entegrasyonu:** AdSense yayıncı kimliğiniz (`ca-pub-1976027031672277`) GitHub Secrets yerine doğrudan Firestore `site_settings` belgesindeki `PUBLIC_ADSENSE_CLIENT_ID` alanına kaydedilmiştir.
+* **Dinamik Yükleme:** Sitenin derlenmesi esnasında bu kimlik veritabanından çekilerek Astro `.env` dosyası üzerinden `Layout.astro` şablonuna otomatik olarak gömülür.
+* **Otomatik Reklamlar & Boyut Uyumluluğu:** Sitenizde AdSense otomatik reklamları (Auto Ads) ve mobil boyut optimizasyonu tam uyumlu olarak aktif edilmiş durumdadır.
+
+### D. "Editörün Kalemi" Bölümü & Özel Filtreleme:
+* **Neon Gradyan Menü:** Sitenin ana navigasyon (Navbar) menüsünün en sağ tarafına (Kuantum Evreni'nin yanına), mor-cyan neon gradyan geçişli ve kalın fontlu **`★ Editörün Kalemi`** özel bağlantısı eklenmiştir.
+* **Özel İstek Süzgeci:** `yazar/editoryal-ekip.astro` sayfası güncellenerek 450 otonom haber bu sayfadan tamamen temizlenmiştir. Sayfa, sadece sizin Telegram botundan yolladığınız özel konu/araştırma makalelerini (`sourceName` değeri `"Editörün Kalemi"`, `"Telegram Arama"` veya `"Telegram Araştırma"` olanlar) listeleyecek ve sayacak şekilde kurgulanmıştır.
+* **Otonom Kaynak İmzalama:** `main.py` güncellenerek Telegram'dan gelen her yeni özel talebin kaynak adının otomatik olarak `"Editörün Kalemi"` olarak işaretlenmesi sağlanmıştır.
+
