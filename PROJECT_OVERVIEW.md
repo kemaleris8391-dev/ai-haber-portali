@@ -258,3 +258,9 @@ Bu bölümde, projenin güvenlik yapısını artırmak, LLM model başarısını
 * **Özel İstek Süzgeci:** `yazar/editoryal-ekip.astro` sayfası güncellenerek 450 otonom haber bu sayfadan tamamen temizlenmiştir. Sayfa, sadece sizin Telegram botundan yolladığınız özel konu/araştırma makalelerini (`sourceName` değeri `"Editörün Kalemi"`, `"Telegram Arama"` veya `"Telegram Araştırma"` olanlar) listeleyecek ve sayacak şekilde kurgulanmıştır.
 * **Otonom Kaynak İmzalama:** `main.py` güncellenerek Telegram'dan gelen her yeni özel talebin kaynak adının otomatik olarak `"Editörün Kalemi"` olarak işaretlenmesi sağlanmıştır.
 
+### E. Mobil Navigasyon Responsive ve Sığma İyileştirmesi (Haziran 2026):
+* **Esnek ve Sınırlı Genişlik Yapısı:** Mobil ekranlarda (`max-width: 768px`) kategorilerin tam sığmaması, taşması veya "Ana Sayfa" bağlantısının kaydırılsa dahi görünmemesi hatası giderilmiştir.
+* **Flexbox Min-Width ve Stretch Düzeltmesi:** `.nav-links` (kategori listesi) öğesine `min-width: 0;`, `max-width: 100%;` ve `align-self: stretch;` uygulanarak üst `.navbar` öğesinin ortalama (`align-items: center`) hizalamasından ötürü her iki yana taşarak "Ana Sayfa"yı sol dışa kilitleme hatası çözülmüştür.
+* **Bileşen Küçülmesi (Squishing) Engeli:** Liste elemanlarına (`.nav-links li`) `flex-shrink: 0;` verilerek yazılarının ekrana sığdırılmaya çalışılırken ezilmesi engellenmiş, doğal genişliklerinde yatayda pürüzsüz kayması (`overflow-x: auto`) sağlanmıştır.
+
+

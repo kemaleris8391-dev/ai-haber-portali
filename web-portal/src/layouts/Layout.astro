@@ -418,12 +418,19 @@ const jsonLd = type === 'article' && articleData ? {
 		}
 
 		.nav-links {
+			display: flex;
+			flex-wrap: nowrap;
 			width: 100%;
+			max-width: 100%;
+			min-width: 0;
+			align-self: stretch;
 			justify-content: flex-start;
+			align-items: center;
 			overflow-x: auto;
 			white-space: nowrap;
 			gap: 1.25rem;
 			padding: 0.5rem 1.5rem;
+			margin: 0;
 			box-sizing: border-box;
 			scrollbar-width: none; /* Firefox */
 			-ms-overflow-style: none;  /* IE and Edge */
@@ -432,6 +439,11 @@ const jsonLd = type === 'article' && articleData ? {
 
 		.nav-links::-webkit-scrollbar {
 			display: none; /* Safari and Chrome */
+		}
+
+		.nav-links li {
+			flex-shrink: 0;
+			display: block;
 		}
 
 		.nav-link {
