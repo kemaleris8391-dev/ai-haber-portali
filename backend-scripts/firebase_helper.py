@@ -245,7 +245,7 @@ def mark_custom_request_completed(doc_id):
 _blacklist_cache = None
 
 def get_blacklisted_links():
-    """Firestore'dan kalıcı kara listeyi çeker. Aynı çalışmada tekrar çağrılırsa bellekten döner."""
+    """Firestore'dan kalıcı kara listeyi çeker. 14 günden eski olanları otomatik temizler."""
     global _blacklist_cache
     if _blacklist_cache is not None:
         return _blacklist_cache
@@ -254,20 +254,50 @@ def get_blacklisted_links():
     doc_ref = db.collection("system_config").document("blacklisted_links")
     doc = doc_ref.get()
     
+    now = time.time()
+    cutoff_time = now - (14 * 24 * 3600)  # 14 gün öncesi (14 gün * 24 saat * 3600 saniye)
+    
+    dirty = False
+    active_links = {}
+    
     if doc.exists:
         data = doc.to_dict()
-        _blacklist_cache = set(data.get("links", []))
+        links_data = data.get("links", {})
+        
+        # Geriye uyumluluk: Eğer eski veri tipi list (array) ise Map formatına dönüştür
+        if isinstance(links_data, list):
+            print("BİLGİ: Eski liste formatındaki kara liste Map formatına dönüştürülüyor...")
+            links_data = {link: now for link in links_data}
+            dirty = True
+            
+        # 14 günden eski olanları temizle
+        if isinstance(links_data, dict):
+            for link, added_time in links_data.items():
+                if added_time >= cutoff_time:
+                    active_links[link] = added_time
+                else:
+                    dirty = True
     else:
         # İlk çalışma: boş döküman oluştur
-        doc_ref.set({"links": [], "last_updated": time.time()})
+        doc_ref.set({"links": {}, "last_updated": now})
         _blacklist_cache = set()
         print("Firestore üzerinde kara liste dökümanı oluşturuldu (system_config/blacklisted_links).")
-    
-    print(f"Kara liste yüklendi: {len(_blacklist_cache)} adet engellenmiş link.")
+        return _blacklist_cache
+        
+    if dirty:
+        # Güncellenmiş aktif listeyi kaydet
+        doc_ref.set({
+            "links": active_links,
+            "last_updated": now
+        })
+        print(f"🧹 Temizlik: Kara listeden 14 günden eski olan linkler temizlendi. Aktif link sayısı: {len(active_links)}")
+        
+    _blacklist_cache = set(active_links.keys())
+    print(f"Kara liste yüklendi: {len(_blacklist_cache)} adet aktif engellenmiş link.")
     return _blacklist_cache
 
 def add_to_blacklist(new_links):
-    """Verilen linkleri Firestore kara listesine toplu olarak ekler."""
+    """Verilen linkleri Firestore kara listesine Map formatında toplu olarak ekler."""
     global _blacklist_cache
     if not new_links:
         return
@@ -275,26 +305,32 @@ def add_to_blacklist(new_links):
     db = init_firebase()
     doc_ref = db.collection("system_config").document("blacklisted_links")
     
-    # Mevcut listeyi al (cache varsa kullan)
-    current = get_blacklisted_links()
+    # Cache ve aktif listeyi yükle
+    get_blacklisted_links()
     
-    # Sadece yeni linkleri ekle (dedup)
-    unique_new = [link for link in new_links if link not in current]
-    if not unique_new:
-        print("Kara listeye eklenecek yeni link yok (tümü zaten mevcut).")
-        return
+    now = time.time()
     
-    # Firestore array union ile atomik ekleme
-    from google.cloud.firestore_v1 import ArrayUnion
-    doc_ref.update({
-        "links": ArrayUnion(unique_new),
-        "last_updated": time.time()
-    })
-    
-    # Cache'i güncelle
-    for link in unique_new:
-        current.add(link)
-    _blacklist_cache = current
-    
-    print(f"Kara listeye {len(unique_new)} yeni link eklendi. Toplam: {len(_blacklist_cache)}")
-
+    # Güncel dökümanı oku
+    doc = doc_ref.get()
+    current_links = {}
+    if doc.exists:
+        data = doc.to_dict()
+        links_data = data.get("links", {})
+        if isinstance(links_data, dict):
+            current_links = links_data
+            
+    # Sadece yeni olanları ekle
+    added_count = 0
+    for link in new_links:
+        if link not in current_links:
+            current_links[link] = now
+            added_count += 1
+            
+    if added_count > 0:
+        doc_ref.set({
+            "links": current_links,
+            "last_updated": now
+        })
+        # Cache'i güncelle
+        _blacklist_cache = set(current_links.keys())
+        print(f"Kara listeye {added_count} yeni link eklendi. Toplam aktif: {len(_blacklist_cache)}")
