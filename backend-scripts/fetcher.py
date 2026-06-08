@@ -47,10 +47,10 @@ def save_db(db_path, db_data):
     with open(db_path, "w", encoding="utf-8") as f:
         json.dump(db_data, f, ensure_ascii=False, indent=2)
 
-def get_existing_titles(limit=40, today_only=True):
+def get_existing_titles(limit=40, hours_back=30):
     """Astro blog klasöründeki haberlerin başlıklarını çeker.
-    today_only=True ise sadece son 2 günün haberlerini döndürür (bugün + dün).
-    today_only=False ise son 'limit' adet haberi döndürür (eski davranış).
+    hours_back belirtilmişse, son X saatte yayınlanmış haberlerin başlıklarını döndürür.
+    Değilse son 'limit' adet haberi döndürür.
     """
     base_dir = os.path.dirname(os.path.abspath(__file__))
     blog_dir = os.path.abspath(os.path.join(base_dir, "../web-portal/src/content/blog"))
@@ -60,10 +60,9 @@ def get_existing_titles(limit=40, today_only=True):
         
     md_files = [f for f in os.listdir(blog_dir) if f.endswith(".md")]
     
-    # Sadece bugünün tarihini hesapla (TR saat dilimine göre)
+    # Türkiye saat dilimine göre eşik zamanı hesapla
     now_tr = datetime.now(TR_TZ)
-    today_str = now_tr.strftime("%Y-%m-%d")
-    valid_dates = {today_str}
+    threshold_time = now_tr - timedelta(hours=hours_back) if hours_back is not None else None
     
     parsed_posts = []
     for file in md_files:
@@ -79,10 +78,17 @@ def get_existing_titles(limit=40, today_only=True):
                 pub_val = pub_match.group(1).strip()
                 title = title_match.group(1).strip()
                 
-                # today_only modunda sadece son 2 günün haberlerini al
-                if today_only:
-                    pub_date_str = pub_val[:10] if len(pub_val) >= 10 else ""
-                    if pub_date_str not in valid_dates:
+                # pubDate tarihini parse et
+                try:
+                    dt_post = datetime.fromisoformat(pub_val[:19])
+                    if dt_post.tzinfo is None:
+                        dt_post = dt_post.replace(tzinfo=TR_TZ)
+                except Exception:
+                    continue
+                
+                # Belirlenen saat diliminin dışındaysa atla
+                if threshold_time is not None:
+                    if dt_post < threshold_time:
                         continue
                 
                 parsed_posts.append((pub_val, title))
@@ -92,10 +98,9 @@ def get_existing_titles(limit=40, today_only=True):
     # Sort posts by pubDate descending (latest first)
     parsed_posts.sort(key=lambda x: x[0], reverse=True)
     
-    # today_only modunda limit uygulanmaz (tüm günün haberleri döner)
-    if today_only:
+    if hours_back is not None:
         titles = [post[1] for post in parsed_posts]
-        print(f"Bugün+Dün haber başlığı sayısı: {len(titles)} (Tarihler: {', '.join(valid_dates)})")
+        print(f"Son {hours_back} saatteki haber başlığı sayısı: {len(titles)}")
         return titles
     
     # Eski mod: son N haberi döndür
@@ -187,8 +192,8 @@ def fetch_new_news():
     # Katman 1: Firestore kara listesini yükle (tek read)
     blacklisted_links = firebase_helper.get_blacklisted_links()
     
-    # Katman 2 için: Sadece bugün+dün haberlerinin başlıklarını al
-    existing_titles = get_existing_titles(today_only=True)
+    # Katman 2 için: Geriye dönük son 30 saatlik haber başlıklarını al
+    existing_titles = get_existing_titles(hours_back=30)
     
     new_news_list = []
     newly_blacklisted = []  # Bu çalışmada elenen linkler (toplu kara liste yazımı için)
@@ -286,8 +291,8 @@ def fetch_new_news():
                     "category": item["category"]
                 })
                 
-            # Bugün+dün haberlerinin başlıklarını AI'a gönder (dar kapsam = ekonomik)
-            original_existing = get_existing_titles(today_only=True)
+            # Geriye dönük son 30 saatlik haberlerin başlıklarını AI'a gönder
+            original_existing = get_existing_titles(hours_back=30)
             duplicate_ids = check_news_semantic_duplicates(candidates_with_ids, original_existing)
             
             if duplicate_ids:
