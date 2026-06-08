@@ -283,6 +283,11 @@ const jsonLd = type === 'article' && articleData ? {
 		display: flex;
 		list-style: none;
 		gap: 2rem;
+		white-space: nowrap;
+	}
+
+	.nav-links li {
+		flex-shrink: 0;
 	}
 
 	.nav-link {
@@ -394,6 +399,18 @@ const jsonLd = type === 'article' && articleData ? {
 		text-align: center;
 		color: var(--text-muted);
 		font-size: 0.8rem;
+	}
+
+	@media (max-width: 1150px) {
+		.logo-slogan, .logo-separator {
+			display: none;
+		}
+	}
+
+	@media (max-width: 1024px) {
+		.nav-links {
+			gap: 1rem;
+		}
 	}
 
 	@media (max-width: 768px) {
