@@ -59,9 +59,9 @@ jobs:
         FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
       run: |
         # Eğer force veya cleanup parametresi seçildiyse ilgili argümanı ekle
-        if [ "${{ github.event.inputs.cleanup }}" = "true" ]; then
+        if [ "${{ github.event.inputs.cleanup }}" = "true" ] || [ "${{ github.event.inputs.cleanup }}" = "True" ] || [ "${{ inputs.cleanup }}" = "true" ] || [ "${{ inputs.cleanup }}" = "True" ]; then
           python backend-scripts/main.py --cleanup
-        elif [ "${{ github.event.inputs.force }}" = "true" ]; then
+        elif [ "${{ github.event.inputs.force }}" = "true" ] || [ "${{ github.event.inputs.force }}" = "True" ] || [ "${{ inputs.force }}" = "true" ] || [ "${{ inputs.force }}" = "True" ]; then
           python backend-scripts/main.py --force
         else
           python backend-scripts/main.py

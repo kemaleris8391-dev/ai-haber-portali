@@ -263,4 +263,10 @@ Bu bölümde, projenin güvenlik yapısını artırmak, LLM model başarısını
 * **Flexbox Min-Width ve Stretch Düzeltmesi:** `.nav-links` (kategori listesi) öğesine `min-width: 0;`, `max-width: 100%;` ve `align-self: stretch;` uygulanarak üst `.navbar` öğesinin ortalama (`align-items: center`) hizalamasından ötürü her iki yana taşarak "Ana Sayfa"yı sol dışa kilitleme hatası çözülmüştür.
 * **Bileşen Küçülmesi (Squishing) Engeli:** Liste elemanlarına (`.nav-links li`) `flex-shrink: 0;` verilerek yazılarının ekrana sığdırılmaya çalışılırken ezilmesi engellenmiş, doğal genişliklerinde yatayda pürüzsüz kayması (`overflow-x: auto`) sağlanmıştır.
 
+### F. Manuel Tetikleyici Kilit Aşımı ve Hayalet İşlemlerin Temizlenmesi (Haziran 2026):
+* **Firestore Kilit Zaman Aşımı:** `/tara` veya `/ototemizleme` manuel tetiklemelerinde, bir önceki işlemin yarıda kalması (çökme veya yarıda durdurulma) durumunda `is_running` kilidinin Firestore'da sürekli `True` olarak kilitli kalma hatası çözülmüştür. Vercel backend API'sine kilit kontrolünde 15 dakikalık zaman aşımı (`elapsed_minutes >= 15.0`) eklenmiş, bu süreyi aşan kilitler otomatik olarak sıfırlanarak yeni işlemlerin önü açılmıştır.
+* **GitHub Actions Hayalet İş (Ghost Run) Engeli:** GitHub API'sinin, tamamlanmış veya iptal edilmiş bazı Actions işlerini hâlâ `in_progress` veya `queued` statüsünde göstermesinden kaynaklanan manuel tetikleme engeli aşılmıştır. API'den dönen aktif işler taranırken, oluşturulma zamanı 20 dakikadan eski olan (`elapsed_run_minutes >= 20.0`) "hayalet" işler hesaba katılmayarak tetikleyicinin sorunsuz çalışması garanti altına alınmıştır.
+* **GitHub Inputs Format Desteği:** `autonomous_rss.yml` Actions dosyasındaki boolean/string inputs kontrol yapısı genişletilerek `cleanup` ve `force` girdilerinin hem küçük/büyük harf (`true`/`True`) hem de veri tipi dönüşümlerinden kaynaklanan hatalarda dahi temizlik komutunu (`--cleanup`) doğru tetiklemesi sağlanmıştır.
+
+
 

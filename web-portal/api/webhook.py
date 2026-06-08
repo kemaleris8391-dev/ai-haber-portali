@@ -1927,13 +1927,19 @@ def trigger_github_workflow():
     try:
         sched_conf = get_scheduler_config()
         if sched_conf.get("is_running", False):
-            send_message(
-                "⚠️ <b>Aktif Tarama Zaten Devam Ediyor!</b>\n\n"
-                "Sistem şu anda otonom veya manuel olarak tetiklenmiş bir tarama işlemi yürütmektedir.\n\n"
-                "🚫 <b>Çakışma Koruması:</b> Aynı anda birden fazla tarama yapılması, haberlerin mükerrer yazılmasına veya sunucu hatalarına yol açabileceği için şu an tetikleme yapılamaz.\n\n"
-                "⏳ <i>Lütfen mevcut işlemin bitmesini (yaklaşık 1-2 dakika) bekleyin.</i>"
-            )
-            return False
+            last_run = sched_conf.get("last_run_time", 0.0)
+            elapsed_minutes = (time.time() - last_run) / 60.0
+            if elapsed_minutes < 15.0:
+                send_message(
+                    "⚠️ <b>Aktif Tarama Zaten Devam Ediyor!</b>\n\n"
+                    "Sistem şu anda otonom veya manuel olarak tetiklenmiş bir tarama işlemi yürütmektedir.\n\n"
+                    "🚫 <b>Çakışma Koruması:</b> Aynı anda birden fazla tarama yapılması, haberlerin mükerrer yazılmasına veya sunucu hatalarına yol açabileceği için şu an tetikleme yapılamaz.\n\n"
+                    "⏳ <i>Lütfen mevcut işlemin bitmesini (yaklaşık 1-2 dakika) bekleyin.</i>"
+                )
+                return False
+            else:
+                print(f"BİLGİ: Kilit takılı kalmış ({elapsed_minutes:.1f} dakika önce). Sıfırlanıyor...")
+                update_scheduler_config(is_running=False)
     except Exception as sched_err:
         print(f"Scheduler checking error: {sched_err}")
         
@@ -1959,11 +1965,38 @@ def trigger_github_workflow():
             )
             
             active_runs = 0
+            now_utc = datetime.utcnow()
+            
             if r_prog.status_code == 200:
-                active_runs += len(r_prog.json().get("workflow_runs", []))
+                for run in r_prog.json().get("workflow_runs", []):
+                    created_at_str = run.get("created_at")
+                    if created_at_str:
+                        try:
+                            dt = datetime.strptime(created_at_str[:19], "%Y-%m-%dT%H:%M:%S")
+                            elapsed_run_minutes = (now_utc - dt).total_seconds() / 60.0
+                            if elapsed_run_minutes < 20.0:
+                                active_runs += 1
+                        except Exception as parse_err:
+                            print(f"Error parsing created_at: {parse_err}")
+                            active_runs += 1
+                    else:
+                        active_runs += 1
+                        
             if r_queue.status_code == 200:
-                active_runs += len(r_queue.json().get("workflow_runs", []))
-                
+                for run in r_queue.json().get("workflow_runs", []):
+                    created_at_str = run.get("created_at")
+                    if created_at_str:
+                        try:
+                            dt = datetime.strptime(created_at_str[:19], "%Y-%m-%dT%H:%M:%S")
+                            elapsed_run_minutes = (now_utc - dt).total_seconds() / 60.0
+                            if elapsed_run_minutes < 20.0:
+                                active_runs += 1
+                        except Exception as parse_err:
+                            print(f"Error parsing created_at: {parse_err}")
+                            active_runs += 1
+                    else:
+                        active_runs += 1
+                        
             if active_runs > 0:
                 send_message(
                     "⚠️ <b>Bulut Sunucusu Şu Anda Meşgul!</b>\n\n"
@@ -2045,12 +2078,18 @@ def trigger_github_cleanup_workflow():
     try:
         sched_conf = get_scheduler_config()
         if sched_conf.get("is_running", False):
-            send_message(
-                "⚠️ <b>Aktif İşlem Zaten Devam Ediyor!</b>\n\n"
-                "Sistem şu anda otonom veya manuel olarak tetiklenmiş bir tarama/temizlik işlemi yürütmektedir.\n\n"
-                "⏳ <i>Lütfen mevcut işlemin bitmesini bekleyin.</i>"
-            )
-            return False
+            last_run = sched_conf.get("last_run_time", 0.0)
+            elapsed_minutes = (time.time() - last_run) / 60.0
+            if elapsed_minutes < 15.0:
+                send_message(
+                    "⚠️ <b>Aktif İşlem Zaten Devam Ediyor!</b>\n\n"
+                    "Sistem şu anda otonom veya manuel olarak tetiklenmiş bir tarama/temizlik işlemi yürütmektedir.\n\n"
+                    "⏳ <i>Lütfen mevcut işlemin bitmesini bekleyin.</i>"
+                )
+                return False
+            else:
+                print(f"BİLGİ: Temizlik öncesi kilit takılı kalmış ({elapsed_minutes:.1f} dakika önce). Sıfırlanıyor...")
+                update_scheduler_config(is_running=False)
     except Exception as sched_err:
         print(f"Scheduler checking error: {sched_err}")
         
@@ -2071,15 +2110,43 @@ def trigger_github_cleanup_workflow():
                 headers=check_headers,
                 timeout=10
             )
+            
             active_runs = 0
+            now_utc = datetime.utcnow()
+            
             if r_prog.status_code == 200:
-                active_runs += len(r_prog.json().get("workflow_runs", []))
+                for run in r_prog.json().get("workflow_runs", []):
+                    created_at_str = run.get("created_at")
+                    if created_at_str:
+                        try:
+                            dt = datetime.strptime(created_at_str[:19], "%Y-%m-%dT%H:%M:%S")
+                            elapsed_run_minutes = (now_utc - dt).total_seconds() / 60.0
+                            if elapsed_run_minutes < 20.0:
+                                active_runs += 1
+                        except Exception as parse_err:
+                            print(f"Error parsing created_at: {parse_err}")
+                            active_runs += 1
+                    else:
+                        active_runs += 1
+                        
             if r_queue.status_code == 200:
-                active_runs += len(r_queue.json().get("workflow_runs", []))
-                
+                for run in r_queue.json().get("workflow_runs", []):
+                    created_at_str = run.get("created_at")
+                    if created_at_str:
+                        try:
+                            dt = datetime.strptime(created_at_str[:19], "%Y-%m-%dT%H:%M:%S")
+                            elapsed_run_minutes = (now_utc - dt).total_seconds() / 60.0
+                            if elapsed_run_minutes < 20.0:
+                                active_runs += 1
+                        except Exception as parse_err:
+                            print(f"Error parsing created_at: {parse_err}")
+                            active_runs += 1
+                    else:
+                        active_runs += 1
+                        
             if active_runs > 0:
                 send_message(
-                    "⚠️ <b>Bulut Sunucusu Şu Anda Meşgul!</b>\n\n"
+                    "⚠️ <b>Bulul Sunucusu Şu Anda Meşgul!</b>\n\n"
                     "Bulut sunucumuz (GitHub Actions) üzerinde şu anda aktif veya sırada bekleyen bir tarama/derleme işi çalışmaktadır.\n\n"
                     "⏳ <i>Lütfen mevcut bulut işleminin tamamlanmasını bekleyin.</i>"
                 )
