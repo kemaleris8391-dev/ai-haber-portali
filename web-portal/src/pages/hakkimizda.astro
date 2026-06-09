@@ -4,11 +4,11 @@ import Layout from '../layouts/Layout.astro';
 const orgJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "Tech & Game News AI",
+  "name": "AIHaberler - Teknisyen ve Otomasyon Rehberi",
   "alternateName": "AIHABERLER",
   "url": "https://aihaberler.web.app",
   "logo": "https://aihaberler.web.app/favicon.svg",
-  "description": "Yapay zeka otonom yazarları ve editoryal ekipleriyle teknoloji, oyun ve sinema dünyasından en son haberleri sunan yeni nesil haber portalı.",
+  "description": "PLC otomasyonu, endüstriyel makine tamiri, elektrik devreleri ve pratik donanım çözümleri üzerine yapay zeka ve sahadan gelen teknisyen tecrübeleriyle hazırlanan otonom bilgi portalı.",
   "sameAs": [
     "https://x.com/kaose_dev",
     "https://linkedin.com/company/kaose-dev"
@@ -16,7 +16,7 @@ const orgJsonLd = {
 };
 ---
 
-<Layout title="Hakkımızda" description="AIHaberler: Yapay zekanın kalemiyle geleceğin otonom teknoloji, oyun ve dizi/film portalı.">
+<Layout title="Hakkımızda" description="AIHaberler: Otomasyon, PLC yazılımları, endüstriyel tamir ve pratik donanım çözümleri portalı.">
   <!-- JSON-LD Organization Schema -->
   <script type="application/ld+json" set:html={JSON.stringify(orgJsonLd)} />
 
@@ -29,18 +29,17 @@ const orgJsonLd = {
     <div class="glass-card about-card glow-border">
       <h2>Biz Kimiz?</h2>
       <p>
-        AIHaberler; teknoloji dünyasındaki gelişmeleri ve bilimsel gelişmeleri çeşitli kategoriler halinde otonom olarak takip eden, 
-        analiz eden, teknoloji ve bilim odaklı derinlemesine araştırmalar yaparak güncel bilgiler ışığında içerikler üreten ve bunları 
-        yapay zeka destekli editoryal yorumlarla zenginleştirerek okuyucuya sunan yeni nesil bir haber portalıdır. 
+        AIHaberler; endüstriyel otomasyon, PLC kontrolörler, fabrika arıza/bakım teknikleri, elektrik panoları ve ev/PC donanım tamiri gibi alanları otonom olarak takip eden, 
+        analiz eden, sahadan gelen teknisyen tecrübelerini yapay zeka ile harmanlayarak derinlemesine teknik rehberler ve çözümler üreten yeni nesil bir otonom bilgi portalıdır. 
         Altyapımız, Kaose Development tarafından geliştirilen gelişmiş AI ajan mimarileri üzerine inşa edilmiştir.
       </p>
 
       <h2>Teknolojik Altyapımız</h2>
       <p>
-        Sistemimiz, küresel teknoloji ve bilim kaynaklarını anlık olarak tarayarak haber adaylarını toplar. 
+        Sistemimiz, küresel otomasyon, donanım, tamir ve bakım kaynaklarını anlık olarak tarayarak haber adaylarını toplar. 
         Toplanan adaylar, gelişmiş semantik arama filtrelerimizin analiziyle mükerrer, hatalı veya düşük kaliteli içeriklerden otomatik olarak arındırılır. 
         Seçilen nitelikli içerikler, en güncel üretken yapay zeka dil modelleri aracılığıyla; clickbait'ten uzak, nesnel, derinlemesine analizler ve 
-        teknoloji dünyasına yön veren editoryal yorumlarla harmanlanarak zenginleştirilmiş Türkçe haber makalelerine dönüştürülür.
+        teknik sahaya yön veren teknisyen/editör yorumlarıyla harmanlanarak zenginleştirilmiş Türkçe makalelere dönüştürülür.
       </p>
 
       <h2>Neden Otonom Habercilik?</h2>

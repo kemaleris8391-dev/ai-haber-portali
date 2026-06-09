@@ -1,0 +1,42 @@
+﻿2026-06-07T16:52:15.2322115Z ##[group]Run FirebaseExtended/action-hosting-deploy@v0
+2026-06-07T16:52:15.2322592Z with:
+2026-06-07T16:52:15.2325645Z   repoToken: ***
+2026-06-07T16:52:15.2334935Z   firebaseServiceAccount: ***
+2026-06-07T16:52:15.2335592Z   projectId: aihaberler
+2026-06-07T16:52:15.2335960Z   channelId: live
+2026-06-07T16:52:15.2336308Z   entryPoint: web-portal
+2026-06-07T16:52:15.2336660Z   expires: 7d
+2026-06-07T16:52:15.2337003Z   firebaseToolsVersion: latest
+2026-06-07T16:52:15.2337412Z   disableComment: false
+2026-06-07T16:52:15.2337751Z   force: false
+2026-06-07T16:52:15.2338069Z env:
+2026-06-07T16:52:15.2338458Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:52:15.2339024Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+2026-06-07T16:52:15.2339589Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:52:15.2340108Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:52:15.2340611Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:52:15.2341154Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+2026-06-07T16:52:15.2341604Z ##[endgroup]
+2026-06-07T16:52:15.3072431Z ##[group]Verifying firebase.json exists
+2026-06-07T16:52:15.3077190Z Changing to directory: web-portal
+2026-06-07T16:52:15.3080900Z firebase.json file found. Continuing deploy.
+2026-06-07T16:52:15.3081987Z ##[endgroup]
+2026-06-07T16:52:15.3082806Z ##[group]Setting up CLI credentials
+2026-06-07T16:52:15.3096398Z Created a temporary file with Application Default Credentials.
+2026-06-07T16:52:15.3097557Z ##[endgroup]
+2026-06-07T16:52:15.3098384Z ##[group]Deploying to production site
+2026-06-07T16:52:15.3124219Z [command]/opt/hostedtoolcache/node/22.22.3/x64/bin/npx firebase-tools@latest deploy --only hosting --project aihaberler --json
+2026-06-07T16:52:23.2436209Z ***
+2026-06-07T16:52:23.2436662Z   "status": "success",
+2026-06-07T16:52:23.2437074Z   "result": ***
+2026-06-07T16:52:23.2437653Z     "hosting": "projects/666456409584/sites/aihaberler/versions/f614aeda73603db4"
+2026-06-07T16:52:23.2438231Z   ***
+2026-06-07T16:52:23.2886403Z ***::endgroup::
+2026-06-07T16:52:23.2899776Z ***
+2026-06-07T16:52:23.2900426Z   details_url: 'https://aihaberler.web.app/',
+2026-06-07T16:52:23.2901105Z   conclusion: 'success',
+2026-06-07T16:52:23.2902164Z   output: ***
+2026-06-07T16:52:23.2902775Z     title: 'Production deploy succeeded',
+2026-06-07T16:52:23.2903674Z     summary: '[aihaberler.web.app](https://aihaberler.web.app/)'
+2026-06-07T16:52:23.2904491Z   ***
+2026-06-07T16:52:23.2905503Z ***

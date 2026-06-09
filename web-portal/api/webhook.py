@@ -299,9 +299,9 @@ def get_categories():
     db = init_firebase()
     doc = db.collection("system_config").document("categories").get()
     if doc.exists:
-        return doc.to_dict().get("list", ["teknoloji", "oyun", "dizi-film"])
+        return doc.to_dict().get("list", ["plc", "pc", "endustriyel-makinalar", "oyun"])
     else:
-        default_cats = ["teknoloji", "oyun", "dizi-film"]
+        default_cats = ["plc", "pc", "endustriyel-makinalar", "oyun"]
         db.collection("system_config").document("categories").set({"list": default_cats})
         return default_cats
 
@@ -330,7 +330,7 @@ def extract_metadata_from_markdown(content):
     title = "Bilinmeyen Haber"
     pub_date = "2026-05-30"
     hero_image = "/images/default-news.png"
-    category = "teknoloji"
+    category = "donanim-pratik"
     
     title_match = re.search(r'^title:\s*["\']?(.*?)["\']?\s*$', content, re.MULTILINE)
     pub_match = re.search(r'^pubDate:\s*["\']?(.*?)["\']?\s*$', content, re.MULTILINE)
@@ -1215,8 +1215,8 @@ def handle_del_cat_confirm(callback_query, cat_slug):
         answer_callback_query(callback_id, "Silme başarısız.")
         return
         
-    # Standard protection: do not let them delete core 3 categories
-    if cat_slug in ["teknoloji", "oyun", "dizi-film"]:
+    # Standard protection: do not let them delete core 4 categories
+    if cat_slug in ["plc", "pc", "endustriyel-makinalar", "oyun"]:
         text = (
             f"❌ <b>Kategori Silinemedi!</b>\n\n"
             f"<code>{cat_slug}</code> kategorisi sistemin temel (çekirdek) kategorilerinden biridir ve silinemez."
@@ -1399,7 +1399,7 @@ def handle_date_callback(callback_query, date_val):
             
         categories = {}
         for p in date_posts:
-            cat = p.get("category", "teknoloji").lower()
+            cat = p.get("category", "donanim-pratik").lower()
             categories[cat] = categories.get(cat, 0) + 1
             
         keyboard = []
@@ -1429,7 +1429,7 @@ def handle_category_callback(callback_query, date_val, category_val):
         index_data = get_posts_index()
         posts = index_data.get("posts", {})
         
-        cat_posts = [(p_id, p) for p_id, p in posts.items() if p["date"] == date_val and p.get("category", "teknoloji").lower() == category_val.lower()]
+        cat_posts = [(p_id, p) for p_id, p in posts.items() if p["date"] == date_val and p.get("category", "donanim-pratik").lower() == category_val.lower()]
         
         if not cat_posts:
             answer_callback_query(callback_id, "Bu kategoride haber bulunamadı.")
@@ -1487,7 +1487,7 @@ def handle_select_callback(callback_query, p_id):
             f"<b>Haber:</b> {escaped_title}\n"
             f"<b>Tarih:</b> {p['date']}\n"
             f"<b>Dosya:</b> <code>{p['slug']}</code>\n"
-            f"<b>Kategori:</b> {p.get('category', 'teknoloji').upper()}\n"
+            f"<b>Kategori:</b> {p.get('category', 'donanim-pratik').upper()}\n"
             f"<b>Görsel:</b> {p['image']}\n\n"
             "Bu haberi ve kapak görselini buluttan kalıcı olarak silmek istediğinize emin misiniz?\n"
             "💡 <i>(Bu işlem geri alınamaz ve canlı sitenizden kaldırılır!)</i>"
@@ -1798,6 +1798,234 @@ def handle_execute_multi_del(callback_query):
         send_error("Çoklu Haber Silme Başarısız", f"Silme işlemi sırasında kritik hata: {e}")
         edit_message_text(f"❌ Haberler silinirken hata oluştu: <code>{e}</code>", message_id)
 
+import base64
+
+def get_github_headers():
+    github_token = os.getenv("GITHUB_PAT") or os.getenv("GITHUB_TOKEN")
+    if not github_token:
+        raise ValueError("GITHUB_PAT veya GITHUB_TOKEN tanımlı değil!")
+    return {
+        "Authorization": f"Bearer {github_token.strip()}",
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "AIHABERLER-Bot"
+    }
+
+def publish_markdown_to_github(slug, markdown_content):
+    import base64
+    owner = "kemaleris8391-dev"
+    repo = "ai-haber-portali"
+    path = f"web-portal/src/content/blog/{slug}.md"
+    url = f"https://api.github.com/repos/{owner}/{repo}/contents/{path}"
+    
+    headers = get_github_headers()
+    
+    sha = None
+    r_get = requests.get(url, headers=headers, timeout=10)
+    if r_get.status_code == 200:
+        sha = r_get.json().get("sha")
+        
+    content_b64 = base64.b64encode(markdown_content.encode("utf-8")).decode("utf-8")
+    
+    payload = {
+        "message": f"feat: publish news '{slug}' via Telegram Bot approval",
+        "content": content_b64
+    }
+    if sha:
+        payload["sha"] = sha
+        
+    r_put = requests.put(url, json=payload, headers=headers, timeout=15)
+    return r_put.status_code in [200, 201]
+
+def delete_file_from_github(path, commit_message):
+    owner = "kemaleris8391-dev"
+    repo = "ai-haber-portali"
+    url = f"https://api.github.com/repos/{owner}/{repo}/contents/{path}"
+    
+    headers = get_github_headers()
+    
+    r_get = requests.get(url, headers=headers, timeout=10)
+    if r_get.status_code == 200:
+        sha = r_get.json().get("sha")
+        if sha:
+            payload = {
+                "message": commit_message,
+                "sha": sha
+            }
+            r_del = requests.delete(url, json=payload, headers=headers, timeout=15)
+            return r_del.status_code == 200
+    return False
+
+def handle_approve_direct(callback_query, doc_id):
+    message_id = callback_query["message"]["message_id"]
+    callback_id = callback_query["id"]
+    
+    edit_message_text("⏳ <b>Haber doğrudan yayınlanıyor, lütfen bekleyin...</b>\n(Dosyalar GitHub'a yazılıyor)", message_id)
+    answer_callback_query(callback_id, "Yayınlama başlatıldı.")
+    
+    try:
+        db = init_firebase()
+        doc_ref = db.collection("pending_posts").document(doc_id)
+        doc = doc_ref.get()
+        if not doc.exists:
+            edit_message_text("❌ Hata: Taslak haber bulunamadı veya daha önce yayınlanmış/silinmiş.", message_id)
+            return
+            
+        post_data = doc.to_dict()
+        slug = post_data["slug"]
+        markdown_content = post_data["markdown_content"]
+        
+        success = publish_markdown_to_github(slug, markdown_content)
+        if success:
+            doc_ref.update({"status": "published", "published_at": time.time()})
+            
+            try:
+                trigger_github_workflow()
+            except Exception as e:
+                print(f"Trigger workflow error: {e}")
+                
+            success_text = (
+                "✅ <b>Haber Yorumsuz Başarıyla Yayınlandı!</b>\n\n"
+                f"<b>Başlık:</b> {html.escape(post_data['title'])}\n"
+                f"<b>Kategori:</b> {post_data['category'].upper()}\n\n"
+                "🚀 Haber dosyası GitHub deposuna başarıyla yazıldı. Canlı site 1-2 dakika içinde güncellenecektir."
+            )
+            keyboard = [[{"text": "🔙 Ana Menüye Dön", "callback_data": "menu:yardim"}]]
+            edit_message_text(success_text, message_id, reply_markup={"inline_keyboard": keyboard})
+        else:
+            edit_message_text("❌ Hata: Haber GitHub'a yazılamadı.", message_id)
+            
+    except Exception as e:
+        edit_message_text(f"❌ Haber yayınlanırken hata oluştu: <code>{e}</code>", message_id)
+
+def handle_approve_delete(callback_query, doc_id):
+    message_id = callback_query["message"]["message_id"]
+    callback_id = callback_query["id"]
+    
+    edit_message_text("⏳ <b>Taslak siliniyor, lütfen bekleyin...</b>", message_id)
+    answer_callback_query(callback_id, "Silme başlatıldı.")
+    
+    try:
+        db = init_firebase()
+        doc_ref = db.collection("pending_posts").document(doc_id)
+        doc = doc_ref.get()
+        if not doc.exists:
+            edit_message_text("❌ Hata: Taslak haber bulunamadı veya zaten silinmiş.", message_id)
+            return
+            
+        post_data = doc.to_dict()
+        slug = post_data["slug"]
+        image_url = post_data.get("heroImage", "")
+        
+        doc_ref.delete()
+        
+        if "/images/news/" in image_url:
+            img_name = os.path.basename(image_url)
+            try:
+                delete_file_from_github(f"web-portal/public/images/news/{img_name}", f"style: delete pending draft image '{img_name}'")
+            except Exception as e:
+                print(f"Pending image deletion error: {e}")
+                
+        success_text = (
+            "🗑️ <b>Taslak Haber Silindi!</b>\n\n"
+            f"<b>Başlık:</b> {html.escape(post_data['title'])}\n"
+            f"<b>Kategori:</b> {post_data['category'].upper()}\n\n"
+            "Taslak haber ve indirilmiş olan kapak görseli başarıyla kaldırıldı."
+        )
+        keyboard = [[{"text": "🔙 Ana Menüye Dön", "callback_data": "menu:yardim"}]]
+        edit_message_text(success_text, message_id, reply_markup={"inline_keyboard": keyboard})
+        
+    except Exception as e:
+        edit_message_text(f"❌ Taslak silinirken hata oluştu: <code>{e}</code>", message_id)
+
+def enrich_news_with_comment(draft_data, user_comment):
+    api_keys = []
+    keys_str = os.getenv("GEMINI_API_KEYS")
+    if keys_str:
+        api_keys = [k.strip() for k in keys_str.split(",") if k.strip()]
+    else:
+        fallback_key = os.getenv("GEMINI_API_KEY")
+        if fallback_key:
+            api_keys = [fallback_key.strip()]
+            
+    if not api_keys:
+        raise ValueError("API anahtarları bulunamadı!")
+        
+    prompt = f"""
+Aşağıda yapay zeka tarafından yazılmış bir haber makalesi ve bu makalenin en tepesine eklenecek olan uzman teknisyenin kişisel yorumu yer almaktadır.
+
+GÖREVİN:
+1. Teknisyenin kişisel yorumunu incele. Dilbilgisi ve yazım hatalarını düzelt ama onun teknik uzman, samimi, 'sahadan gelen usta' üslubunu kesinlikle bozma ve yumuşatma.
+2. Bu yorumu makale metninin EN TEPESİNE (ilk paragrafa), yapay zeka tarafından yazılmadığı, bizzat bir insan görüşü olduğu açıkça anlaşılan özel bir stil halinde ekle. Örneğin:
+   > 💬 **Teknisyenin Sahadan Görüşü:** {user_comment}
+   
+   Ardından bir boşluk bırakıp makalenin orijinal içeriğini devam ettir.
+3. Haberin başlığını, teknisyenin kişisel yorumunun/görüşünün ana fikrini içerecek veya onun görüşünü yansıtacak şekilde güncelle. Başlığın en başında veya içinde teknisyenin görüşü ana fikir olmalıdır.
+4. Çıktıyı kesinlikle aşağıdaki JSON formatında ver (başka açıklama ekleme, markdown kod bloğu içinde olmalıdır):
+```json
+{{
+  "title": "[Yeni Başlık]",
+  "content": "[Yeni İçerik]"
+}}
+```
+
+Makale Başlığı: {draft_data['title']}
+Makale İçeriği:
+{draft_data['content']}
+"""
+
+    models_to_try = ["gemma-4-31b-it", "gemma-4-26b-a4b-it", "gemma-4-26b-it", "gemini-2.5-flash"]
+    last_err = "Bilinmeyen API Hatası"
+    
+    for key in api_keys:
+        try:
+            client = genai.Client(api_key=key)
+            for model_name in models_to_try:
+                try:
+                    print(f"Gemma ile yorum entegrasyonu deneniyor: Model={model_name} (Key: {key[-6:]})...")
+                    try:
+                        response = client.models.generate_content(
+                            model=model_name,
+                            contents=prompt,
+                            config=types.GenerateContentConfig(
+                                response_mime_type="application/json",
+                                thinking_config=types.ThinkingConfig(
+                                    thinking_level="HIGH"
+                                )
+                            )
+                        )
+                    except Exception as thinking_err:
+                        print(f"Model {model_name} thinking_config hatası. Normal modda deneniyor...")
+                        response = client.models.generate_content(
+                            model=model_name,
+                            contents=prompt,
+                            config=types.GenerateContentConfig(
+                                response_mime_type="application/json"
+                            )
+                        )
+                    
+                    text = response.text
+                    if not text:
+                        continue
+                        
+                    if "```json" in text:
+                        text = text.split("```json")[1].split("```")[0].strip()
+                    elif "```" in text:
+                        text = text.split("```")[1].split("```")[0].strip()
+                        
+                    data = json.loads(text.strip())
+                    if data.get("title") and data.get("content"):
+                        return data
+                except Exception as model_err:
+                    last_err = str(model_err)
+                    print(f"Model {model_name} zenginleştirme hatası: {last_err}")
+                    continue
+        except Exception as e:
+            last_err = str(e)
+            print(f"API key hatası (Key: {key[-6:]}): {last_err}")
+            continue
+            
+    raise Exception(f"Gemma 31B Zenginleştirme Hatası: {last_err}")
+
 def handle_callback_query_routing(callback_query):
     data = callback_query.get("data", "")
     
@@ -1948,6 +2176,12 @@ def handle_callback_query_routing(callback_query):
         handle_execute_multi_del(callback_query)
     elif data == "cancel_multi_del":
         handle_cancel_multi_del(callback_query)
+    elif data.startswith("approve_direct:"):
+        doc_id = data.split(":", 1)[1]
+        handle_approve_direct(callback_query, doc_id)
+    elif data.startswith("approve_delete:"):
+        doc_id = data.split(":", 1)[1]
+        handle_approve_delete(callback_query, doc_id)
 
 def add_custom_request(topic):
 
@@ -2610,6 +2844,93 @@ class handler(BaseHTTPRequestHandler):
             self.wfile.write(json.dumps({"status": "no text"}).encode())
             return
             
+        # Reply-to-message control for pending post comment approval
+        reply_to = message.get("reply_to_message")
+        if reply_to:
+            reply_msg_id = reply_to.get("message_id")
+            db = init_firebase()
+            pending_query = db.collection("pending_posts").where("telegram_message_id", "==", reply_msg_id).where("status", "==", "pending_approval").limit(1).get()
+            
+            if pending_query:
+                # Eşleşen taslak bulundu!
+                draft_doc = pending_query[0]
+                doc_id = draft_doc.id
+                draft_data = draft_doc.to_dict()
+                
+                # Kullanıcının yazdığı yorum
+                user_comment = text
+                
+                # Gemma 4 31B ile başlık ve içeriği zenginleştir
+                send_message("🧠 <b>Yorumunuz alındı. Gemma 31B ile başlık ve içerik zenginleştiriliyor...</b>")
+                
+                try:
+                    enriched_data = enrich_news_with_comment(draft_data, user_comment)
+                    if enriched_data:
+                        # Yeni başlık ve içeriği hazırla
+                        new_title = enriched_data["title"]
+                        new_content = enriched_data["content"]
+                        
+                        # Markdown içeriğini güncelle
+                        keywords = draft_data.get("keywords", [])
+                        category = draft_data.get("category", "pc")
+                        astro_image_path = draft_data.get("heroImage", "/images/default-news.png")
+                        source_name = draft_data.get("sourceName", "AI")
+                        source_url = draft_data.get("sourceUrl", "")
+                        slug = draft_data["slug"]
+                        
+                        updated_markdown = f"""---
+title: "{new_title}"
+description: "{draft_data['description']}"
+pubDate: "{datetime.now(TR_TZ).strftime('%Y-%m-%dT%H:%M:%S')}"
+heroImage: "{astro_image_path}"
+category: "{category}"
+tags: {json.dumps(keywords, ensure_ascii=False)}
+sourceName: "{source_name}"
+sourceUrl: "{source_url}"
+---
+{new_content}
+"""
+                        # GitHub'a yaz
+                        success = publish_markdown_to_github(slug, updated_markdown)
+                        if success:
+                            # Firestore taslağı sil veya durumunu "published" yap
+                            db.collection("pending_posts").document(doc_id).update({
+                                "status": "published", 
+                                "published_at": time.time(),
+                                "title": new_title,
+                                "markdown_content": updated_markdown,
+                                "content": new_content
+                            })
+                            
+                            # Yeniden derleme tetikle
+                            try:
+                                trigger_github_workflow()
+                            except Exception as e:
+                                print(f"Trigger workflow error: {e}")
+                                
+                            success_text = (
+                                "✅ <b>Haber Kişisel Yorumunuzla Birlikte Yayınlandı!</b>\n\n"
+                                f"<b>Yeni Başlık:</b> {html.escape(new_title)}\n"
+                                f"<b>Kategori:</b> {category.upper()}\n\n"
+                                "🚀 Makale GitHub deposuna başarıyla yazıldı. Canlı site 1-2 dakika içinde güncellenecektir."
+                            )
+                            # Orijinal Telegram bildirim mesajını güncelle
+                            try:
+                                edit_message_text(success_text, reply_msg_id)
+                            except Exception as e:
+                                print(f"Error editing original telegram message: {e}")
+                                
+                            send_message("🎉 <b>Haber başarıyla yayına alındı!</b>")
+                        else:
+                            send_message("❌ <b>Hata:</b> Zenginleştirilmiş haber GitHub'a yazılamadı.")
+                    else:
+                        send_message("❌ <b>Hata:</b> Gemma 31B zenginleştirme adımı başarısız oldu.")
+                except Exception as e:
+                    send_message(f"❌ <b>Hata oluştu:</b> <code>{e}</code>")
+                
+                self.wfile.write(json.dumps({"status": "processed"}).encode())
+                return
+
         try:
             # CHECK BOT INPUT STATE MACHINE
             db = init_firebase()

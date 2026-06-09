@@ -1,0 +1,15 @@
+﻿2026-06-07T16:49:46.0990485Z ##[group]Run python backend-scripts/export_env_from_firestore.py
+2026-06-07T16:49:46.0991151Z [36;1mpython backend-scripts/export_env_from_firestore.py[0m
+2026-06-07T16:49:46.1020076Z shell: /usr/bin/bash -e ***0***
+2026-06-07T16:49:46.1020478Z env:
+2026-06-07T16:49:46.1020887Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:49:46.1021504Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+2026-06-07T16:49:46.1022078Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:49:46.1022601Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:49:46.1023113Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:49:46.1023639Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+2026-06-07T16:49:46.1033384Z   FIREBASE_SERVICE_ACCOUNT_KEY: ***
+2026-06-07T16:49:46.1033796Z ##[endgroup]
+2026-06-07T16:49:47.6762057Z Firestore'dan ayarlar çekiliyor...
+2026-06-07T16:49:47.6762733Z ✅ web-portal/.env güncellendi.
+2026-06-07T16:49:47.6763378Z ✅ backend-scripts/prompts_config.json oluşturuldu.

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import sys
 import firebase_admin
@@ -38,34 +39,34 @@ def populate_firestore():
 
     # 2. Gemini Promptları (E-E-A-T & Google Discover & AdSense Uyumlu)
     
-    rewrite_prompt = """Aşağıdaki haber başlığı ve özetini analiz et. Bu haberi tamamen özgün, Türkçe, akıcı, SEO dostu ve profesyonel bir teknoloji/oyun/sinema editörü üslubuyla yeniden yaz. 
+    rewrite_prompt = """Aşağıdaki haber başlığı ve özetini analiz et. Bu haberi tamamen özgün, Türkçe, akıcı, SEO dostu ve profesyonel bir teknoloji editörü ve teknik uzman üslubuyla yeniden yaz. 
 
 Yazım Tarzı ve Doğruluk Kuralları (MANDATORY):
 1. **İlgi Çekici ve Sürükleyici Dil:** Donuk ve makine dili yerine okuyucunun dikkatini ilk cümleden yakalayan, canlı, dinamik ve profesyonel bir üslup kullan.
 2. **Konuda Tutucu (Strict Focus):** Haberin odağından kesinlikle sapma. Girdi olarak verilen konunun dışına çıkma, konuyu gereksiz yere dağıtma veya alakasız teknolojilerden bahsetme. Sadece haberin ana konusuna derinlemesine ve tutarlı bir şekilde odaklan.
 3. **KESİNLİKLE YALAN HABER YAPMA (Zero Fabrication):** Asla uydurma veriler, uydurma tarihler, hayali kaynaklar veya yanlış iddialar üretme. Girdi haberinde yer alan gerçek olgulara ve doğrulanabilir verilere %100 sadık kal.
-4. **Clickbait Olmayan Merak Uyandırıcı Başlık:** Clickbait (tık tuzağı veya aldatıcı) olmayan ama merak uyandıran, profesyonel, okuma potansiyeli yüksek Türkçe başlıklar oluştur.
+4. **Clickbait Olmayan Merak Uyandırıcı Başlık:** Clickbait (tık tuzağı veya aldatıcı) olmayan ama merak uyandırıcı, profesyonel, okuma potansiyeli yüksek Türkçe başlıklar oluştur.
 5. **Türkçe Dil ve Çeviri Hassasiyeti:** Girdi haber başlığı veya özeti İngilizce (veya başka bir dilde) ise, haberi anlam kaybı olmadan tamamen Türkçe diline çevirip yeniden yaz. Gerekli yerlerde veya teknik terminolojide (örneğin "CPU", "ray tracing", "pipeline" gibi) İngilizce terimleri olduğu gibi kullanabilirsin ancak haberin genel dili akıcı, anlaşılır ve tamamen Türkçe olmalıdır.
 
 Hayati Güvenlik ve İçerik Kuralları (MANDATORY):
 1. KESİNLİKLE siyaset, politika, devletlerarası krizler, dini konular, toplumsal tartışmalar, yasal ihtilaflar, kişisel karalamalar veya suçlamalar gibi hassas ve yasal risk barındıran konulara girme.
-2. Haberlerin odağı sadece saf teknoloji, bilimsel buluşlar, oyun güncellemeleri, yeni dizi/film duyuruları, fragmanlar ve kuantum fiziği/bilgisayarları/teknolojileri olmalıdır.
-3. Dizi-Film kategorisi altındaki haberler SADECE bilim kurgu, fantastik, oyun uyarlamaları, dijital yayın teknolojileri (Netflix/Disney+ vb. teknik haberleri) veya sinemada yapay zeka/CGI kullanımıyla ilgili olmalıdır. Yerel/standart aşk dizileri, magazin haberleri, alakasız dram veya genel sinema dedikoduları KESİNLİKLE haber yapılmamalıdır.
-4. EĞER GİRDİ HABERİ BU BELİRTİLEN SINIRLARIN (Teknoloji, Oyun, Bilim, Kuantum, Geek Dizi/Film) DIŞINDAYSA, kesinlikle makale yazma ve sadece aşağıdaki hata formatında JSON dön:
+2. Haberlerin odağı sadece PLC programlama ve otomasyonu, PC donanımları ve bilgisayar teknolojileri, endüstriyel makineler ve bunların bakım-tamirleri ile dijital/bilgisayar oyun dünyası olmalıdır.
+3. Siyaset, politika, magazin, aşk, genel finans/kripto para ve alakasız konular KESİNLİKLE sisteme alınmamalı, portalımızın teknoloji, otomasyon ve oyun odağı dışı ilan edilmelidir.
+4. EĞER GİRDİ HABERİ BU BELİRTİLEN SINIRLARIN (PLC, PC, Endüstriyel Makineler, Oyun) DIŞINDAYSA, kesinlikle makale yazma ve sadece aşağıdaki hata formatında JSON dön:
 {
-  "error": "Bu konu/haber portalımızın odak alanı (Teknoloji, Oyun, Bilim Kurgu/Geek Dizi-Film, Kuantum) dışındadır."
+  "error": "Bu konu/haber portalımızın odak alanı (PLC, PC, Endüstriyel Makineler, Oyun) dışındadır."
 }
 5. Suya sabuna dokunmayan, tamamen tarafsız, objektif, yasal açıdan %100 güvenli, sadece bilgilendirici ve nötr bir dil kullan.
-6. Kaynak haberde politik veya hukuki bir tartışma/polemik varsa, bu kısımları tamamen temizle ve konuyu yalnızca nesnel teknolojik/endüstriyel boyutuyla ele al.
+6. Kaynak haberde politik veya hukuki bir tartışma/polemik varsa, bu kısımları tamamen temizle ve konuyu yalnızca nesnel teknolojik/endüstriyel/oyun boyutuyla ele al.
 
 Genel Yapı & E-E-A-T Katma Değer Kuralları:
-1. Haber içeriği en az 4 paragraflık, kapsamlı ve doyurucu bir teknik inceleme/makale metni olmalıdır.
+1. Haber içeriði en az 4 paragraflık, kapsamlı ve doyurucu bir teknik inceleme/makale metni olmalıdır.
 2. Metin içinde kesinlikle en az 2 adet analitik alt başlık (markdown ## olarak) kullanılmalıdır. Haber konusuyla en iyi eşleşen iki başlığı seçerek metne entegre et:
-   - ## Teknolojik Altyapı ve Yenilikler (Teknik detaylar, mimari, kullanılan yenilikçi yöntemler)
-   - ## Sektörel Etki ve Pazar Analizi (Rakiplerle karşılaştırma, endüstri üzerindeki kısa/uzun vadeli etkileri)
-   - ## Kullanıcı Deneyimi ve Gelecek Öngörüsü (Tüketicinin veya oyuncunun elde edeceği fayda, gelecekteki olası gelişmeler)
-   - ## Eleştirel Bakış ve Soru İşaretleri (Varsa olumsuz yönler, güvenlik riskleri veya cevaplanmamış sorular)
-3. Haberin en sonuna mutlaka "### Editörün Kaleminden" başlığı altında, okuyucuyla bağ kuran, samimi, objektif ve zenginleştirici 2-3 cümlelik derinlemesine bir değerlendirme ekle.
+   - ## Teknolojik Altyapı ve Çalışma Prensibi (Teknik detaylar, mimari, kullanılan yöntemler)
+   - ## Sahadaki Kullanım ve Endüstriyel/Sektörel Etkileri (Kullanım alanları, verimlilik ve sektörel etkileri)
+   - ## Pratik Uygulama ve Sorun Giderme Öngörüleri (Karşılaşılabilecek sorunlar ve arıza çözme önerileri)
+   - ## Olası Riskler ve Güvenlik Önlemleri (Güvenlik önlemleri, iş güvenliği ve veri güvenliği hususları)
+3. Haberin en sonuna mutlaka "### Teknisyenin Sahadan Notu" başlığı altında, okuyucuyla bağ kuran, samimi, objektif ve zenginleştirici 2-3 cümlelik derinlemesine bir değerlendirme ekle.
 4. "Editörün Kaleminden" paragrafının BİTİMİNDE, haberin orijinal kaynağını kesinlikle şu Markdown formatında ekle: `[Haberin Orijinal Kaynağı: {source_name}]({raw_link})`. Kaynak linki için asla "Link burada", "haberin devamı" gibi ifadeler kullanma.
 5. Haber için en fazla 160 karakterlik bir SEO meta açıklaması (description) oluştur.
 6. Haberle ilgili 5 adet Türkçe etiket (keywords) belirle.
@@ -91,10 +92,10 @@ Haber Kategorisi: {category}
 GÖREV:
 Yeni aday haberlerin her birini analiz et. Her aday haber için şu iki kontrolü yap:
 
-1. YAYIN POLİTİKASI UYGUNLUK KONTROLÜ (is_compliant):
+1. YAYİN POLİTİKASI UYGUNLUK KONTROLÜ (is_compliant):
    Aday haberin portalımızın yayın politikasına uygun olup olmadığını denetle.
-   - Yayın Politikası Odak Alanları: Sadece teknoloji, bilimsel buluşlar, yapay zeka, uzay araştırmaları, kuantum dünyası/bilgisayarları, oyun dünyası (güncellemeler, yeni oyunlar, donanımlar vb.), geek film/dizi duyuruları (bilim kurgu, fantastik, oyun uyarlamaları, sinema teknolojileri) ile ilgili olmalıdır.
-   - Politika Dışı (Uygunsuz) Alanlar: Siyaset, politika, genel borsa/yatırım/kripto para (teknolojik altyapısı dışındaki genel finans/fiyat haberleri), standart aşk/dram dizileri veya genel magazin dedikoduları, genel otomotiv incelemeleri (elektrikli/otonom araç teknolojileri dışındaki standart araçlar), yasal uyuşmazlıklar, suç, toplumsal tartışmalar veya polemikler KESİNLİKLE elenmelidir (is_compliant: false).
+   - Yayın Politikası Odak Alanları: PLC otomasyonu (plc), kişisel bilgisayarlar ve donanımlar (pc), endüstriyel makineler (endustriyel-makinalar), oyun dünyası (oyun) ile ilgili olmalıdır.
+   - Politika Dışı (Uygunsuz) Alanlar: Siyaset, politika, genel borsa/yatırım/kripto para (teknolojik altyapısı dışındaki genel finans/fiyat haberleri), standart aşk/dram dizileri veya genel magazin dedikoduları, genel otomotiv incelemeleri (ålektrikli/otonom araç teknolojileri dışındaki standart araçlar), yasal uyuşmazlıklar, suç, toplumsal tartışmalar veya polemikler KESİNLİKLE elenmelidir (is_compliant: false).
 
 2. MÜKERRERLİK KONTROLÜ (is_duplicate):
    - Aday haberi sitemizde son 24 saatte yayınlanmış olan "Mevcut Haberler" başlıkları ile karşılaştır. Eğer aday haber, mevcut haberlerden herhangi biriyle semantik (anlamsal) olarak aynı gelişmeyi, lansmanı, duyuruyu veya olayı ele alıyorsa (farklı kelimelerle ifade edilmiş olsa bile semantik olarak aynı gelişme ise), bu haberi mükerrer (is_duplicate: true) olarak işaretle.
@@ -119,7 +120,7 @@ Yeni Adaylar (Ham Adaylar - Başlık, Kategori ve Özet):
 }
 """
 
-    detailed_research_prompt = """Aşağıda kullanıcı tarafından sunulan detaylı araştırma raporunu/metnini incele. Bu metne dayanarak tamamen özgün, Türkçe, akıcı, SEO dostu ve profesyonel bir teknoloji/oyun/sinema/bilim editörü üslubuyla bir haber makalesi yaz.
+    detailed_research_prompt = """Aşağıda kullanıcı tarafından sunulan detaylı araştırma raporunu/metnini incele. Bu metne dayanarak tamamen özgün, Türkçe, akıcı, SEO dostu ve profesyonel bir teknoloji editörü ve teknik uzman üslubuyla bir haber makalesi yaz.
 
 KRİTİK BİLGİ KAYNAĞI ÖNCELİĞİ KURALI (MANDATORY - %100 UYULMALIDIR):
 1. Makaleyi **SADECE VE SADECE** aşağıda verilen araştırma metnindeki bilgilere ve verilere dayanarak yaz.
@@ -130,30 +131,30 @@ KRİTİK BİLGİ KAYNAĞI ÖNCELİĞİ KURALI (MANDATORY - %100 UYULMALIDIR):
 Yazım Tarzı ve Doğruluk Kuralları (MANDATORY):
 1. **İlgi Çekici ve Sürükleyici Dil:** Donuk ve makine dili yerine okuyucunun dikkatini ilk cümleden yakalayan, canlı, dinamik ve profesyonel bir üslup kullan.
 2. **Konuda Tutucu (Strict Focus):** Haberin odağından kesinlikle sapma. Girdi olarak verilen konunun dışına çıkma, konuyu gereksiz yere dağıtma veya alakasız teknolojilerden bahsetme. Sadece haberin ana konusuna derinlemesine ve tutarlı bir şekilde odaklan.
-3. **Clickbait Olmayan Merak Uyandırıcı Başlık:** Clickbait (tık tuzağı veya aldatıcı) olmayan ama merak uyandıran, profesyonel, okuma potansiyeli yüksek Türkçe başlıklar oluştur.
+3. **Clickbait Olmayan Merak Uyandırıcı Başlık:** Clickbait (tık tuzağı veya aldatıcı) olmayan ama merak uyandırıcı, profesyonel, okuma potansiyeli yüksek Türkçe başlıklar oluştur.
 4. **Türkçe Dil ve Çeviri Hassasiyeti:** Araştırma metni veya kaynaklar İngilizce (veya başka bir dilde) ise, haberi anlam kaybı olmadan tamamen Türkçe diline çevirip yaz. Gerekli yerlerde veya teknik terminolojide İngilizce terimleri kullanabilirsin ancak makale tamamen Türkçe olmalıdır.
 
 Hayati Güvenlik ve İçerik Kuralları (MANDATORY):
 1. KESİNLİKLE siyaset, politika, devletlerarası krizler, dini konular, toplumsal tartışmalar, yasal ihtilaflar, kişisel karalamalar veya suçlamalar gibi hassas ve yasal risk barındıran konulara girme.
-2. Haberlerin odağı sadece saf teknoloji, bilimsel buluşlar, oyun güncellemeleri, yeni dizi/film duyuruları, fragmanlar ve kuantum fiziği/bilgisayarları/teknolojileri olmalıdır.
-3. Dizi-Film kategorisi altındaki haberler SADECE bilim kurgu, fantastik, oyun uyarlamaları, dijital yayın teknolojileri (Netflix/Disney+ vb. teknik haberleri) veya sinemada yapay zeka/CGI kullanımıyla ilgili olmalıdır. Yerel/standart aşk dizileri, magazin haberleri, alakasız dram veya genel sinema dedikoduları KESİNLİKLE haber yapılmamalıdır.
-4. EĞER GİRDİ HABERİ VEYA ARAŞTIRMA KONUSU BU BELİRTİLEN SINIRLARIN DIŞINDAYSA, kesinlikle makale yazma ve sadece aşağıdaki hata formatında JSON dön:
+2. Haberlerin odağı sadece PLC programlama ve otomasyonu, PC donanımları ve bilgisayar teknolojileri, endüstriyel makineler ve bunların bakım-tamirleri ile dijital/bilgisayar oyun dünyası olmalıdır.
+3. Siyaset, politika, magazin, aşk, genel finans/kripto para ve alakasız konular KESİNLİKLE sisteme alınmamalıdır.
+4. EĞER GİRDİ HABERİ VEYA ARAŞTIRMA KONUSU BU BELİRTĀLEN SINIRLARIN DIŞINDAYSA, kesinlikle makale yazma ve sadece aşağıdaki hata formatında JSON dön:
 {
-  "error": "Bu konu/haber portalımızın odak alanı (Teknoloji, Oyun, Bilim Kurgu/Geek Dizi-Film, Kuantum) dışındadır."
+  "error": "Bu konu/haber portalımızın odak alanı (PLC, PC, Endüstriyel Makineler, Oyun) dışındadır."
 }
 5. Suya sabuna dokunmayan, tamamen tarafsız, objektif, yasal açıdan %100 güvenli, sadece bilgilendirici ve nötr bir dil kullan.
-6. Kaynak haberde veya arama sonuçlarında politik veya hukuki bir tartışma/polemik varsa, bu kısımları tamamen temizle ve konuyu yalnızca nesnel teknolojik/endüstriyel boyutuyla ele al.
+6. Kaynak haberde veya arama sonuçlarında politik veya hukuki bir tartışma/polemik varsa, bu kısımları tamamen temizle ve konuyu yalnızca nesnel teknolojik/endüstriyel/oyun boyutuyla ele al.
 
 Genel Yapı & E-E-A-T Katma Değer Kuralları:
-1. Haber içeriği en az 4 paragraflık, kapsamlı ve doyurucu bir metin olmalıdır.
+1. Haber içeriði en az 4 paragraflık, kapsamıdı ve doyurucu bir metin olmalıdır.
 2. Metin içinde kesinlikle en az 2 adet analitik alt başlık (markdown ## olarak) kullanılmalıdır. Haber konusuyla en iyi eşleşen iki başlığı seçerek metne entegre et:
-   - ## Teknolojik Altyapı ve Yenilikler (Teknik detaylar, mimari, kullanılan yenilikçi yöntemler)
-   - ## Sektörel Etki ve Pazar Analizi (Rakiplerle karşılaştırma, endüstri üzerindeki kısa/uzun vadeli etkileri)
-   - ## Kullanıcı Deneyimi ve Gelecek Öngörüüsü (Tüketicinin veya oyuncunun elde edeceği fayda, gelecekteki olası gelişmeler)
-   - ## Eleştirel Bakış ve Soru İşaretleri (Varsa olumsuz yönler, güvenlik riskleri veya cevaplanmamış sorular)
-3. Haberin en sonuna mutlaka "### Editörün Kaleminden" başlığı altında, okuyucuyla bağ kuran, samimi, objektif ve zenginleştirici 2-3 cümlelik derinlemesine bir değerlendirme ekle.
+   - ## Teknolojik Altyapı ve Çalışma Prensibi (Teknik detaylar, mimari, kullanılan yöntemler)
+   - ## Sahadaki Kullanım ve Endüstriyel/Sektörel Etkileri (Kullanım alanları, verimlilik ve sektörel etkileri)
+   - ## Pratik Uygulama ve Sorun Giderme Öngörüleri (Karşılaşılabilecek sorunlar ve arıza çözme önerileri)
+   - ## Olası Riskler ve Güvenlik Önlemleri (Güvenlik önlemleri, iş güvenliği ve veri güvenliği hususları)
+3. Haberin en sonuna mutlaka "### Teknisyenin Sahadan Notu" başlığı altında, okuyucuyla bağ kuran, samimi, objektif ve zenginleştirici 2-3 cümlelik derinlemesine bir değerlendirme ekle.
 4. Haber için en fazla 160 karakterlik bir SEO meta açıklaması (description) oluştur.
-5. Haber kategorisini konuya göre tam olarak şu dördünden biri olarak belirle: "teknoloji", "oyun", "dizi-film" veya "kuantum-evreni". Başka bir kategori adı kesinlikle kullanma.
+5. Haber kategorisini konuya göre tam olarak şu dördünden biri olarak belirle: "plc", "pc", "endustriyel-makinalar" veya "oyun". Başka bir kategori adı kesinlikle kullanma.
 6. Haberle ilgili 5 adet Türkçe etiket (keywords) belirle.
 7. Pexels görsel arama motoru için haberin ana konusunu, markasını ve modelini içeren İngilizce 2-3 kelimelik net ve nokta atışı bir görsel arama sorgusu (pexels_query) yaz. Örnek: "playstation 5 console" (sadece "playstation" yazma), "intel arc gpu" (sadece "gpu" yazma), "quantum computing chip" (sadece "quantum" yazma), "volkswagen ID electric car" (sadece "car" yazma).
 
@@ -172,36 +173,36 @@ Kullanıcının Sunduğu Detaylı Araştırma Metni:
 }
 """
 
-    search_research_prompt = """Aşağıda kullanıcı tarafından verilen konuyu veya araştırma metnini incele. Bu konuyu Google Search kullanarak detaylıca araştır ve konundan tamamen özgün, Türkçe, akıcı, SEO dostu ve profesyonel bir teknoloji/oyun/sinema/bilim editörü üslubuyla bir haber makalesi yaz.
+    search_research_prompt = """Aşağıda kullanıcı tarafından verilen konuyu veya araştırma metnini incele. Bu konuyu Google Search kullanarak detaylıca araştır ve konundan tamamen özgün, Türkçe, akıcı, SEO dostu ve profesyonel bir teknoloji editörü ve teknik uzman üslubuyla bir haber makalesi yaz.
 
 Yazım Tarzı ve Doğruluk Kuralları (MANDATORY):
 1. **İlgi Çekici ve Sürükleyici Dil:** Donuk ve makine dili yerine okuyucunun dikkatini ilk cümleden yakalayan, canlı, dinamik ve profesyonel bir üslup kullan.
 2. **Konuda Tutucu (Strict Focus):** Haberin odağından kesinlikle sapma. Girdi olarak verilen konunun dışına çıkma, konuyu gereksiz yere dağıtma veya alakasız teknolojilerden bahsetme. Sadece haberin ana konusuna derinlemesine ve tutarlı bir şekilde odaklan.
 3. **KESİNLİKLE YALAN HABER YAPMA (Zero Fabrication):** Asla uydurma veriler, uydurma tarihler, hayali kaynaklar veya yanlış iddialar üretme. Arama sonuçlarındaki gerçek olgulara ve doğrulanabilir verilere %100 sadık kal.
-4. **Clickbait Olmayan Merak Uyandırıcı Başlık:** Clickbait (tık tuzağı veya aldatıcı) olmayan ama merak uyandıran, profesyonel, okuma potansiyeli yüksek Türkçe başlıklar oluştur.
+4. **Clickbait Olmayan Merak Uyandırıcı Başlık:** Clickbait (tık tuzağı veya aldatıcı) olmayan ama merak uyandırıcı, profesyonel, okuma potansiyeli yüksek Türkçe başlıklar oluştur.
 5. **Türkçe Dil ve Çeviri Hassasiyeti:** Araştırma kaynakları İngilizce (veya başka bir dilde) ise, haberi anlam kaybı olmadan tamamen Türkçe diline çevirip yaz. Gerekli yerlerde veya teknik terminolojide İngilizce terimleri kullanabilirsin ancak makale tamamen Türkçe olmalıdır.
 
 Hayati Güvenlik ve İçerik Kuralları (MANDATORY):
 1. KESİNLİKLE siyaset, politika, devletlerarası krizler, dini konular, toplumsal tartışmalar, yasal ihtilaflar, kişisel karalamalar veya suçlamalar gibi hassas ve yasal risk barındıran konulara girme.
-2. Haberlerin odağı sadece saf teknoloji, bilimsel buluşlar, oyun güncellemeleri, yeni dizi/film duyuruları, fragmanlar ve kuantum fiziği/bilgisayarları/teknolojileri olmalıdır.
-3. Dizi-Film kategorisi altındaki haberler SADECE bilim kurgu, fantastik, oyun uyarlamaları, dijital yayın teknolojileri (Netflix/Disney+ vb. teknik haberleri) veya sinemada yapay zeka/CGI kullanımıyla ilgili olmalıdır. Yerel/standart aşk dizileri, magazin haberleri, alakasız dram veya genel sinema dedikoduları KESİNLİKLE haber yapılmamalıdır.
-4. EĞER GİRDİ HABERİ VEYA ARAŞTIRMA KONUSU BU BELİRTİLEN SINIRLARIN DIŞINDAYSA, kesinlikle makale yazma ve sadece aşağıdaki hata formatında JSON dön:
+2. Haberlerin odağı sadece PLC programlama ve otomasyonu, PC donanımları ve bilgisayar teknolojileri, endüstriyel makineler ve bunların bakım-tamirleri ile dijital/bilgisayar oyun dünyası olmalıdır.
+3. Siyaset, politika, magazin, aşk, genel finans/kripto para ve alakasız konular KESİNLİKLE sisteme alınmamalıdır.
+4. EĞER GİRDİ HABERİ VEYA ARAŞTIRMA KONUSU BU BELİRTĀLEN SINIRLARIN DIŞINDAYSA, kesinlikle makale yazma ve sadece aşağıdaki hata formatında JSON dön:
 {
-  "error": "Bu konu/haber portalımızın odak alanı (Teknoloji, Oyun, Bilim Kurgu/Geek Dizi-Film, Kuantum) dışındadır."
+  "error": "Bu konu/haber portalımızın odak alanı (PLC, PC, Endüstriyel Makineler, Oyun) dışındadır."
 }
 5. Suya sabuna dokunmayan, tamamen tarafsız, objektif, yasal açıdan %100 güvenli, sadece bilgilendirici ve nötr bir dil kullan.
-6. Kaynak haberde veya arama sonuçlarında politik veya hukuki bir tartışma/polemik varsa, bu kısımları tamamen temizle ve konuyu yalnızca nesnel teknolojik/endüstriyel boyutuyla ele al.
+6. Kaynak haberde veya arama sonuçlarında politik veya hukuki bir tartışma/polemik varsa, bu kısımları tamamen temizle ve konuyu yalnızca nesnel teknolojik/endüstriyel/oyun boyutuyla ele al.
 
 Genel Yapı & E-E-A-T Katma Değer Kuralları:
-1. Haber içeriği en az 4 paragraflık, kapsamlı ve doyurucu bir metin olmalıdır. Ara başlıklar (markdown ## olarak) kullanabilirsin.
+1. Haber içeriði en az 4 paragraflık, kapsamlı ve doyurucu bir metin olmalıdır. Ara başlıklar (markdown ## olarak) kullanabilirsin.
 2. Metin içinde kesinlikle en az 2 adet analitik alt başlık (markdown ## olarak) kullanılmalıdır. Haber konusuyla en iyi eşleşen iki başlığı seçerek metne entegre et:
-   - ## Teknolojik Altyapı ve Yenilikler (Teknik detaylar, mimari, kullanılan yenilikçi yöntemler)
-   - ## Sektörel Etki ve Pazar Analizi (Rakiplerle karşılaştırma, endüstri üzerindeki kısa/uzun vadeli etkileri)
-   - ## Kullanıcı Deneyimi ve Gelecek Öngörüsü (Tüketicinin veya oyuncunun elde edeceği fayda, gelecekteki olası gelişmeler)
-   - ## Eleştirel Bakış ve Soru İşaretleri (Varsa olumsuz yönler, güvenlik riskleri veya cevaplanmamış sorular)
-3. Haberin en sonuna mutlaka "### Editörün Kaleminden" başlığı altında, okuyucuyla bağ kuran, samimi, objektif ve zenginleştirici 2-3 cümlelik derinlemesine bir değerlendirme ekle.
+   - ## Teknolojik Altyapı ve Çalışma Prensibi (Teknik detaylar, mimari, kullanılan yöntemler)
+   - ## Sahadaki Kullanım ve Endüstriyel/Sektörel Etkileri (Kullanım alanları, verimlilik ve sektörel etkileri)
+   - ## Pratik Uygulama ve Sorun Giderme Öngörüleri (Karşılaşılabilecek sorunlar ve arıza çözme önerileri)
+   - ## Olası Riskler ve Güvenlik Önlemleri (Güvenlik önlemleri, iş güvenliği ve veri güvenliği hususları)
+3. Haberin en sonuna mutlaka "### Teknisyenin Sahadan Notu" başlığı altında, okuyucuyla bağ kuran, samimi, objektif ve zenginleştirici 2-3 cümlelik derinlemesine bir değerlendirme ekle.
 4. Haber için en fazla 160 karakterlik bir SEO meta açıklaması (description) oluştur.
-5. Haber kategorisini konuya göre tam olarak şu dördünden biri olarak belirle: "teknoloji", "oyun", "dizi-film" veya "kuantum-evreni". Başka bir kategori adı kesinlikle kullanma.
+5. Haber kategorisini konuya göre tam olarak şu dördünden biri olarak belirle: "plc", "pc", "endustriyel-makinalar" veya "oyun". Başka bir kategori adı kesinlikle kullanma.
 6. Haberle ilgili 5 adet Türkçe etiket (keywords) belirle.
 7. Pexels görsel arama motoru için haberin ana konusunu, markasını ve modelini içeren İngilizce 2-3 kelimelik net ve nokta atışı bir görsel arama sorgusu (pexels_query) yaz. Örnek: "playstation 5 console" (sadece "playstation" yazma), "intel arc gpu" (sadece "gpu" yazma), "quantum computing chip" (sadece "quantum" yazma), "volkswagen ID electric car" (sadece "car" yazma).
 
@@ -243,39 +244,39 @@ Araştırılacak Konu / Girdi: {user_prompt}
     # Yeni küresel telif uyumlu kaynakları ekle
     new_sources = [
         {
-            "name": "IGN PC",
-            "url": "http://feeds.feedburner.com/ign/pc-articles",
-            "category": "oyun"
+            "name": "Control.com",
+            "url": "https://control.com/rss",
+            "category": "plc"
         },
         {
-            "name": "IGN Movies",
-            "url": "http://feeds.feedburner.com/ign/movies-articles",
-            "category": "dizi-film"
+            "name": "Automation World",
+            "url": "https://www.automationworld.com/rss",
+            "category": "endustriyel-makinalar"
         },
         {
-            "name": "ScienceDaily Technology",
+            "name": "iFixit News",
+            "url": "https://www.ifixit.com/News/rss",
+            "category": "pc"
+        },
+        {
+            "name": "Hackaday",
+            "url": "https://hackaday.com/blog/feed/",
+            "category": "pc"
+        },
+        {
+            "name": "ScienceDaily Tech",
             "url": "https://www.sciencedaily.com/rss/matter_energy/technology.xml",
-            "category": "teknoloji"
+            "category": "pc"
         },
         {
-            "name": "Phys.org Technology",
+            "name": "Phys.org Tech",
             "url": "https://phys.org/rss-feed/technology-news",
-            "category": "teknoloji"
+            "category": "pc"
         },
         {
-            "name": "arXiv Quantum Physics",
-            "url": "https://rss.arxiv.org/rss/quant-ph",
-            "category": "kuantum-evreni"
-        },
-        {
-            "name": "ScienceDaily Quantum",
-            "url": "https://www.sciencedaily.com/rss/matter_energy/quantum_computing.xml",
-            "category": "kuantum-evreni"
-        },
-        {
-            "name": "Phys.org Physics",
-            "url": "https://phys.org/rss-feed/physics-news",
-            "category": "kuantum-evreni"
+            "name": "IGN Games",
+            "url": "https://feeds.feedburner.com/ign/news",
+            "category": "oyun"
         }
     ]
     
@@ -296,7 +297,14 @@ Araştırılacak Konu / Girdi: {user_prompt}
     }, merge=True)
     print("✅ Otonom araştırma başlangıç ayarları eklendi.")
 
-    print("🎉 İşlem tamamlandı! Hassas veriler ve küresel RSS kaynakları Firestore üzerinde güncellendi.")
+    # 5. Default Categories
+    categories_ref = db.collection('system_config').document('categories')
+    categories_ref.set({
+        "list": ["plc", "pc", "endustriyel-makinalar", "oyun"]
+    })
+    print("✅ Varsayılan kategoriler listesi Firestore'a eklendi.")
+
+    print("Ἰ9 İşlem tamamlandı! Hassas veriler ve küresel RSS kaynakları Firestore üzerinde güncellendi.")
 
 if __name__ == "__main__":
     populate_firestore()

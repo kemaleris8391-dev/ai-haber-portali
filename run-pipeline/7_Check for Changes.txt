@@ -1,0 +1,19 @@
+﻿2026-06-07T16:51:57.5566060Z ##[group]Run git status --porcelain
+2026-06-07T16:51:57.5566858Z [36;1mgit status --porcelain[0m
+2026-06-07T16:51:57.5567531Z [36;1m# Eğer değişiklik varsa output set et[0m
+2026-06-07T16:51:57.5568275Z [36;1mif [ -n "$(git status --porcelain)" ]; then[0m
+2026-06-07T16:51:57.5568988Z [36;1m  echo "changes=true" >> $GITHUB_OUTPUT[0m
+2026-06-07T16:51:57.5569606Z [36;1melse[0m
+2026-06-07T16:51:57.5570143Z [36;1m  echo "changes=false" >> $GITHUB_OUTPUT[0m
+2026-06-07T16:51:57.5570774Z [36;1mfi[0m
+2026-06-07T16:51:57.5612007Z shell: /usr/bin/bash -e ***0***
+2026-06-07T16:51:57.5612602Z env:
+2026-06-07T16:51:57.5613202Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:51:57.5614099Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+2026-06-07T16:51:57.5615004Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:51:57.5616107Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:51:57.5616915Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:51:57.5618150Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+2026-06-07T16:51:57.5618862Z ##[endgroup]
+2026-06-07T16:51:57.6733364Z ?? web-portal/public/images/news/marvel-1943-rise-of-hydra-bekleyisi-uzuyor-cikis-tarihi-tekr.webp
+2026-06-07T16:51:57.6734874Z ?? web-portal/src/content/blog/marvel-1943-rise-of-hydra-bekleyisi-uzuyor-cikis-tarihi-tekr.md

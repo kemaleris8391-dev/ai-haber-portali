@@ -1,39 +1,34 @@
 {
   "sources": [
     {
-      "name": "IGN PC",
-      "url": "http://feeds.feedburner.com/ign/pc-articles",
-      "category": "oyun"
+      "name": "Control.com",
+      "url": "https://control.com/rss",
+      "category": "otomasyon-plc"
     },
     {
-      "name": "IGN Movies",
-      "url": "http://feeds.feedburner.com/ign/movies-articles",
-      "category": "dizi-film"
+      "name": "Automation World",
+      "url": "https://www.automationworld.com/rss",
+      "category": "otomasyon-plc"
     },
     {
-      "name": "ScienceDaily Technology",
+      "name": "iFixit News",
+      "url": "https://www.ifixit.com/News/rss",
+      "category": "endustriyel-tamir"
+    },
+    {
+      "name": "Hackaday",
+      "url": "https://hackaday.com/blog/feed/",
+      "category": "donanim-pratik"
+    },
+    {
+      "name": "ScienceDaily Tech",
       "url": "https://www.sciencedaily.com/rss/matter_energy/technology.xml",
-      "category": "teknoloji"
+      "category": "donanim-pratik"
     },
     {
-      "name": "Phys.org Technology",
+      "name": "Phys.org Tech",
       "url": "https://phys.org/rss-feed/technology-news",
-      "category": "teknoloji"
-    },
-    {
-      "name": "arXiv Quantum Physics",
-      "url": "https://rss.arxiv.org/rss/quant-ph",
-      "category": "kuantum-evreni"
-    },
-    {
-      "name": "ScienceDaily Quantum",
-      "url": "https://www.sciencedaily.com/rss/matter_energy/quantum_computing.xml",
-      "category": "kuantum-evreni"
-    },
-    {
-      "name": "Phys.org Physics",
-      "url": "https://phys.org/rss-feed/physics-news",
-      "category": "kuantum-evreni"
+      "category": "donanim-pratik"
     }
   ],
   "gemini": {

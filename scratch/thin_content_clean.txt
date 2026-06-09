@@ -1,0 +1,401 @@
+Manuel işlemler raporu
+======================
+Sitenize yönelik herhangi bir manuel işlemin olup olmadığına bakın ve sitenin manuel işlem geçmişini görüntüleyin.
+Bir sitede manuel işlem varsa o sitenin bir kısmı veya tamamı Google arama sonuçlarının dışında tutulur.
+Manuel işlemler raporunu aç
+
+Search Console'da Manuel İşlemler raporu - Google Search Console Eğitimi
+Manuel işlem nedir?
+===================
+Google'da bir inceleme uzmanı sitedeki sayfaların Google'ın spam politikalarına uygun olmadığını belirlediğinde, Google siteye karşı bir manuel işlem gerçekleştirir. Çoğu manuel işlem, arama dizinimize müdahale etme girişimlerine yöneliktir. Burada rapor edilen çoğu sorun, kullanıcıya görsel bir uyarıda bulunulmaksızın sayfaların veya sitelerin sıralamasının düşürülmesine ya da arama sonuçlarından çıkarılmasına neden olur.
+Sitenizi etkileyen bir manuel işlem olursa, bunu manuel işlem raporunda ve Search Console mesaj merkezinde size bildiririz.
+Manuel işlemler neden var?
+Arama motorlarının ortaya çıkışından beri, sonuçlar sayfasının en üstünde yer almak için bıkıp usanmadan hilelere başvuran kişiler olmuştur. Normalde daha alakalı olan web siteleri, alakasız sonuçlar tarafından sıralamada aşağılara itildiğinden bu, arama yapan kullanıcılar için olumsuz bir durumdur. Diğer yandan, sitelerin bulunması zorlaştığından kurallara uygun hareket eden web siteleri de bu durumdan kötü etkilenmektedir. Bu nedenlerle, Google olarak en başından beri, spam üretenlerle mücadele ederken, kullanıcıların aradıkları yanıtları bulmalarına ve meşru web sitelerinin Google Arama sayesinde trafik almalarına yardımcı olmaya çalışıyoruz.
+Google, arama hizmetini geliştirmek için sürekli olarak çalışmaktadır. Verilere dayalı bir yaklaşım benimseyip arama kalitesini değerlendirmeleri için tam zamanlı analistler, araştırmacılar ve istatistikçiler çalıştırırız. Algoritmalarımızdaki değişiklikler, yayınlanmadan önce kapsamlı kalite değerlendirmelerinden geçer. Algoritmalarımız hakkında daha fazla bilgi edinin.
+Algoritmalarımız spam'ı algılama konusunda son derece başarılıdır ve çoğu durumda spam'ı otomatik olarak keşfedip arama sonuçlarımızdan kaldırırız. Bununla birlikte, dizinimizin kalitesini korumak amacıyla spam'ı arama sonuçlarımızdan kaldırmak için manuel işlem de uygularız.
+Siteme yönelik herhangi bir manuel işlem var mı?
+================================================
+Raporun üst kısmında sitenize yönelik manuel işlemlerin sayısını görürsünüz. Sitenizle ilgili bir manuel işlem yoksa yeşil bir onay işareti ve uygun bir mesaj görünür.
+Ama bu siteyi yeni satın aldım.
+Yeni satın aldığınız bir site, siz sahip olmadan önce spam politikalarımızı ihlal etmişse bu raporda belirtilen sorunları düzeltin, ardından yeniden değerlendirme isteğinizde siteyi yeni aldığınızı ve sitenin artık politikaları ihlal etmediğini bize bildirin.
+Hangi sayfalar etkileniyor?
+===========================
+Etkilenen sayfa düzenlerinin listesini görmek için manuel işlem açıklamasını genişletin. Bu, sitenizin bir alt kümesi veya sitenizin tamamı olabilir. Düzenle eşleşen tüm sayfaların etkilenmesi gerekmez.
+Örnek:
+https://example.com/real-estate/* - bu URL'de real-estate/ dizininin altındaki sayfaların bir kısmı veya tamamı etkilenir.
+Tüm sayfaları etkiliyor - Bu açıklamaya sahip manuel işlemler sitenin tamamını etkiler.
+Sorunu nasıl çözerim?
+=====================
+Sitenizdeki bir manuel işlemi düzeltmek için:
+Daha fazla bilgi için rapordaki manuel işlem açıklama panelini genişletin.
+Hangi sayfaların etkilendiğine bakın.
+Sorunun türüne ve kısa açıklamasına baktıktan sonra, ayrıntılı bilgileri ve sorunu düzeltmek için gerçekleştirilmesi gereken adımları görmek için "Daha fazla bilgi" bağlantısını takip edin. (Bu sayfanın alt kısmında belirtilen her işlem için ayrıntılı bilgileri bulabilirsiniz).
+Etkilenen tüm sayfalarda sorunu düzeltin. Sorunu yalnızca bazı sayfalarda düzelttiğinizde, arama sonuçlarına kısmi bir geri dönüş elde etmezsiniz. Sitenizde birden fazla manuel işlem varsa bunların tümü hakkında bilgi edinin ve tüm sorunları düzeltin.
+Google'ın sayfalarınıza ulaşabildiğinden emin olun. Etkilenen sayfalar giriş gerektirmemeli, bir ödeme duvarının arkasında olmamalı veya robots.txt ya da noindex yönergesi tarafından engellenmelidir. URL Denetleme aracını kullanarak erişilebilirliği test edebilirsiniz.
+Raporda listelenen tüm sorunlar tüm sayfalarda düzeltildiğinde, bu rapordaki İnceleme İsteğinde Bulunun'u seçin. Yeniden değerlendirme isteğinizde düzeltmelerinizi açıklayın. İyi bir isteğin üç özelliği vardır:
+    
+Sitenizdeki sorunun tam olarak ne olduğunu açıklar.
+Sorunu gidermek için uyguladığınız adımları açıklar.
+Yaptığınız çalışmaların sonucunu belgelendirir.
+Sitenizdeki sorunun tam olarak ne olduğunu açıklar.
+Sorunu gidermek için uyguladığınız adımları açıklar.
+Yaptığınız çalışmaların sonucunu belgelendirir.
+Yeniden değerlendirme incelemelerinin tamamlanması biraz zaman alabilir (aşağıya bakın). İlerleme durumuyla ilgili olarak e-posta yoluyla bilgilendirilirsiniz. İsteğinizi gönderdiğinizde, incelemenin devam ettiğini size bildiren bir inceleme onayı mesajı alırsınız; bekleyen isteğinizle ilgili nihai bir karar elinize ulaşmadan isteğinizi yeniden göndermeyin.
+
+Yeniden değerlendirme incelemem ne kadar sürecek?
+=================================================
+Çoğu yeniden değerlendirme incelemesinin tamamlanması birkaç gün veya hafta sürebilir. Bununla birlikte, bağlantılar hakkındaki yeniden değerlendirme istekleri gibi bazı durumlarda talebinizin incelenmesi normalden uzun sürebilir. İsteğinizi aldığımızda e-posta ile bilgilendirilirsiniz. Böylece, incelemenizin etkin olduğunu bilirsiniz. İnceleme tamamlandığında da bir e-posta alırsınız. Bekleyen isteklerle ilgili bir karar elinize ulaşmadan lütfen isteğinizi yeniden göndermeyin.
+Manuel işlemlerin listesi
+=========================
+Google tarafından uygulanabilecek manuel işlemler ve bunların nasıl düzeltileceği aşağıda açıklanmaktadır.
+Geri düğmesinin ele geçirilmesi
+===============================
+Google, sitenizin bir bölümünde kötü amaçlı uygulamalar ile ilgili spam politikamızı ihlal eden, geri düğmesini ele geçirme davranışının görülebileceğini tespit etti.
+Geri düğmesini ele geçirme, bir sitenin tarayıcı geçmişini veya diğer işlevlerini manipüle ederek kullanıcının tarayıcıda gezinmesine müdahale ettiği ve kullanıcının geldiği sayfaya hemen geri dönmek için geri düğmesini kullanmasını engellediği durumu ifade eder.
+Geçerli manuel işlem, politikamızı ihlal eden içeriğin bulunduğu sayfaları etkilemektedir. Siteniz, geri düğmesini ele geçirme politikamızı tekrarlanan bir şekilde ihlal ederse bu durum başka manuel işlemler yapılmasına yol açabilir ve sitenizin genel sıralamasını etkileyebilir.
+Önerilen işlemler:
+==================
+Google'ın kötü amaçlı uygulamalar ile ilgili spam politikasını inceledikten sonra sitenizdeki ihlalleri tespit edip düzeltmek için aşağıdaki adımları uygulayın:
+Geri düğmesini ele geçirmekten sorumlu tüm kodları veya içe aktarma işlemlerini devre dışı bırakın ya da kaldırın.
+Sitenizin artık spam politikalarımızı ihlal etmediğinden emin olduktan sonra Manuel işlemler raporunda İnceleme isteğinde bulunun'u tıklayın.
+Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin, spam politikalarımızı artık ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Önerilen işlemler
+=================
+Google'ın kullanıcı tarafından oluşturulan spam ile ilgili spam politikalarını, ayrıca spam yorumları ve ücretsiz olarak barındırılan spam içerikleri önlemeyle ilgili belgeleri ve saldırıya uğramış sayfaları nasıl düzelteceğinizi inceleyin, ardından sitenizdeki ihlalleri tespit edip düzeltmek için şu adımları uygulayın:
+Kullanıcıların, ziyaretçilerin veya diğer üçüncü tarafların içerik ekleyebileceği veya etkileşimde bulunabileceği sayfaları tanımlayın. Bunlar; forumlarınız, konuk defterleriniz, sosyal medya platformlarınız, dosya yükleyiciniz, ücretsiz barındırma hizmetleriniz veya kullanıcıların sorgu gönderebildiği dahili arama sayfaları olabilir.
+Spam barındıran içeriğin göründüğü yerleri daha iyi anlamak için Search Console Mesajları merkezinde veya e-posta ile aldığınız mesajlardaki örnek URL'leri inceleyin. Ayrıca, beklenmeyen veya spam barındıran içerikleri bulmak için lütfen Google aramada sitenizin konusuyla ilgili olmayan ticari ya da yetişkinlere yönelik anahtar kelimeleri "site:" operatörünü kullanarak sitenizde aratın. Örneğin, sitenizdeki alakasız içeriği tespit etmek için [site:alan-adınız viagra] veya [site:alan-adınız ücretsiz film online izle] aramasını yapın. Örneğin, aşağıdakilere benzer aramalar yapın:
+        
+Tek amacı, üçüncü taraf web sitesinin veya hizmetin tanıtımını yapmak olan bağlam dışı metin veya konu dışı bağlantılar (örneğin, "Ücretsiz film indirme" veya "online izle")
+Anlamsız kelimeler içeren veya otomatik olarak oluşturulmuş gibi görünen metin
+Kullanıcılar tarafından, gerçekçi olmayan, ticari gibi görünen anahtar kelimelerle gönderilen yorumlar veya bilgiler. Örneğin, alakasız sitelerle bağlantı oluşturan ve "İndirim Garantisi" gibi gerçek kullanıcı adına benzemeyen kullanıcı adları.
+Kullanıcının sorgusunun, üçüncü taraf web sitesini veya hizmetini tanıtmaya yönelik göründüğü dahili arama sonuçları
+Tek amacı, üçüncü taraf web sitesinin veya hizmetin tanıtımını yapmak olan bağlam dışı metin veya konu dışı bağlantılar (örneğin, "Ücretsiz film indirme" veya "online izle")
+Anlamsız kelimeler içeren veya otomatik olarak oluşturulmuş gibi görünen metin
+Kullanıcılar tarafından, gerçekçi olmayan, ticari gibi görünen anahtar kelimelerle gönderilen yorumlar veya bilgiler. Örneğin, alakasız sitelerle bağlantı oluşturan ve "İndirim Garantisi" gibi gerçek kullanıcı adına benzemeyen kullanıcı adları.
+Kullanıcının sorgusunun, üçüncü taraf web sitesini veya hizmetini tanıtmaya yönelik göründüğü dahili arama sonuçları
+Web sunucusu günlük dosyalarınızda, özellikle yeni oluşturulan sayfalara ait beklenmedik veya açıklanmayan ani trafik sıçramaları olup olmadığını izleyin. URL kalıplarında, web sitenizle hiçbir alakası olmayan anahtar kelimeler olup olmadığına bakın. Google Arama'da en çok tıklanan sayfalarınızı, Arama için Performans raporunu kullanarak görebilirsiniz.
+Her türlü uygunsuz içeriği kaldırıp spam içerikli terimler listesi (akış, indir, yetişkin, kumar veya ilaç terimleri gibi) kullanarak açıkça uygunsuz üçüncü taraf kaynaklı içeriğin platformunuzda yayınlanmasını engelleyin.
+Uygun durumlarda şu kılavuzları kullanın:
+        
+Sitenizde kullanıcı tarafından oluşturulan spam'i önleme
+Kullanıcı tarafından oluşturulan içerik bağlantılarını rel==”ugc” ile işaretleme
+Saldırıya uğramış sayfaları düzeltme
+Sitenizde kullanıcı tarafından oluşturulan spam'i önleme
+Kullanıcı tarafından oluşturulan içerik bağlantılarını rel==”ugc” ile işaretleme
+Saldırıya uğramış sayfaları düzeltme
+Daha kolay bakım ve spam tespiti için etkileşimli içeriğinizi yoğunlaştırılmış dosya yolunda birleştirmeyi düşünün.
+Sitenizin artık spam politikalarımızı ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin, spam politikalarımızı artık ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Bu arada, bu tür spam barındıran içerikleri etkin bir şekilde izleyip temizlemeye devam etmeniz, sitenizin sistemini iyileştirmeniz ve gelecekte bu tür spam'leri önlemek için sistem güvenlik açığını düzeltmeniz de önerilir.
+Google, site ziyaretçileri tarafından gönderilen sayfalarınızda spam tespit etmiştir. Genellikle bu tür spam içerikler forum sayfalarında, konuk defteri sayfalarında veya kullanıcı profillerinde bulunur.
+Matt Cutts explains the "User-Generated Spam" manual action.
+Önerilen işlemler
+=================
+Google'ın kullanıcı tarafından oluşturulan spam ile ilgili politikalarını inceleyin, ardından sitenizdeki ihlalleri tespit edip düzeltmek için şu adımları uygulayın:
+Kullanıcılar genellikle forumlarda, blog yorumlarında ve kullanıcı profillerinde sitelere içerik eklerler. Sitenizde kullanıcıların içerik eklemiş olabileceği sayfaları belirleyin.
+“İndirim Garantisi” gibi ticari kullanıcı adları içeren profiller veya reklam, konu dışı bağlantılar ya da anlamsız metinler içeren yayınlar olup olmadığına bakın. Bu alanlarda şunların olup olmadığını kontrol edin:
+        
+Reklam gibi görünen yayınlar veya profiller
+Bağlam dışı veya konuyla ilgili olmayan bağlantılar içeren yayınlar veya profiller
+Alakasız sitelerle bağlantı oluşturan, "İndirim Garantisi" gibi gerçek kullanıcı adına benzemeyen ticari kullanıcı adlarına sahip profiller ve yayınlar
+Otomatik olarak oluşturulmuş (gerçek bir kullanıcısı tarafından yazılmamış) gibi görünen yayınlar veya profiller
+Reklam gibi görünen yayınlar veya profiller
+Bağlam dışı veya konuyla ilgili olmayan bağlantılar içeren yayınlar veya profiller
+Alakasız sitelerle bağlantı oluşturan, "İndirim Garantisi" gibi gerçek kullanıcı adına benzemeyen ticari kullanıcı adlarına sahip profiller ve yayınlar
+Otomatik olarak oluşturulmuş (gerçek bir kullanıcısı tarafından yazılmamış) gibi görünen yayınlar veya profiller
+Beklenmeyen veya spam barındıran içerikleri bulmak için Google aramada sitenizin konusuyla ilgili olmayan ticari ya da yetişkinlere yönelik anahtar kelimeleri site: operatörünü kullanarak sitenizde aratın. Örneğin, sitenizde "viagra" terimini aramak için [site:example.com viagra] aramasını yapın.
+Uygunsuz içeriği kaldırın.
+Kullanıcı tarafından oluşturulan spam'ı engellemeye yönelik önlemler almayı düşünebilirsiniz.
+Sitenizin artık spam politikalarımızı ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin, spam politikalarımızı artık ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Ücretsiz web barındırma hizmetinizde barındırılan sitelerin önemli bir kısmı spam içermektedir.
+Google, spam ile ilgili manuel işlem gerçekleştirirken hassas davranmaya çalışır. Bununla birlikte, belirli bir web barındırma hizmetinde bulunan sayfaların önemli bir kısmı spam içeriğine sahipse, hizmetin tamamı için manuel işlem yapabiliriz.
+Önerilen işlemler
+=================
+Sunduğunuz hizmetin kötüye kullanımını tanımlamanızı ve engellemenizi sağlayacak ipuçlarına bakın.
+Sunduğunuz hizmetteki spam içerikli tüm mevcut hesapları kaldırın.
+Barındırma hizmetinizin teknik ekibiyle iletişime geçin ve manuel işlem hakkında bilgi verin.
+Sitenizin spam politikalarımıza uyduğundan emin olduğunuzda Manuel İşlemler raporunda İnceleme İsteğinde Bulunun'u seçin.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin, spam politikalarımızı artık ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Google, sayfalarınızdaki bazı işaretlemelerin yapılandırılmış veri yönergelerimize uymayan teknikler kullanıyor olabileceğini tespit etmiştir; örneğin: kullanıcılar tarafından görülmeyen içeriği işaretleme, alakasız veya yanıltıcı içeriği işaretleme ya da diğer yönlendirici davranışlar.
+Siteniz için geçerli olabilecek yapılandırılmış veri sorunlarından bazıları şunlardır:
+Önerilen işlemler
+=================
+Sitenizin, Google'ın arama sonuçlarında öne çıkmasını istiyorsanız sitenizdeki işaretlemenin Google'ın yapılandırılmış verilerle ilgili yönergelerine uyduğundan emin olun. Bunun için mevcut işaretlemenizi güncellemeniz veya yönergelerimizi ihlal eden işaretlemeleri kaldırmanız gerekebilir.
+Bu değişiklikleri yaptığınızda Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin, yönergelerimizi artık ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Google, sitenize işaret eden yapay, yanıltıcı veya aldatıcı bağlantı düzeni algılamıştır. Google arama sonuçlarının sıralamasını etkilemek amacıyla bağlantı satın almak veya bağlantı düzenlerine katılmak spam politikalarımıza aykırıdır. Bu, sitenizin bir kısmının veya tamamının manuel işlem almasına neden olabilir.
+Matt Cutts and Alex explain the "Unnatural links to your site" manual action.
+Önerilen işlemler
+=================
+Öncelikle Google'ın bağlantı spam'i politikasını inceleyin.
+Daha sonra, ihlalleri tanımlamak ve düzeltmek için aşağıdaki adımları uygulayın:
+Search Console'dan sitenizin bağlantılarının bir listesini indirin. Bağlantılarınızı ana makine adına göre (En çok bağlantı veren siteler > Dışa aktar) veya kronolojik sırada (Bağlantı raporu > Harici bağlantıları dışa aktar > Son bağlantılar) düzenlenmiş olarak indirebilirsiniz.
+Bu listede, bağlantı spam'i politikamızı ihlal eden bağlantıların olup olmadığını kontrol edin. Liste genişse size en çok bağlantı oluşturan sitelere veya en son oluşturulan bağlantılara (son birkaç ay içinde) bakarak başlayın.
+Spam politikalarımızı ihlal eden bağlantılar için söz konusu sitenin sahibi ile iletişim kurun ve bağlantıları kaldırmasını isteyin veya bir rel=”nofollow” ya da daha belirli bir özellik ekleyerek bunların PageRank'i geçirmesini engelleyin.
+Kaldırılmasını sağlayamadığınız bağlantıları reddetmek için Search Console'daki Bağlantıları reddetme aracını kullanın. Reddetme aracının yanlış şekilde kullanıldığını sık sık görüyoruz. Dolayısıyla aracı kullanırken aşağıdaki noktaları göz önünde bulundurun:
+        
+Bir geri bağlantının kaldırılmasını sağlayabiliyorsanız öncelikle bağlantıyı kaldırmaya yönelik iyi niyetli çabada bulunun. Tüm geri bağlantıların incelenmeden reddetme dosyasına eklenmesi, iyi niyetli çaba olarak kabul edilmez ve yeniden değerlendirme isteğinizin başarılı olması için yeterli olmaz.
+Sitenize yönelik aynı alan adından gelen birden çok bağlantı varsa size kolaylık sağlaması için reddetme dosyasında "domain:" operatörünü kullanın.
+Sitenize yönelik organik bağlantıları reddetmediğinizden emin olun.
+Kaldırmaya çalışmadan tüm geri bağlantıları sadece reddetmek, isteğinizin de reddedilmesine neden olabilir.
+Bir geri bağlantının kaldırılmasını sağlayabiliyorsanız öncelikle bağlantıyı kaldırmaya yönelik iyi niyetli çabada bulunun. Tüm geri bağlantıların incelenmeden reddetme dosyasına eklenmesi, iyi niyetli çaba olarak kabul edilmez ve yeniden değerlendirme isteğinizin başarılı olması için yeterli olmaz.
+Sitenize yönelik aynı alan adından gelen birden çok bağlantı varsa size kolaylık sağlaması için reddetme dosyasında "domain:" operatörünü kullanın.
+Sitenize yönelik organik bağlantıları reddetmediğinizden emin olun.
+Kaldırmaya çalışmadan tüm geri bağlantıları sadece reddetmek, isteğinizin de reddedilmesine neden olabilir.
+Yapay bağlantıları kaldırdığınızda veya reddettiğinizde Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin. İsteğinizi işleme koymamıza yardımcı olmak için kaldırdığınız bağlantılarla ilgili dokümanları ve kaldıramadığınız bağlantıların bir açıklamasını belirtin.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin, spam politikalarımızı artık ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Google, sitenize yapay, yanıltıcı veya aldatıcı nitelikte bir giden bağlantılar düzeni algılamıştır. Google arama sonuçlarının sıralamasını etkilemek amacıyla bağlantı satın almak veya bağlantı düzenlerine katılmak Google'ın spam politikalarına aykırıdır.
+Önerilen işlemler
+=================
+Öncelikle Google'ın bağlantı spam'i politikasını inceleyin.
+Daha sonra, sitenizdeki ihlalleri tanımlamak ve düzeltmek için aşağıdaki adımları uygulayın:
+Sitenizdeki ücretli bağlantıları veya bağlantı spam'i politikamızı ihlal ettiği anlaşılan bağlantıları (ör. aşırı bağlantı takasları) belirleyin.
+Bu bağlantıları ya kaldırın ya da PageRank'i geçirmeyecekleri şekilde değiştirin. Örneğin, bir rel = ”nofollow” veya daha belirli bir özellik ekleyerek ya da bunları robots.txt tarafından engellenen sayfa üzerinden yönlendirin.
+Sitenizin artık spam politikalarımızı ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin. Kaldırdığınız kötü içeriklere ve eklediğiniz iyi içeriklere örnekler verin.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin, spam politikalarımızı artık ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Google sitenizde düşük kalitede veya yüzeysel içeriğe sahip sayfalar algılamıştır. Genellikle derinliği olmayan, çok az değer katan ya da hiç katmayan sayfalara ilişkin yaygın örneklerden birkaçı:
+Düşük etkili iştirak sayfaları
+Diğer kaynaklardan alınan içerik. Örneğin: Toplama içerik veya düşük kalitede misafir blogu yayınları
+Köprüler
+Bu teknikler, kullanıcılara yeteri kadar benzersiz veya değerli içerik sağlamaz ve spam politikalarımızı ihlal eder.
+Matt Cutts explains the "Thin Content with little or no added value" manual action.
+Önerilen işlemler
+=================
+Öncelikle spam politikalarımızın aşağıdaki bölümlerini inceleyin:
+Düşük etkili iştirak sayfaları
+Toplama içerik
+Köprüler
+Daha sonra, sitenizdeki ihlalleri tanımlamak ve düzeltmek için aşağıdaki adımları uygulayın:
+Sitenizde, başka bir yerde bulunan içeriğin kopyalarının olup olmadığını kontrol edin.
+Sitenizdeki iştirak bağlantılarında düşük etkili içerik bulunan sayfalar olup olmadığını kontrol edin.
+Sitenizde köprü sayfalar olup olmadığını kontrol edin.
+Sitenizde bu tür içeriklerin herhangi biri varsa sitenizin kullanıcılara önemli bir katma değer sağlayıp sağlamadığını düşünün. 
+İpucu: Sitenizi geliştirecek fikirler edinmek için, sitenizle bağlantılı olmayan gerçek kişilerden, arkadaşlarınızdan veya ailenizden sitenizi kullanmalarını veya eleştirmelerini isteyebilirsiniz.
+Web sitenizi, kullanıcılarınız için önemli değer sağlayacak bir hale getirin.
+Sitenizin artık spam politikalarımızı ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin. Kaldırdığınız kötü içeriklere ve eklediğiniz iyi içeriklere örnekler verin.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin, spam politikalarımızı artık ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Siteniz kullanıcılara, Google'a gösterdiğinden farklı sayfalar gösteriyor veya kullanıcıları, Google'ın gördüğünden farklı bir sayfaya yönlendiriyor olabilir. Gizleme ve gizli yönlendirmeler Google'ın spam politikalarına aykırıdır.
+
+Abonelik ve ödeme duvarlı içerik: Yayıncılar, Google'ın ödeme duvarlı içeriklerle, gizleme yapan (Googlebot'a farklı kullanıcıya farklı sunulan) içeriği ayırmasına yardımcı olmak için ödeme duvarlı içeriklerini yapılandırılmış veri içinde sunmalıdır.
+Önerilen işlemler
+=================
+Öncelikle Google'ın gizleme ve gizli yönlendirmeler ile ilgili spam politikalarını inceleyin.
+Daha sonra, sitenizdeki ihlalleri tanımlamak ve düzeltmek için aşağıdaki adımları uygulayın:
+Sitenizin sorundan etkilenen alanındaki sayfaları getirmek için Search Console'daki URL Denetleme aracını kullanın.
+Google tarafından getirilen içeriği, siteyi ziyaret eden bir gerçek kullanıcının (sizin) gördüğü içerikle karşılaştırın.
+İçerik farklıysa sitenizin Google'a ve kullanıcılara farklı içerik sunan kısmını tanımlayın ve kaldırın. Bu, sitenizin sunucudaki kodunu gözden geçirmenizi gerektirir.
+Sitenizde, kullanıcıları gitmeyi bekledikleri yerden farklı bir yere yönlendiren URL'lerin olup olmadığını kontrol edin.
+Sitenizde koşullu yönlendirme yapan; örneğin, yalnızca Google aramadan gelen kullanıcıları veya yalnızca belirli bir IP adresi aralığından gelen kullanıcıları yönlendiren URL'lerin olup olmadığını kontrol edin.
+Siteniz kullanıcıları bu yolların herhangi biriyle yönlendiriyorsa sitenizin bu yönlendirmeleri oluşturan bölümünü tanımlayıp kaldırın. Bu, sitenizin sunucudaki kodunu gözden geçirmenizi gerektirir.
+İpucu: Bu tür yönlendirmeler genellikle JavaScript'te veya .htaccess dosyanıza yazılır. Ayrıca, içerik yönetimi sisteminizi ve eklentileri de kontrol edebilirsiniz.
+Sitenizin artık spam politikalarımızı ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin, spam politikalarımızı artık ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Bu sitede, ölçeklendirilmiş içeriğin kötüye kullanımı, gizleme ve/veya Google'ın spam politikalarının tekrar tekrar ya da ağır bir şekilde ihlal edilmesi gibi saldırgan spam tekniklerinin kullanıldığı anlaşılıyor.
+Önerilen işlemler
+=================
+Sitenizi güncelleyerek Google'ın spam politikalarına uygun hale getirin.
+Sitenizin artık spam politikalarımızı ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin. Kaldırdığınız kötü içeriklere ve eklediğiniz iyi içeriklere örnekler verin.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin, spam politikalarımızı artık ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Site resimlerinizin bir kısmı, Google’ın arama sonuçlarında sitenizde görüntülendiklerinden farklı görüntüleniyor olabilir. Gizleme gerçek kullanıcılara sunulan içeriğin, arama motorlarına sunulandan farklı olmasıdır. Gizleme, kullanıcılarımıza beklediklerinden farklı sonuçlar sağladığı için Google'ın spam politikalarının bir ihlali olarak kabul edilir. Silikleştirilmiş resimler ve yanlış eşleştirilmiş küçük resimler kullanıcıya aradığı resmi sunmayacağından, resim gizleme Google görsel arama sonuçları için kötü bir kullanıcı deneyimi sağlayabilir.
+Gizlenmiş resim örnekleri
+Burada, resim gizleme davranışına ilişkin bazı örnekler bulabilirsiniz:
+Google'a sunulan resimlerin, başka bir resimle (örneğin, bir metin bloğuyla bir resmi engelleme) silikleştirilmesi.
+Google'a sunulan resimlerin, sayfayı ziyaret eden kullanıcılara sunulan resimlerden farklı olması.
+Google arama sonuçlarında resimleri engellemeniz gerekiyorsa aşağıda açıklanan yöntemi kullanın.
+Önerilen işlemler
+=================
+Sitenizin, hem Google arama sonuçlarında ve hem de sitenizdeki kullanıcılara tam olarak aynı resimleri gösterdiğinden emin olun. Gizleme, yalnızca aşağıda ayrıntılı olarak açıklandığı gibi görsel arama satır içi bağlantısının devre dışı bırakılması durumunda kabul edilebilir.
+Sitenizdeki resimlerin doğrudan sitenizde veya Google'ın arama sonuçlarında tamamen aynı göründüğünden emin olduğunuzda, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin, spam politikalarımızı artık ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+
+Arama sonuçlarında bir resmi en küçük boyutuna getirme veya engelleme
+Google arama sonuçlarında tam boyutlu resmin görünmesini önlemek için satır içi bağlantıyı devre dışı bırakın.
+Resmin arama sonuçlarında hiç görünmemesini sağlamak için bu adımları uygulayın.
+
+Satır içi bağlantı oluşturmayı devre dışı bırakmak için:
+Resminiz istendiğinde, istekteki HTTP yönlendiren üst bilgisini inceleyin.
+İstek bir Google alanından geliyorsa HTTP 200 veya 204 ile yanıtlayın ve içerik sağlamayın.
+Google sayfanızı taramaya devam eder ve resmi görür, ancak arama sonuçlarında tarama sırasında oluşturulan bir küçük resmi görüntüler. Bu devre dışı bırakma işlemini istediğiniz zaman gerçekleştirebilirsiniz ve bir web sitesinin resimlerinin yeniden işlenmesini gerektirmez. Bu davranış, resim gizleme olarak kabul edilmez ve manuel işlemle sonuçlanmaz.
+Sayfalarınızdan bazıları Google'ın spam politikalarınca izin verilmeyen gizli metin veya anahtar kelime doldurma tekniklerini içeriyor olabilir.
+
+Önerilen işlemler
+=================
+Öncelikle Google'ın gizli metin ve anahtar kelime doldurma ile ilgili spam politikalarını inceleyin.
+Daha sonra, sitenizdeki ihlalleri tanımlamak ve düzeltmek için aşağıdaki adımları uygulayın:
+Tarayıcımızın görebildiği, ancak siteyi ziyaret eden bir gerçek kullanıcının (sizin) göremediği içeriği kontrol etmek için Search Console'daki URL Denetleme aracını kullanın.
+Web sayfasının arka planıyla aynı veya benzer renge sahip metin olup olmadığını kontrol edin.
+İpucu: Bu tür metinleri genellikle Ctrl + A veya Command-A tuşlarına basıp sayfadaki tüm metni seçerek ortaya çıkarabilirsiniz.
+CSS stili veya konumlandırması kullanılarak gizlenmiş metinlerin olup olmadığını kontrol edin.
+Tüm gizli metinleri kaldırın veya arama motoru tarayıcımız ve gerçek kullanıcılar tarafından da eşit ölçüde keşfedilebilmesi için yeniden biçimlendirin.
+Herhangi bir bağlam olmadan tekrar eden kelimelerden oluşmuş listelerin veya paragrafların olup olmadığını kontrol edin.
+<title> etiketlerinde ve alt metninde yinelenen kelime dizelerinin olup olmadığını kontrol edin.
+Bu tür kelimeleri veya diğer anahtar kelime doldurma örneklerini kaldırın.
+Sitenizin artık spam politikalarımızı ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin, spam politikalarımızı artık ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+AMP sürümü ile standart web sayfası içerikleri farklı.
+AMP sürümünün içeriği standart web sayfasının içeriği ile aynı olmalıdır. Metnin aynı olması gerekmez, ancak konu aynı olmalıdır ve kullanıcılar hem AMP sayfasında hem de standart sayfada aynı görevleri gerçekleştirebilmelidir.
+Bu manuel işlemden etkilenen AMP sayfaları Google Arama'da gösterilmez; bunun yerine standart sayfa gösterilir.
+Önerilen işlemler
+=================
+AMP'nin doğru standart web sayfasını referans aldığından emin olun.
+AMP'nin ve standart sayfanın genel içeriklerinin aynı olduğundan emin olun.
+Hem AMP hem de standart sayfa için URL Denetleme aracını kullanarak Google'ın sayfaları kullanıcılarla aynı şekilde görüntülediğinden emin olun. Bir robots.txt dosyası, sayfalardan birinde önemli kaynakları engellediğinde uyuşmazlık ortaya çıkabilir. Engellenen kaynaklar da URL Denetleme aracında gösterilir.
+AMP'niz ve standart sayfalarınız temelde aynıysa Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin, spam politikalarımızı artık ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Bu sitedeki bazı sayfalar mobil cihaz kullanıcılarını, arama motoru tarayıcılarının kullanımına sunulmayan bir içeriğe yönlendirmektedir. Bu gizli yönlendirmeler Google spam politikalarına aykırıdır. Kullanıcılarımıza kaliteli arama sonuçları sağlamak amacıyla Google Arama Kalitesi ekibi, bu tür siteler hakkında, URL'lerin dizinimizden kaldırılmasını da içeren çeşitli işlemler yapabilir.
+Genel Bakış
+===========
+Çoğu durumda, farklı cihazlarda birbirinden biraz farklı içeriğin gösterilmesi sorun oluşturmaz. Örneğin, akıllı telefon ekranlarının daha küçük olan alanını optimize etmek için içeriğin bir bölümünde (ör. resimler) değişiklik yapılabilir. Benzer bir şekilde, yalnızca mobil yönlendirmelerde, mobil kullanıcıları mobil deneyimlerini iyileştirmek amacıyla yönlendirmek (örneğin, mobil kullanıcıları example.com/url1 adresinden m.example.com/url1 adresine yönlendirmek) genellikle kullanıcıların yararına olur. Ancak, mobil kullanıcıları gizli bir şekilde farklı bir içeriğe yönlendirmek kullanıcı deneyimi açısından kötüdür.
+
+Gizli mobil yönlendirmeler, site sahibi tarafından bilinçli olarak oluşturmuş olabilir. Bununla birlikte, yalnızca mobil cihazlarda görülen gizli yönlendirmelerin site sahibinin bilgisi dışında gerçekleştiği durumlarla da karşılaşılmaktadır. Aşağıda, gizli mobil yönlendirmelere neden olabilecek yapılandırma örnekleri gösterilmiştir:
+Mobil kullanıcılar için yönlendirme kuralları oluşturan kod ekleme
+Mobil kullanıcıları yönlendiren reklamları görüntülemek ve bu tür içerikten para kazanmak için komut dosyası veya öğe kullanma
+Bilgisayar korsanları tarafından eklenen ve mobil kullanıcıları kötü amaçlı sitelere yönlendiren komut dosyası veya öğe
+Önerilen işlemler
+=================
+Bu davranışı kasıtlı olarak gerçekleştirmiyorsanız:
+
+Sitenizin saldırıya uğramadığından emin olun
+Google'ın saldırıya uğramış olduğunuzu düşünüp düşünmediğini görmek için Güvenlik Sorunları raporunu kontrol edin.
+
+Sitenizdeki üçüncü taraf komut dosyalarını/öğelerini denetleyin
+Siteniz saldırıya uğramadıysa biraz zaman ayırıp yönlendirmelere üçüncü taraf komut dosyalarının veya öğelerinin neden olup olmadığını araştırmanızı öneririz. Şu adımları uygulayabilirsiniz:
+
+Kontrolü sizde olmayan üçüncü taraf komut dosyalarını veya öğelerini, yönlendirme sayfalarından tek tek kaldırın.
+Her komut dosyasını veya öğeyi kaldırdıktan sonra, yeniden yönlendirmenin durup durmadığını görmek için sitenizin davranışını bir mobil cihazda veya Chrome mobil emülatöründe (ya da başka bir emülatörde) kontrol edin.
+Gizli yönlendirmeden belirli bir komut dosyasının veya öğenin sorumlu olduğunu düşünüyorsanız bunu sitenizden kaldırmayı ve komut dosyasının veya öğenin sağlayıcısıyla birlikte hata ayıklama çalışması yaparak sorunu çözmeyi düşünebilirsiniz.
+Sitenizin saldırıya uğramadığından emin olun
+Google'ın saldırıya uğramış olduğunuzu düşünüp düşünmediğini görmek için Güvenlik Sorunları raporunu kontrol edin.
+Google'ın saldırıya uğramış olduğunuzu düşünüp düşünmediğini görmek için Güvenlik Sorunları raporunu kontrol edin.
+Sitenizdeki üçüncü taraf komut dosyalarını/öğelerini denetleyin
+Siteniz saldırıya uğramadıysa biraz zaman ayırıp yönlendirmelere üçüncü taraf komut dosyalarının veya öğelerinin neden olup olmadığını araştırmanızı öneririz. Şu adımları uygulayabilirsiniz:
+
+Kontrolü sizde olmayan üçüncü taraf komut dosyalarını veya öğelerini, yönlendirme sayfalarından tek tek kaldırın.
+Her komut dosyasını veya öğeyi kaldırdıktan sonra, yeniden yönlendirmenin durup durmadığını görmek için sitenizin davranışını bir mobil cihazda veya Chrome mobil emülatöründe (ya da başka bir emülatörde) kontrol edin.
+Gizli yönlendirmeden belirli bir komut dosyasının veya öğenin sorumlu olduğunu düşünüyorsanız bunu sitenizden kaldırmayı ve komut dosyasının veya öğenin sağlayıcısıyla birlikte hata ayıklama çalışması yaparak sorunu çözmeyi düşünebilirsiniz.
+Siteniz saldırıya uğramadıysa biraz zaman ayırıp yönlendirmelere üçüncü taraf komut dosyalarının veya öğelerinin neden olup olmadığını araştırmanızı öneririz. Şu adımları uygulayabilirsiniz:
+Kontrolü sizde olmayan üçüncü taraf komut dosyalarını veya öğelerini, yönlendirme sayfalarından tek tek kaldırın.
+Her komut dosyasını veya öğeyi kaldırdıktan sonra, yeniden yönlendirmenin durup durmadığını görmek için sitenizin davranışını bir mobil cihazda veya Chrome mobil emülatöründe (ya da başka bir emülatörde) kontrol edin.
+Gizli yönlendirmeden belirli bir komut dosyasının veya öğenin sorumlu olduğunu düşünüyorsanız bunu sitenizden kaldırmayı ve komut dosyasının veya öğenin sağlayıcısıyla birlikte hata ayıklama çalışması yaparak sorunu çözmeyi düşünebilirsiniz.
+Bu davranışı kasıtlı olarak gerçekleştiriyorsanız: Sayfalarınızı düzeltin.
+Sayfalarınızı bir akıllı telefonla veya bir mobil cihaz emülatörüyle Google arama sonuçlarından ziyaret ederek düzeltme işleminizi onaylayın.
+Sitenizin tüm sayfalarındaki sorunlar düzeltildiğinde, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin, spam politikalarımızı artık ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+İleride olabilecek gizli mobil yönlendirmeleri önleme
+=====================================================
+Kendi kullanıcılarınızın bilginiz dışında yönlendirilmesi riskini azaltmak için kullanıcı trafiğini işleme yöntemleri konusunda şeffaf olan reklamverenleri seçtiğinizden emin olun. İnternet reklamcılığı alanında güven tesis etmek istiyorsanız reklam ağlarına katılırken sektör genelinde geçerli olan en iyi uygulamaları araştırmanız gerekir. Örneğin, Trustworthy Accountability Group’un (Interactive Advertising Bureau) Inventory Quality Guidelines (Envanter Kalitesi Yönergeleri) başlamak için iyi bir yerdir. Yüksek kaliteli kullanıcı deneyimi sağlayan mobil çözümlerle içeriğinizden para kazanmanın birçok yolu vardır. Bunları kullandığınızdan emin olun.
+Sitenizde gizli mobil yönlendirme olup olmadığını kontrol etmek için aşağıdaki adımları gerçekleştirin:
+Akıllı telefonunuzdan sitenize gittiğinizde yönlendirilip yönlendirilmediğinizi kontrol edin
+Google arama sonuçlarındaki sayfalarınızı akıllı telefonla ziyaret ederek sitenizin mobil kullanıcı deneyimini kontrol etmenizi öneririz. Masaüstü tarayıcılardaki mobil emülasyon özelliği, hata ayıklama sırasında birçok farklı cihaz için testler yapabilmenizi sağladığından yararlı olur. Örneğin, sayfaları doğrudan Chrome, Firefox veya Safari tarayıcınızdan bir mobil cihaz gibi görüntüleyebilirsiniz (Safari için "Show Develop menu in menu bar" (Menü çubuğunda Geliştirme menüsünü göster) özelliğini etkinleştirdiğinizden emin olun).
+Google arama sonuçlarındaki sayfalarınızı akıllı telefonla ziyaret ederek sitenizin mobil kullanıcı deneyimini kontrol etmenizi öneririz. Masaüstü tarayıcılardaki mobil emülasyon özelliği, hata ayıklama sırasında birçok farklı cihaz için testler yapabilmenizi sağladığından yararlı olur. Örneğin, sayfaları doğrudan Chrome, Firefox veya Safari tarayıcınızdan bir mobil cihaz gibi görüntüleyebilirsiniz (Safari için "Show Develop menu in menu bar" (Menü çubuğunda Geliştirme menüsünü göster) özelliğini etkinleştirdiğinizden emin olun).
+Kullanıcılarınızı dinleyin
+Kullanıcılarınız, sitenizi sizden farklı şekillerde görebilir. Kullanıcı şikayetlerine dikkat etmek her zaman için önemlidir. Bu şekilde, mobil kullanıcı deneyimiyle ilgili sorunların farkına varabilirsiniz.
+Kullanıcılarınız, sitenizi sizden farklı şekillerde görebilir. Kullanıcı şikayetlerine dikkat etmek her zaman için önemlidir. Bu şekilde, mobil kullanıcı deneyimiyle ilgili sorunların farkına varabilirsiniz.
+Mobil kullanıcılarınızı sitenizin analiz verilerinden izleyin
+Olağandışı mobil kullanıcı etkinliği, web sitenizin analiz verilerindeki bazı verilere bakılarak tespit edilebilir. Örneğin, mobil kullanıcılarınızın sitenizde harcadığı ortalama süreye göz atın: Yalnızca mobil kullanıcılarınız aniden sitenizde önceden harcadıklarından çok daha az zaman harcamaya başlarsa mobil yönlendirmelerle ilgili bir sorun olabilir.
+Mobil kullanıcı etkinliğinizdeki büyük değişiklikleri izlemeniz, gizli mobil yönlendirmeleri proaktif bir şekilde tanımlamanızda yardımcı olabilir. Mobil kullanıcılarınızın sitenizde harcadığı ortalama sürede veya mobil kullanıcıların sayısında önemli düşüşler olursa sizi uyaracak Google Analytics uyarıları ayarlayabilirsiniz. Bu uyarılar, mobil gizli yönlendirmelerinizin olduğu anlamına gelmez ancak en azından araştırmaya değecek bir durumu işaret edebilir.
+Olağandışı mobil kullanıcı etkinliği, web sitenizin analiz verilerindeki bazı verilere bakılarak tespit edilebilir. Örneğin, mobil kullanıcılarınızın sitenizde harcadığı ortalama süreye göz atın: Yalnızca mobil kullanıcılarınız aniden sitenizde önceden harcadıklarından çok daha az zaman harcamaya başlarsa mobil yönlendirmelerle ilgili bir sorun olabilir.
+Mobil kullanıcı etkinliğinizdeki büyük değişiklikleri izlemeniz, gizli mobil yönlendirmeleri proaktif bir şekilde tanımlamanızda yardımcı olabilir. Mobil kullanıcılarınızın sitenizde harcadığı ortalama sürede veya mobil kullanıcıların sayısında önemli düşüşler olursa sizi uyaracak Google Analytics uyarıları ayarlayabilirsiniz. Bu uyarılar, mobil gizli yönlendirmelerinizin olduğu anlamına gelmez ancak en azından araştırmaya değecek bir durumu işaret edebilir.
+Google Haberler ve/veya Keşfet içerik politikalarını ihlal ettiniz. Aşağıdaki bölümlerde ihlal türü açıklanmaktadır.
+Sayfalarınızı inceleyin ve tehlikeli içeriği kaldırarak politikaya uygun olacak şekilde güncelleyin. (Haberler politikası / Keşfet politikası)
+Sitenizin artık politikalarımızı ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin ve düzeltilen uygulamaların geçmişi ile yeni yazım politikaları ve yayın kurulu dahil olmak üzere değiştirilen editoryal uygulamalarının kanıtlarını sağlayın.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin artık politikalarımızı ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Sitenizi inceleyip resmi makamlarla ve siyasi çıkar gruplarıyla finansal veya başka türden anlamlı ilişkileri açıkça paylaşacak şekilde güncelleyin. Sitenizin analiz, içerik yönetimi ve e-ticaret sistemlerine kimlerin erişimi olduğunu inceleyebilir ve bu tarafların sitenizde paydaş olarak belirtilip belirtilmeyeceğine karar verebilirsiniz.
+Sitenizin artık yönergelerimizi ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin ve düzeltilen uygulamaların geçmişi ile yeni yazım yönergeleri ve yayın kurulu dahil olmak üzere değiştirilen editoryal uygulamalarının kanıtlarını sağlayın.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin, yönergelerimizi artık ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Sitenizi inceleyip resmi makamlarla ve siyasi çıkar gruplarıyla finansal veya başka türden anlamlı ilişkileri açıkça paylaşacak şekilde güncelleyin. Sitenizin analiz, içerik yönetimi ve e-ticaret sistemlerine kimlerin erişimi olduğunu inceleyebilir ve bu tarafların sitenizde paydaş olarak belirtilip belirtilmeyeceğine karar verebilirsiniz.
+Sitenizin artık yönergelerimizi ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin ve düzeltilen uygulamaların geçmişi ile yeni yazım yönergeleri ve yayın kurulu dahil olmak üzere değiştirilen editoryal uygulamalarının kanıtlarını sağlayın.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin, yönergelerimizi artık ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Sitenizi inceleyip hiciv niteliğini net bir şekilde paylaşacak veya gerçek kimlikleri paylaşmanın kişisel güvenlik riski oluşturacağına dair kanıt sağlayacak şekilde güncelleyin.
+Sitenizin artık yönergelerimizi ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin ve düzeltilen uygulamaların geçmişi ile yeni yazım yönergeleri ve yayın kurulu dahil olmak üzere değiştirilen editoryal uygulamalarının kanıtlarını sağlayın.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin, yönergelerimizi artık ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Sitenizi inceleyip resmi makamlarla ve siyasi çıkar gruplarıyla finansal ve editoryal ilişkileri net bir şekilde açıklayacak veya bu açıklamanın kişisel güvenlik riski oluşturacağına dair kanıt sunacak şekilde güncelleyin.
+Sitenizin artık yönergelerimizi ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin ve düzeltilen uygulamaların geçmişi ile yeni yazım yönergeleri ve yayın kurulu dahil olmak üzere değiştirilen editoryal uygulamalarının kanıtlarını sağlayın.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin, yönergelerimizi artık ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Sitenizi inceleyip kuruluşunuzla ilgili doğru konumu veya konumları net bir şekilde açıklayacak veya bu açıklamanın kişisel güvenlik riski oluşturacağına dair kanıt sağlayacak şekilde güncelleyin.
+Sitenizin artık yönergelerimizi ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin ve düzeltilen uygulamaların geçmişi ile yeni yazım yönergeleri ve yayın kurulu dahil olmak üzere değiştirilen editoryal uygulamalarının kanıtlarını sağlayın.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin, yönergelerimizi artık ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Sayfalarınızı inceleyin ve taciz edici içeriği kaldırarak politikaya uygun olacak şekilde güncelleyin. (Haberler politikası / Keşfet politikası)
+Sitenizin artık politikalarımızı ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin ve düzeltilen uygulamaların geçmişi ile yeni yazım politikaları ve yayın kurulu dahil olmak üzere değiştirilen editoryal uygulamalarının kanıtlarını sağlayın.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin artık politikalarımızı ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Sayfalarınızı inceleyin ve nefret barındıran içeriği kaldırarak politikaya uygun olacak şekilde güncelleyin. (Haberler politikası / Keşfet politikası)
+Sitenizin artık politikalarımızı ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin ve düzeltilen uygulamaların geçmişi ile yeni yazım politikaları ve yayın kurulu dahil olmak üzere değiştirilen editoryal uygulamalarının kanıtlarını sağlayın.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin artık politikalarımızı ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Sayfalarınızı inceleyin ve medya içeriğini çarpıtmayı tanımlayarak, hiciv veya mizah amacını açıklayarak ya da vatandaşlık ve seçim sürecindeki katılımı veya güveni önemli ölçüde azaltan yanıltıcı içeriği kaldırarak politikaya uygun olacak şekilde güncelleyin. (Haberler politikası / Keşfet politikası)
+Sitenizin artık politikalarımızı ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin ve düzeltilen uygulamaların geçmişi ile yeni yazım politikaları ve yayın kurulu dahil olmak üzere değiştirilen editoryal uygulamalarının kanıtlarını sağlayın.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin artık politikalarımızı ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Sayfalarınızı inceleyin ve tıbbi içeriği kaldırarak politikaya uygun olacak şekilde güncelleyin. (Haberler politikası / Keşfet politikası)
+Sitenizin artık politikalarımızı ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin ve düzeltilen uygulamaların geçmişi ile yeni yazım politikaları ve yayın kurulu dahil olmak üzere değiştirilen editoryal uygulamalarının kanıtlarını sağlayın.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin artık politikalarımızı ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Sayfalarınızı inceleyin ve yanıltıcı içeriği kaldırarak Keşfet politikası'na uygun olacak şekilde güncelleyin.
+Sitenizin artık politikalarımızı ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin ve düzeltilen uygulamaların geçmişi ile yeni yazım politikaları ve yayın kurulu dahil olmak üzere değiştirilen editoryal uygulamalarının kanıtlarını sağlayın.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin artık politikalarımızı ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Sayfalarınızı inceleyin ve müstehcen içeriği kaldırarak politikaya uygun olacak şekilde güncelleyin. (Haberler politikası / Keşfet politikası)
+Sitenizin artık politikalarımızı ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin ve düzeltilen uygulamaların geçmişi ile yeni yazım politikaları ve yayın kurulu dahil olmak üzere değiştirilen editoryal uygulamalarının kanıtlarını sağlayın.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin artık politikalarımızı ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Sayfalarınızı inceleyin ve terör amaçlı içeriği kaldırarak politikaya uygun olacak şekilde güncelleyin. (Haberler politikası / Keşfet politikası)
+Sitenizin artık politikalarımızı ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin ve düzeltilen uygulamaların geçmişi ile yeni yazım politikaları ve yayın kurulu dahil olmak üzere değiştirilen editoryal uygulamalarının kanıtlarını sağlayın.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin artık politikalarımızı ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Sayfalarınızı inceleyin ve açık tarihler, yazarlar, yayın, yayıncı, yayın kurulu, içeriğin arkasındaki şirket veya ağ ve genel olmayan iletişim bilgileri sağlayarak Haberler politikası'na uyacak şekilde güncelleyin.
+Sitenizin artık politikalarımızı ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin ve düzeltilen uygulamaların geçmişi ile yeni yazım politikaları ve yayın kurulu dahil olmak üzere değiştirilen editoryal uygulamalarının kanıtlarını sağlayın.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin artık politikalarımızı ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Sayfanızı inceleyin ve şiddet ve kan barındıran içeriği kaldırarak politikaya uyacak şekilde güncelleyin. (Haberler politikası / Keşfet politikası)
+Sitenizin artık politikalarımızı ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin ve düzeltilen uygulamaların geçmişi ile yeni yazım politikaları ve yayın kurulu dahil olmak üzere değiştirilen editoryal uygulamalarının kanıtlarını sağlayın.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin artık politikalarımızı ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Sayfalarınızı inceleyin ve rahatsız edici içeriği kaldırarak politikaya uygun olacak şekilde güncelleyin. (Haberler politikası / Keşfet politikası)
+Sitenizin artık politikalarımızı ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda İnceleme İsteğinde Bulunun seçeneğini belirleyin ve düzeltilen uygulamaların geçmişi ile yeni yazım politikaları ve yayın kurulu dahil olmak üzere değiştirilen editoryal uygulamalarının kanıtlarını sağlayın.
+Yeniden değerlendirme isteği gönderdikten sonra sabırlı olmanızı ve Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin artık politikalarımızı ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Site itibarını kötüye kullanma
+==============================
+Google, sitenizin bir bölümünün site itibarını kötüye kullanma ile ilgili spam politikamızı ihlal ettiğini tespit etti.
+Geçerli manuel işlem, politikamızı ihlal eden içeriğin bulunduğu sayfaları etkilemektedir. Ancak, siteniz site itibarını kötüye kullanma politikamızı tekrarlanan bir şekilde ihlal ederse bu durum başka manuel işlemler yapılmasına yol açabilir ve/veya sitenizin genel sıralamasını etkileyebilir.
+Önerilen işlemler:
+Google'ın site itibarını kötüye kullanmayla ilgili spam politikasını inceledikten sonra sitenizdeki ihlalleri tespit edip düzeltmek için aşağıdaki adımları uygulayın:
+Sitenizde site itibarını kötüye kullanma politikasını ihlal eden üçüncü taraf içerik olup olmadığına bakın. Politikayı ihlal eden içeriğin göründüğü yeri daha iyi anlamak için Search Console'dan aldığınız mesajdaki (Search Console Mesajları merkezinde, Manuel İşlemler raporunda veya e-postayla) etkilenen sayfa kalıplarının listesini inceleyin.
+Politikayı ihlal eden içerikle ilgili ne yapacağınıza karar verin ve işlem yapın. Örneğin:
+
+
+İhlalde bulunan içeriği yeni bir alana taşıyın. Eski siteden yeni siteye bağlantı verirseniz bu bağlantılarda nofollow özelliğini kullanın. Yönlendirme, site itibarını kötüye kullanma sorununun tekrar ortaya çıkmasına neden olabileceğinden eski sitedeki URL'leri yeni siteye yönlendirmekten kaçının.
+
+
+Politikayı ihlal eden içeriğin Arama dizinine eklenmesini önlemek için noindex etiketini kullanın. noindex kuralınızın etkili olduğundan emin olmak için söz konusu içeriği robots.txt dosyanızla engellemeyin.
+
+
+İhlalde bulunan içeriği birinci taraf içerik olarak yeniden oluşturun.
+
+
+İhlalde bulunan içeriği sitenizden kaldırın.
+
+
+Dikkat: İçeriği, tanınmış başka bir siteye veya sitenizdeki bir alt alan adına/alt dizine taşımak temel sorunu çözmeyebilir:
+
+Alt alan adına/alt dizine taşıma, spam politikamızı atlatmaya yönelik bir girişim olarak görülebilir. Bu durum da Google Arama'da sitenize karşı daha kapsamlı işlemler yapılmasına neden olabilir.
+Tanınmış bir siteye taşıma, bu tanınmış sitenin kendi itibarı varsa ve üçüncü taraf niteliği değişmediyse söz konusu sitede site itibarını kötüye kullanma sorununa neden olabilir.
+Politikayı ihlal eden içerikle ilgili ne yapacağınıza karar verin ve işlem yapın. Örneğin:
+İhlalde bulunan içeriği yeni bir alana taşıyın. Eski siteden yeni siteye bağlantı verirseniz bu bağlantılarda nofollow özelliğini kullanın. Yönlendirme, site itibarını kötüye kullanma sorununun tekrar ortaya çıkmasına neden olabileceğinden eski sitedeki URL'leri yeni siteye yönlendirmekten kaçının.
+İhlalde bulunan içeriği yeni bir alana taşıyın. Eski siteden yeni siteye bağlantı verirseniz bu bağlantılarda nofollow özelliğini kullanın. Yönlendirme, site itibarını kötüye kullanma sorununun tekrar ortaya çıkmasına neden olabileceğinden eski sitedeki URL'leri yeni siteye yönlendirmekten kaçının.
+Politikayı ihlal eden içeriğin Arama dizinine eklenmesini önlemek için noindex etiketini kullanın. noindex kuralınızın etkili olduğundan emin olmak için söz konusu içeriği robots.txt dosyanızla engellemeyin.
+Politikayı ihlal eden içeriğin Arama dizinine eklenmesini önlemek için noindex etiketini kullanın. noindex kuralınızın etkili olduğundan emin olmak için söz konusu içeriği robots.txt dosyanızla engellemeyin.
+İhlalde bulunan içeriği birinci taraf içerik olarak yeniden oluşturun.
+İhlalde bulunan içeriği birinci taraf içerik olarak yeniden oluşturun.
+İhlalde bulunan içeriği sitenizden kaldırın.
+
+
+Dikkat: İçeriği, tanınmış başka bir siteye veya sitenizdeki bir alt alan adına/alt dizine taşımak temel sorunu çözmeyebilir:
+
+Alt alan adına/alt dizine taşıma, spam politikamızı atlatmaya yönelik bir girişim olarak görülebilir. Bu durum da Google Arama'da sitenize karşı daha kapsamlı işlemler yapılmasına neden olabilir.
+Tanınmış bir siteye taşıma, bu tanınmış sitenin kendi itibarı varsa ve üçüncü taraf niteliği değişmediyse söz konusu sitede site itibarını kötüye kullanma sorununa neden olabilir.
+İhlalde bulunan içeriği sitenizden kaldırın.
+Dikkat: İçeriği, tanınmış başka bir siteye veya sitenizdeki bir alt alan adına/alt dizine taşımak temel sorunu çözmeyebilir:
+Alt alan adına/alt dizine taşıma, spam politikamızı atlatmaya yönelik bir girişim olarak görülebilir. Bu durum da Google Arama'da sitenize karşı daha kapsamlı işlemler yapılmasına neden olabilir.
+Tanınmış bir siteye taşıma, bu tanınmış sitenin kendi itibarı varsa ve üçüncü taraf niteliği değişmediyse söz konusu sitede site itibarını kötüye kullanma sorununa neden olabilir.
+Sitenizin artık spam politikalarımızı ihlal etmediğinden emin olduktan sonra, Manuel İşlemler raporunda "İnceleme İsteğinde Bulunun" seçeneğini belirleyin.
+Yeniden değerlendirme isteği gönderdikten sonra Search Console hesabınıza gelecek inceleme durumu mesajını beklemenizi rica ederiz. Sitenizi incelediğimizde bunu size bildiririz. Sitenizin, yönergelerimizi artık ihlal etmediğini belirlersek manuel işlemi iptal ederiz.
+Manuel İşlemler raporu ile Güvenlik Sorunları raporu arasında ne fark vardır?
+=============================================================================
+Manuel İşlemler raporu ile Güvenlik Sorunları raporu arasında kavramsal açıdan örtüşen bazı noktalar vardır. Bu yüzden, bu iki rapor arasındaki farkın bilinmesi yararlı olacaktır:
+Manuel İşlemler raporunda, bir sayfa veya siteyle ilgili olarak manuel bir şekilde tespit edilen, çoğunlukla arama dizinimizi etkileme girişimlerinden oluşan, ancak kullanıcılar için çok tehlikeli olmayan sorunlar listelenir. Burada rapor edilen çoğu sorun, kullanıcıya görsel bir uyarıda bulunulmaksızın sayfaların veya sitenin sıralamasının düşürülmesine ya da arama sonuçlarından çıkarılmasına neden olur.
+Güvenlik Sorunları raporunda, sitenizin saldırıya uğradığını gösteren belirtiler veya sitenizdeki bir ziyaretçiye ya da ziyaretçinin bilgisayarına zarar verebilecek davranışlar listelenir: Örneğin, kimlik avı saldırıları veya kullanıcının bilgisayarına kötü amaçlı ya da istenmeyen yazılımların yüklenmesi. Bu sayfalar, arama sonuçlarında uyarı etiketiyle görüntülenir veya kullanıcı bu sayfaları ziyaret etmeyi denediğinde tarayıcı, uyarı amaçlı bir geçiş sayfası görüntüleyebilir.
+Bu size yardımcı oldu mu?
+=========================

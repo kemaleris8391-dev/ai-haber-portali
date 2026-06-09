@@ -1,0 +1,31 @@
+﻿2026-06-07T16:51:58.8444721Z ##[group]Run actions/setup-node@v4
+2026-06-07T16:51:58.8445350Z with:
+2026-06-07T16:51:58.8445679Z   node-version: 22
+2026-06-07T16:51:58.8446003Z   cache: npm
+2026-06-07T16:51:58.8446384Z   cache-dependency-path: web-portal/package-lock.json
+2026-06-07T16:51:58.8446825Z   always-auth: false
+2026-06-07T16:51:58.8447154Z   check-latest: false
+2026-06-07T16:51:58.8449943Z   token: ***
+2026-06-07T16:51:58.8450258Z env:
+2026-06-07T16:51:58.8450639Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:51:58.8451195Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+2026-06-07T16:51:58.8451771Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:51:58.8452278Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:51:58.8452767Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:51:58.8453261Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+2026-06-07T16:51:58.8453704Z ##[endgroup]
+2026-06-07T16:51:59.0342595Z Found in cache @ /opt/hostedtoolcache/node/22.22.3/x64
+2026-06-07T16:51:59.0349772Z ##[group]Environment details
+2026-06-07T16:51:59.4128033Z node: v22.22.3
+2026-06-07T16:51:59.4128532Z npm: 10.9.8
+2026-06-07T16:51:59.4128950Z yarn: 1.22.22
+2026-06-07T16:51:59.4130389Z ##[endgroup]
+2026-06-07T16:51:59.4154308Z [command]/opt/hostedtoolcache/node/22.22.3/x64/bin/npm config get cache
+2026-06-07T16:51:59.5239854Z /home/runner/.npm
+2026-06-07T16:51:59.6947556Z Cache hit for: node-cache-Linux-x64-npm-e92feef50625e15176fae98fc145f24d22be4e6629f2408b435dc5741b1b2354
+2026-06-07T16:52:00.8531489Z Received 96468992 of 148288613 (65.1%), 91.6 MBs/sec
+2026-06-07T16:52:01.2272008Z Received 148288613 of 148288613 (100.0%), 102.6 MBs/sec
+2026-06-07T16:52:01.2272664Z Cache Size: ~141 MB (148288613 B)
+2026-06-07T16:52:01.2301164Z [command]/usr/bin/tar -xf /home/runner/work/_temp/35d8e0bb-1232-4ff0-83c9-8a4bcef07a23/cache.tzst -P -C /home/runner/work/ai-haber-portali/ai-haber-portali --use-compress-program unzstd
+2026-06-07T16:52:02.5004326Z Cache restored successfully
+2026-06-07T16:52:02.5079425Z Cache restored from key: node-cache-Linux-x64-npm-e92feef50625e15176fae98fc145f24d22be4e6629f2408b435dc5741b1b2354

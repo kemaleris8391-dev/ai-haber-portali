@@ -423,23 +423,26 @@ def convert_to_optimized_webp(input_path, output_path, max_width=1200, quality=8
         print(f"  WebP dönüşüm hatası: {e}")
         return False
 
-def save_news_as_markdown(news_data, output_dir, images_dir, source_name, source_url, og_image=None):
-    """Haber verilerini Astro blog uyumlu Markdown olarak kaydeder."""
+def save_news_as_markdown(news_data, output_dir, images_dir, source_name, source_url, og_image=None, draft_only=False):
+    """Haber verilerini Astro blog uyumlu Markdown olarak kaydeder veya taslak olarak döner."""
     title = news_data["title"].replace('"', "'")
     content = news_data["content"]
     description = news_data["description"].replace('"', "'")
     keywords = news_data["keywords"]
-    category = news_data.get("category", "teknoloji").strip().lower()
+    category = news_data.get("category", "pc").strip().lower()
     
     # Kategori Sınırlama Koruyucusu (Category Safeguard)
     # Telegram/Bot taleplerinde veya AI halüsinasyonlarında izin verilmeyen kategoriler engellenir
-    ALLOWED_CATEGORIES = {"teknoloji", "oyun", "dizi-film", "kuantum-evreni"}
+    ALLOWED_CATEGORIES = {"plc", "pc", "endustriyel-makinalar", "oyun"}
     if category not in ALLOWED_CATEGORIES:
-        # 'bilim' veya türevleri gelirse otomatik olarak 'teknoloji'ye (Teknoloji & Bilim) yönlendirilir
-        if "bilim" in category or "science" in category:
-            category = "teknoloji"
+        if "plc" in category or "otomasyon" in category or "automation" in category:
+            category = "plc"
+        elif "tamir" in category or "bakim" in category or "repair" in category or "maintenance" in category or "makina" in category or "machinery" in category:
+            category = "endustriyel-makinalar"
+        elif "oyun" in category or "game" in category or "gaming" in category:
+            category = "oyun"
         else:
-            category = "teknoloji"
+            category = "pc"
     
     slug = slugify(title)
     date_str = datetime.now(TR_TZ).strftime("%Y-%m-%d")
@@ -521,6 +524,21 @@ sourceUrl: "{source_url}"
 {content}
 """
     
+    if draft_only:
+        print(f"Haber taslak olarak üretildi (Markdown dosyası oluşturulmadı): {slug}")
+        return {
+            "title": title,
+            "content": content,
+            "description": description,
+            "category": category,
+            "keywords": keywords,
+            "heroImage": astro_image_path,
+            "slug": slug,
+            "sourceName": source_name,
+            "sourceUrl": source_url,
+            "markdown_content": markdown_content
+        }
+
     # Markdown dosyasını kaydet
     os.makedirs(output_dir, exist_ok=True)
     file_path = os.path.join(output_dir, f"{slug}.md")
@@ -531,8 +549,8 @@ sourceUrl: "{source_url}"
     print(f"Haber Markdown dosyası oluşturuldu: {file_path}")
     return file_path
 
-def process_single_news(raw_news, config):
-    """Tek bir haberi Gemini ile işler, görselini üretir ve kaydeder."""
+def process_single_news(raw_news, config, draft_only=False):
+    """Tek bir haberi Gemini ile işler, görselini üretir ve kaydeder veya taslak olarak döner."""
     print(f"\nİşleniyor: {raw_news['title']}")
     
     try:
@@ -572,14 +590,19 @@ def process_single_news(raw_news, config):
         abs_images_dir = os.path.abspath(os.path.join(base_dir, images_dir))
         
         # 2. Markdown ve Görsel olarak kaydeder
-        save_news_as_markdown(
+        result = save_news_as_markdown(
             ai_data, 
             abs_output_dir, 
             abs_images_dir, 
             raw_news["source"], 
             raw_news["link"],
-            raw_news.get("og_image")
+            raw_news.get("og_image"),
+            draft_only=draft_only
         )
+        
+        if draft_only:
+            return True, result
+            
         return True, slugify(ai_data["title"])
     except Exception as e:
         return False, str(e)

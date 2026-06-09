@@ -1,0 +1,76 @@
+﻿2026-06-07T16:49:47.7449066Z ##[group]Run # Eğer force veya cleanup parametresi seçildiyse ilgili argümanı ekle
+2026-06-07T16:49:47.7450055Z [36;1m# Eğer force veya cleanup parametresi seçildiyse ilgili argümanı ekle[0m
+2026-06-07T16:49:47.7450615Z [36;1mif [ "false" = "true" ]; then[0m
+2026-06-07T16:49:47.7451069Z [36;1m  python backend-scripts/main.py --cleanup[0m
+2026-06-07T16:49:47.7451534Z [36;1melif [ "true" = "true" ]; then[0m
+2026-06-07T16:49:47.7451965Z [36;1m  python backend-scripts/main.py --force[0m
+2026-06-07T16:49:47.7452386Z [36;1melse[0m
+2026-06-07T16:49:47.7452737Z [36;1m  python backend-scripts/main.py[0m
+2026-06-07T16:49:47.7453125Z [36;1mfi[0m
+2026-06-07T16:49:47.7481397Z shell: /usr/bin/bash -e ***0***
+2026-06-07T16:49:47.7481805Z env:
+2026-06-07T16:49:47.7482208Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:49:47.7482792Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+2026-06-07T16:49:47.7483354Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:49:47.7483913Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:49:47.7484419Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:49:47.7484917Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+2026-06-07T16:49:47.7486933Z   GEMINI_API_KEYS: ***
+2026-06-07T16:49:47.7487721Z   PEXELS_API_KEY: ***
+2026-06-07T16:49:47.7488216Z   TELEGRAM_BOT_TOKEN: ***
+2026-06-07T16:49:47.7488593Z   TELEGRAM_CHAT_ID: ***
+2026-06-07T16:49:47.7498096Z   FIREBASE_SERVICE_ACCOUNT_JSON: ***
+2026-06-07T16:49:47.7498492Z ##[endgroup]
+2026-06-07T16:50:52.0629570Z /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages/google/cloud/firestore_v1/base_collection.py:317: UserWarning: Detected filter using positional arguments. Prefer using the 'filter' keyword argument instead.
+2026-06-07T16:50:52.0631448Z   return query.where(field_path, op_string, value)
+2026-06-07T16:51:57.3037516Z Firebase ortam değişkeni (JSON) ile başlatılıyor...
+2026-06-07T16:51:57.3038631Z Firestore zamanlayıcı ayarları güncellendi: ***'is_running': True***
+2026-06-07T16:51:57.3039603Z Tarama başlatılıyor. Tetikleme: Manuel (--force)
+2026-06-07T16:51:57.3040153Z Otonom temizlik kontrolü başlatılıyor...
+2026-06-07T16:51:57.3040708Z Otonom temizlik için henüz süre dolmadı. Kalan: 52 saat.
+2026-06-07T16:51:57.3041241Z Kara liste yüklendi: 374 adet engellenmiş link.
+2026-06-07T16:51:57.3041793Z Bugün+Dün haber başlığı sayısı: 22 (Tarihler: 2026-06-07)
+2026-06-07T16:51:57.3042311Z RSS beslemeleri taranıyor...
+2026-06-07T16:51:57.3042897Z Kaynak taranıyor: Beyazperde (https://www.beyazperde.com/rss/haberler.xml)
+2026-06-07T16:51:57.3043583Z Kaynak taranıyor: DonanimHaber (https://www.donanimhaber.com/rss/tum/)
+2026-06-07T16:51:57.3044194Z Kaynak taranıyor: IGN Turkiye (https://tr.ign.com/feed.xml)
+2026-06-07T16:51:57.3044780Z Kaynak taranıyor: Kayip Rihtim (https://kayiprihtim.com/feed/)
+2026-06-07T16:51:57.3045548Z Kaynak taranıyor: LOG (https://www.log.com.tr/feed/)
+2026-06-07T16:51:57.3046236Z Kaynak taranıyor: The Quantum Insider &raquo; Feed (https://thequantuminsider.com/feed/)
+2026-06-07T16:51:57.3046938Z Kaynak taranıyor: Webtekno (https://www.webtekno.com/rss.xml)
+2026-06-07T16:51:57.3047252Z 
+2026-06-07T16:51:57.3047618Z 🛡️ Katman 1 (Kara Liste): 88 adet haber kara listeden dolayı sessizce atlandı.
+2026-06-07T16:51:57.3047998Z 
+2026-06-07T16:51:57.3048347Z 🧠 Katman 3: 4 adet yeni aday haber için Gemma Semantik Doğrulama başlatılıyor...
+2026-06-07T16:51:57.3048976Z Bugün+Dün haber başlığı sayısı: 22 (Tarihler: 2026-06-07)
+2026-06-07T16:51:57.3049555Z Bilgi: API Anahtarı 1/8 kullanılıyor. (Baslangic: AIzaSyD15N...)
+2026-06-07T16:51:57.3050293Z Gemma ile yayın öncesi kural ve mükerrerlik analizi yapılıyor: Model=gemma-4-31b-it (Deneme 1/8)...
+2026-06-07T16:51:57.3051903Z 🔍 AI Filtresi (Mükerrer/Kopya) Elendi: 'Attack of Titan final oyunundan ilk fragman geldi' -> Gerekçe: Haberin konusu (Attack on Titan 3 fragmanı ve duyurusu), mevcut haberler listesindeki 'Attack on Titan 3 Duyuruldu: Destansı Finalin İlk Fragmanı Yayında!' başlığı ile semantik olarak aynıdır.
+2026-06-07T16:51:57.3054402Z ✅ AI Filtresi (Onaylandı): 'Marvel 1943: Rise of Hydra bu yıl da çıkmayacak' -> Gerekçe: Oyun dünyasıyla ilgili bir gelişmedir ve mevcut haberler arasında benzer bir içerik bulunmamaktadır.
+2026-06-07T16:51:57.3056323Z 🛡️ AI Filtresi (Politika Dışı) Elendi: 'Ortaçağ Manastırındaki Mezarlar Açıldı, Kanlı Sırlar Gün Yüzüne Çıktı' -> Gerekçe: Haber arkeoloji ve tarih odaklıdır; teknoloji, bilim, oyun veya geek kültürü gibi yayın politikası odak alanlarına girmemektedir.
+2026-06-07T16:51:57.3058492Z 🛡️ AI Filtresi (Politika Dışı) Elendi: 'Eleştirmenlerin Topa Tuttuğu Aksiyon Filmi Yıllar Sonra Dijitalde Yeni Bir Şans Buldu' -> Gerekçe: Standart bir aksiyon filminin dijital platforma eklenmesi haberi olup; bilim kurgu, fantastik veya oyun uyarlaması kategorisinde olmadığı için yayın politikasına uygun değildir.
+2026-06-07T16:51:57.3059859Z Gemma Semantik Doğrulama sonucunda 3 adet haber elendi.
+2026-06-07T16:51:57.3060393Z Haber listesi güncellendi: 4 -> 1
+2026-06-07T16:51:57.3060824Z Kara listeye 3 yeni link eklendi. Toplam: 377
+2026-06-07T16:51:57.3061099Z 
+2026-06-07T16:51:57.3061454Z 🖼️ Katman 4: Onaylanan 1 haberin orijinal görselleri (og:image) aranıyor...
+2026-06-07T16:51:57.3062061Z   [+] Görsel bulundu: Marvel 1943: Rise of Hydra bu ...
+2026-06-07T16:51:57.3062342Z 
+2026-06-07T16:51:57.3062603Z ✅ Toplam 1 adet yeni haber onaylandı ve işlenmeye hazır.
+2026-06-07T16:51:57.3063190Z 📊 Filtre Raporu: Kara Liste=88, Jaccard=0, Kara Listeye Yeni Eklenen=3
+2026-06-07T16:51:57.3063530Z 
+2026-06-07T16:51:57.3063712Z [1/1] Haber İşleniyor...
+2026-06-07T16:51:57.3063905Z 
+2026-06-07T16:51:57.3064171Z İşleniyor: Marvel 1943: Rise of Hydra bu yıl da çıkmayacak
+2026-06-07T16:51:57.3064751Z Bilgi: API Anahtarı 1/8 kullanılıyor. (Baslangic: AIzaSyD15N...)
+2026-06-07T16:51:57.3076203Z Haber özgünleştirme deneniyor: Model=gemma-4-31b-it
+2026-06-07T16:51:57.3077803Z Orijinal görsel indiriliyor: https://www.donanimhaber.com/images/images/haber/206531/src_340x1912xmarvel-1943-rise-of-hydra-tekrar-ertelendi.jpg
+2026-06-07T16:51:57.3079337Z   Görsel boyutlandırıldı: 1280x720 → 1200x675
+2026-06-07T16:51:57.3080166Z   WebP Optimizasyonu: 106KB → 84KB (-%21 tasarruf)
+2026-06-07T16:51:57.3080993Z Orijinal görsel başarıyla WebP'ye dönüştürüldü.
+2026-06-07T16:51:57.3082470Z Haber Markdown dosyası oluşturuldu: /home/runner/work/ai-haber-portali/ai-haber-portali/web-portal/src/content/blog/marvel-1943-rise-of-hydra-bekleyisi-uzuyor-cikis-tarihi-tekr.md
+2026-06-07T16:51:57.3083256Z 
+2026-06-07T16:51:57.3083582Z Akış Tamamlandı. 1 haberden 1 tanesi başarıyla yazıldı ve kaydedildi.
+2026-06-07T16:51:57.3084145Z Rebuilding posts index locally from workspace files...
+2026-06-07T16:51:57.3084724Z Success: Local posts index successfully written to Firestore. Total indexed: 450
+2026-06-07T16:51:57.3085877Z Firestore zamanlayıcı ayarları güncellendi: ***'last_run_time': 1780851116.609326, 'is_running': False***

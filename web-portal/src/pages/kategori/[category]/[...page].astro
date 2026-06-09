@@ -5,7 +5,7 @@ import Layout from '../../../layouts/Layout.astro';
 export async function getStaticPaths({ paginate }) {
   const allPosts = await getCollection('blog');
   const categories = [...new Set(allPosts.map(post => post.data.category).filter(Boolean))];
-  const defaultCategories = ['teknoloji', 'oyun', 'dizi-film', 'kuantum-evreni'];
+  const defaultCategories = ['plc', 'pc', 'endustriyel-makinalar', 'oyun'];
   const uniqueCategories = [...new Set([...defaultCategories, ...categories])];
   
   return uniqueCategories.flatMap(category => {
@@ -39,10 +39,10 @@ const formatDate = (date: Date) => {
 };
 
 const categoryTitles: Record<string, string> = {
-  'teknoloji': 'Teknoloji & Bilim Haberleri',
-  'oyun': 'Oyun Dünyası',
-  'dizi-film': 'Dizi & Film Dünyası',
-  'kuantum-evreni': 'Kuantum Evreni'
+  'plc': 'PLC',
+  'pc': 'PC',
+  'endustriyel-makinalar': 'Endüstriyel Makineler',
+  'oyun': 'Oyun'
 };
 
 const formatCategoryName = (cat: string) => {
@@ -57,10 +57,11 @@ const categoryTitle = categoryTitles[category] || `${formatCategoryName(category
     <header class="category-header">
       <h1 class="category-title">{categoryTitle}</h1>
       <p class="category-desc">
-        {category === 'teknoloji' && "Bilişim dünyası, yapay zeka, donanım, yazılım, bilimsel gelişmeler ve teknoloji devlerinden en yeni haberler."}
-        {category === 'oyun' && "PC, konsol, mobil oyun dünyasından son gelişmeler, güncellemeler ve oyun incelemeleri."}
-        {category === 'dizi-film' && "Popüler dizi ve sinema yapımları, vizyona girecek filmler ve son yayınlanan fragmanlar."}
-        {!['teknoloji', 'oyun', 'dizi-film'].includes(category) && `${formatCategoryName(category)} kategorisindeki en güncel gelişmeler, yapay zeka analizleri ve haberler.`}
+        {category === 'plc' && "PLC programlama, HMI paneller, servo ve step motorlar, endüstriyel sensörler ve otomasyon kontrolörleri."}
+        {category === 'pc' && "Kişisel bilgisayarlar, donanım incelemeleri, PC bileşenleri, overclock ve pratik donanım rehberleri."}
+        {category === 'endustriyel-makinalar' && "Fabrika makineleri, bakım ve tamir prosedürleri, endüstriyel CNC, hidrolik/pnömatik ve pano sistemleri."}
+        {category === 'oyun' && "PC ve konsol oyunları, donanım gereksinimleri, oyun sektörü gelişmeleri ve yapay zeka odaklı analizler."}
+        {!['plc', 'pc', 'endustriyel-makinalar', 'oyun'].includes(category) && `${formatCategoryName(category)} kategorisindeki en güncel gelişmeler, yapay zeka analizleri ve haberler.`}
       </p>
     </header>
 

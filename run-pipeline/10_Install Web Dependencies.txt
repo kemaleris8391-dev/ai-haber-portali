@@ -1,0 +1,19 @@
+﻿2026-06-07T16:52:02.5254162Z ##[group]Run cd web-portal
+2026-06-07T16:52:02.5254583Z [36;1mcd web-portal[0m
+2026-06-07T16:52:02.5254929Z [36;1mnpm ci[0m
+2026-06-07T16:52:02.5289197Z shell: /usr/bin/bash -e ***0***
+2026-06-07T16:52:02.5289609Z env:
+2026-06-07T16:52:02.5290018Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:52:02.5290605Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+2026-06-07T16:52:02.5291206Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:52:02.5291724Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:52:02.5292230Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:52:02.5292734Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+2026-06-07T16:52:02.5293187Z ##[endgroup]
+2026-06-07T16:52:05.7687598Z 
+2026-06-07T16:52:05.7698393Z added 264 packages, and audited 265 packages in 3s
+2026-06-07T16:52:05.7698991Z 
+2026-06-07T16:52:05.7699374Z 140 packages are looking for funding
+2026-06-07T16:52:05.7700181Z   run `npm fund` for details
+2026-06-07T16:52:05.7700589Z 
+2026-06-07T16:52:05.7700843Z found 0 vulnerabilities

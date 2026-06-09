@@ -1,0 +1,21 @@
+﻿2026-06-07T16:49:34.5815957Z ##[group]Run actions/setup-python@v5
+2026-06-07T16:49:34.5817614Z with:
+2026-06-07T16:49:34.5818891Z   python-version: 3.11
+2026-06-07T16:49:34.5820274Z   cache: pip
+2026-06-07T16:49:34.5821557Z   check-latest: false
+2026-06-07T16:49:34.5832500Z   token: ***
+2026-06-07T16:49:34.5833835Z   update-environment: true
+2026-06-07T16:49:34.5835420Z   allow-prereleases: false
+2026-06-07T16:49:34.5836901Z   freethreaded: false
+2026-06-07T16:49:34.5838284Z ##[endgroup]
+2026-06-07T16:49:34.7611937Z ##[group]Installed versions
+2026-06-07T16:49:34.7708471Z Successfully set up CPython (3.11.15)
+2026-06-07T16:49:34.7710916Z ##[endgroup]
+2026-06-07T16:49:34.9053048Z [command]/opt/hostedtoolcache/Python/3.11.15/x64/bin/pip cache dir
+2026-06-07T16:49:35.7215027Z /home/runner/.cache/pip
+2026-06-07T16:49:35.8946150Z Cache hit for: setup-python-Linux-x64-24.04-Ubuntu-python-3.11.15-pip-91959af7e228e74f1f130775d8c09938be2c7c7e95dd82fd732d3dab10104b9e
+2026-06-07T16:49:36.7920370Z Received 40120934 of 40120934 (100.0%), 51.0 MBs/sec
+2026-06-07T16:49:36.7921458Z Cache Size: ~38 MB (40120934 B)
+2026-06-07T16:49:36.7947152Z [command]/usr/bin/tar -xf /home/runner/work/_temp/dae0ec65-9785-40ee-85c6-10ff42d71417/cache.tzst -P -C /home/runner/work/ai-haber-portali/ai-haber-portali --use-compress-program unzstd
+2026-06-07T16:49:36.8917293Z Cache restored successfully
+2026-06-07T16:49:36.8950688Z Cache restored from key: setup-python-Linux-x64-24.04-Ubuntu-python-3.11.15-pip-91959af7e228e74f1f130775d8c09938be2c7c7e95dd82fd732d3dab10104b9e

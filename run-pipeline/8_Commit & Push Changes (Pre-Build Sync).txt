@@ -1,0 +1,25 @@
+﻿2026-06-07T16:51:57.6860517Z ##[group]Run git config --global user.name "kemaleris8391-dev"
+2026-06-07T16:51:57.6861136Z [36;1mgit config --global user.name "kemaleris8391-dev"[0m
+2026-06-07T16:51:57.6861676Z [36;1mgit config --global user.email "kemaleris8391@gmail.com"[0m
+2026-06-07T16:51:57.6862142Z [36;1mgit add .[0m
+2026-06-07T16:51:57.6862549Z [36;1mgit commit -m "Auto: yeni haberler eklendi [skip ci]"[0m
+2026-06-07T16:51:57.6863013Z [36;1mgit pull --rebase origin main[0m
+2026-06-07T16:51:57.6863428Z [36;1mgit push origin HEAD:refs/heads/main[0m
+2026-06-07T16:51:57.6891339Z shell: /usr/bin/bash -e ***0***
+2026-06-07T16:51:57.6891751Z env:
+2026-06-07T16:51:57.6892145Z   pythonLocation: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:51:57.6892709Z   PKG_CONFIG_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib/pkgconfig
+2026-06-07T16:51:57.6893261Z   Python_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:51:57.6893760Z   Python2_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:51:57.6894292Z   Python3_ROOT_DIR: /opt/hostedtoolcache/Python/3.11.15/x64
+2026-06-07T16:51:57.6894780Z   LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.11.15/x64/lib
+2026-06-07T16:51:57.6895457Z ##[endgroup]
+2026-06-07T16:51:57.7201359Z [main 41d906f] Auto: yeni haberler eklendi [skip ci]
+2026-06-07T16:51:57.7201936Z  2 files changed, 27 insertions(+)
+2026-06-07T16:51:57.7202682Z  create mode 100644 web-portal/public/images/news/marvel-1943-rise-of-hydra-bekleyisi-uzuyor-cikis-tarihi-tekr.webp
+2026-06-07T16:51:57.7203647Z  create mode 100644 web-portal/src/content/blog/marvel-1943-rise-of-hydra-bekleyisi-uzuyor-cikis-tarihi-tekr.md
+2026-06-07T16:51:57.9527061Z From https://github.com/kemaleris8391-dev/ai-haber-portali
+2026-06-07T16:51:57.9527889Z  * branch            main       -> FETCH_HEAD
+2026-06-07T16:51:57.9653973Z Current branch main is up to date.
+2026-06-07T16:51:58.8306218Z To https://github.com/kemaleris8391-dev/ai-haber-portali
+2026-06-07T16:51:58.8307023Z    052a3fc..41d906f  HEAD -> main

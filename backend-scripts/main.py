@@ -250,6 +250,7 @@ def main():
         print(f"\n[{len(pending_requests)}] adet bekleyen özel haber talebi işleniyor...")
         try:
             from ai_writer import research_topic_with_gemini, save_news_as_markdown, slugify
+            from telegram_notifier import send_pending_post_notification
             
             output_dir = config["settings"]["output_dir"]
             images_dir = config["settings"]["images_dir"]
@@ -269,35 +270,52 @@ def main():
                         raise ValueError("Gemini araştırma sonucunda boş veri döndü.")
                         
                     # Kategori belirleme yetkisi kullanıcıdadır veya AI'ın kısıtlı tahminindedir.
-                    # Eğer talepte (req) özellikle bir kategori belirtilmişse o kullanılır.
-                    # Belirtilmemişse AI'ın tahmin ettiği kategori (news_data.category) kullanılır.
-                    category = req.get("category") or news_data.get("category") or "teknoloji"
+                    category = req.get("category") or news_data.get("category") or "pc"
                     category = category.strip().lower()
                     
-                    # Kategori koruması (AI'ın yeni/izin verilmeyen kategori oluşturmasını engeller)
-                    ALLOWED_CATEGORIES = {"teknoloji", "oyun", "dizi-film", "kuantum-evreni"}
+                    # Kategori koruması
+                    ALLOWED_CATEGORIES = {"plc", "pc", "endustriyel-makinalar", "oyun"}
                     if category not in ALLOWED_CATEGORIES:
-                        category = "teknoloji"
+                        category = "pc"
                         
                     news_data["category"] = category
                     title = news_data.get("title", "Yeni Haber")
                     
-                    # 2. Markdown ve Görsel olarak kaydet
-                    save_news_as_markdown(
+                    # 2. Markdown ve Görsel olarak kaydet (TASLAK OLARAK)
+                    draft_post = save_news_as_markdown(
                         news_data, 
                         abs_output_dir, 
                         abs_images_dir, 
                         "Editörün Kalemi", 
-                        "https://aihaberler.web.app"
+                        "https://aihaberler.web.app",
+                        draft_only=True
                     )
+                    
+                    # Firestore'a ekle ve Telegram onayı gönder
+                    db = firebase_helper.init_firebase()
+                    pending_ref = db.collection("pending_posts").document()
+                    p_doc_id = pending_ref.id
+                    
+                    msg_id = send_pending_post_notification(
+                        title=draft_post["title"],
+                        summary=draft_post["description"],
+                        category=draft_post["category"],
+                        doc_id=p_doc_id
+                    )
+                    
+                    draft_post["id"] = p_doc_id
+                    draft_post["telegram_message_id"] = msg_id
+                    draft_post["status"] = "pending_approval"
+                    draft_post["created_at"] = time.time()
+                    
+                    pending_ref.set(draft_post)
                     
                     # 3. Firestore'da tamamlandı yap
                     firebase_helper.mark_custom_request_completed(doc_id)
                     
                     # 4. Raporlama
                     success_count += 1
-                    slug = slugify(title)
-                    success_news.append((f"[Özel Talep] {title}", slug))
+                    success_news.append((f"[Özel Talep] {title}", "taslak"))
                     
                 except Exception as e:
                     err_msg = f"Özel haber yazımı başarısız: {e}"
@@ -310,22 +328,41 @@ def main():
             
     # 6.2 RSS haberlerini işle
     
+    from telegram_notifier import send_pending_post_notification
     for idx, raw_news in enumerate(new_news, start=1):
         print(f"\n[{idx}/{len(new_news)}] Haber İşleniyor...")
         try:
-            success, result_val = process_single_news(raw_news, config)
-            if success:
+            success, draft_post = process_single_news(raw_news, config, draft_only=True)
+            if success and isinstance(draft_post, dict):
+                # Firestore'a ekle ve Telegram onayı gönder
+                db = firebase_helper.init_firebase()
+                pending_ref = db.collection("pending_posts").document()
+                p_doc_id = pending_ref.id
+                
+                msg_id = send_pending_post_notification(
+                    title=draft_post["title"],
+                    summary=draft_post["description"],
+                    category=draft_post["category"],
+                    doc_id=p_doc_id
+                )
+                
+                draft_post["id"] = p_doc_id
+                draft_post["telegram_message_id"] = msg_id
+                draft_post["status"] = "pending_approval"
+                draft_post["created_at"] = time.time()
+                
+                pending_ref.set(draft_post)
+                
                 success_count += 1
-                slug = result_val
-                success_news.append((raw_news.get("title", "Yeni Haber"), slug))
+                success_news.append((raw_news.get("title", "Yeni Haber"), "taslak"))
             else:
-                failed_news.append((raw_news.get("title", "Bilinmeyen Başlık"), result_val or "Yazım veya görsel üretim adımı başarısız oldu."))
+                failed_news.append((raw_news.get("title", "Bilinmeyen Başlık"), draft_post or "Yazım veya görsel üretim adımı başarısız oldu."))
         except Exception as e:
             err_msg = f"Haber işlenirken beklenmedik hata oluştu: {e}"
             print(err_msg)
             failed_news.append((raw_news.get("title", "Bilinmeyen Başlık"), err_msg))
             
-    print(f"\nAkış Tamamlandı. {len(new_news)} haberden {success_count} tanesi başarıyla yazıldı ve kaydedildi.")
+    print(f"\nAkış Tamamlandı. {len(new_news)} haberden {success_count} tanesi taslak olarak kaydedildi ve onaya sunuldu.")
     
     # 7. Sonuçları Kaydet ve Kilidi Kaldır
     # Haber üretimi başarılı olsun veya olmasın tarama yapıldı, last_run_time güncellenmeli
@@ -338,8 +375,8 @@ def main():
     # 8. Raporlama ve Hata Bildirimi (Telegram)
     report_msg = ""
     if success_news:
-        success_details = "\n".join([f"- <a href='https://aihaberler.web.app/blog/{s}'>{t}</a>" for t, s in success_news])
-        report_msg += f"✅ <b>Başarıyla Yayınlanan Haberler ({len(success_news)} adet):</b>\n{success_details}\n\n"
+        success_details = "\n".join([f"- <b>{t}</b> (Yayın Onayı Bekliyor)" for t, s in success_news])
+        report_msg += f"📝 <b>Yayın Onayı Bekleyen Taslaklar ({len(success_news)} adet):</b>\n{success_details}\n\n"
         
     if failed_news:
         failed_details = "\n".join([f"- <b>{t}</b>: {d}" for t, d in failed_news])

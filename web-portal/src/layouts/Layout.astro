@@ -19,9 +19,9 @@ interface Props {
 
 const {
 	title,
-	description = "Teknoloji, oyun, dizi ve film dünyasından en son haberler, fragmanlar ve yapay zeka analizleri.",
+	description = "Endüstriyel otomasyon, PLC yazılımları, endüstriyel arıza giderme, pano tasarımı, elektrik ve donanım pratik tamir rehberleri.",
 	image = "/images/default-news.png",
-	keywords = ["teknoloji", "oyun", "dizi", "sinema", "haber"],
+	keywords = ["otomasyon", "plc", "tamir", "bakim", "donanim", "elektrik", "elektronik"],
 	type = "website",
 	articleData
 } = Astro.props;
@@ -33,14 +33,14 @@ const adsenseClientId = import.meta.env.PUBLIC_ADSENSE_CLIENT_ID;
 // Dynamic categories extraction
 const allPosts = await getCollection('blog');
 const activeCategories = [...new Set(allPosts.map(post => post.data.category).filter(Boolean))];
-const defaultCategories = ['teknoloji', 'oyun', 'dizi-film'];
+const defaultCategories = ['plc', 'pc', 'endustriyel-makinalar', 'oyun'];
 const mergedCategories = [...new Set([...defaultCategories, ...activeCategories])];
 
 const categoryLabels: Record<string, string> = {
-	'teknoloji': 'Teknoloji & Bilim',
-	'oyun': 'Oyun',
-	'dizi-film': 'Dizi & Film',
-	'kuantum-evreni': 'Kuantum Evreni'
+	'plc': 'PLC',
+	'pc': 'PC',
+	'endustriyel-makinalar': 'Endüstriyel Makineler',
+	'oyun': 'Oyun'
 };
 
 const getCategoryLabel = (cat: string) => {
@@ -67,7 +67,7 @@ const jsonLd = type === 'article' && articleData ? {
 	"dateModified": articleData.dateModified ? articleData.dateModified.toISOString() : articleData.pubDate.toISOString(),
 	"author": {
 		"@type": "Person",
-		"name": "Teknoloji Editoryal Ekibi",
+		"name": "Teknisyen Editoryal Ekibi",
 		"url": new URL("/yazar/editoryal-ekip", canonicalURL.origin).toString(),
 		"sameAs": [
 			"https://x.com/kaose_dev",
@@ -192,7 +192,7 @@ const jsonLd = type === 'article' && articleData ? {
 							<span class="logo-text">{siteName.slice(0, 2)}</span><span>{siteName.slice(2)}</span>
 						</a>
 						<p class="footer-desc">
-							Gündemi yapay zekanın gücüyle yakalayın: Teknoloji ve bilim dünyasından gelişmeleri, haberleri MetaKalem doğruluğuyla derleyen otonom haber merkeziniz.
+							Elektrik, elektronik, PLC otomasyon ve endüstriyel tamir arıza çözümleri. Sahadan gelen tecrübeyle hazırlanan otonom teknik bilgi merkezi.
 						</p>
 					</div>
 					<div class="footer-links-group">

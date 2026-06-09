@@ -30,7 +30,7 @@ export async function GET(context) {
   <channel>
     <title>AIHABERLER</title>
     <link>${siteUrl}</link>
-    <description>Teknoloji, oyun, dizi ve film dünyasından en son haberler, fragmanlar ve yapay zeka analizleri.</description>
+    <description>Endüstriyel otomasyon, PLC yazılımları, endüstriyel arıza giderme, pano tasarımı, elektrik ve donanım pratik tamir rehberleri.</description>
     <language>tr</language>
     <atom:link href="https://pubsubhubbub.appspot.com/" rel="hub" />
     <atom:link href="${new URL('rss.xml', siteUrl)}" rel="self" type="application/rss+xml" />
