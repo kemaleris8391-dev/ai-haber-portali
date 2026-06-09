@@ -19,6 +19,3 @@ Endüstriyel otomasyon ve saha yönetimi perspektifinden bakıldığında, bu te
 Bu gelişme, donanım dünyasında "algılayan ağlar" döneminin kapılarını aralıyor. Geleneksel sensörlerin ötesine geçen bu yaklaşım, nesnelerin interneti (IoT) ekosistemini donanım seviyesinde yeniden tanımlayacak gibi görünüyor.
 
 [Haberin Orijinal Kaynağı: ScienceDaily Tech](https://www.sciencedaily.com/releases/2026/05/260522023127.htm)
-
-### Teknisyenin Sahadan Notu
-Yıllarca PIR sensörler ve lazer bariyerlerle uğraşmış bir teknisyen olarak söyleyebilirim ki; sinyal işleme kapasitesinin bu seviyeye gelmesi, saha kurulumlarını inanılmaz derecede sadeleştirecek. Ancak, endüstriyel ortamlardaki yoğun metal aksamların yaratacağı çoklu yansımaların (multipath) bu hassasiyeti nasıl etkileyeceğini ve kalibrasyon süreçlerini nasıl değiştireceğini görmek için sabırsızlanıyorum.

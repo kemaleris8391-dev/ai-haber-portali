@@ -17,8 +17,3 @@ Robot süpürgeler, aslında minyatür birer endüstriyel AGV (Otomatik Yönlend
 Saha deneyimlerimize göre, bu cihazlarda karşılaşılan arızaların büyük bir kısmı mekanik tıkanmalar veya sensör kontaminasyonundan kaynaklanır. Özellikle ana fırça miline dolanan saç ve ipler, motorun zorlanmasına, aşırı akım çekilmesine ve nihayetinde motor sürücü kartındaki MOSFET'lerin yanmasına yol açabilir. Sensörlerin üzerindeki toz tabakası ise cihazın çevresel algısını bozarak navigasyon hatalarına neden olur. Bu tür sorunlarda çözüm, sistemli bir fiziksel temizlik ve ardından sensör kalibrasyonudur. Enerji sorunlarında ise batarya hücrelerinin voltaj değerlerinin tek tek ölçülmesi, ömrünü tamamlamış hücrelerin tespit edilip değiştirilmesi en kalıcı çözümdür.
 
 Cihazların operasyonel ömrünü uzatmak için sadece yazılım güncellemelerine güvenmek yeterli değildir; periyodik mekanik bakımlar ve elektrik bağlantılarının oksitlenmeye karşı kontrolü, sistem stabilitesi için hayati önem taşır.
-
-### Teknisyenin Sahadan Notu
-Elektronik ne kadar gelişmiş olursa olsun, mekanik parçalar her zaman fiziksel dünyanın aşınmasına yenik düşer. Robot süpürgenizin yazılımını güncellemek kadar, fırçalarını temizlemek ve tekerlek boşluklarını kontrol etmek, sistemin 'beyni' ile 'kasları' arasındaki uyumu korumanın tek yoludur.
-
-[Haberin Orijinal Kaynağı: iFixit News](https://www.ifixit.com/News/117490/when-your-little-helper-needs-help)

@@ -19,6 +19,3 @@ Saha teknisyenleri için bu durum, analizörün verdiği sonuçların her zaman 
 Donanım dünyasında "benzer" kavramı, özellikle yüksek hızlı dijital devrelerde her zaman "aynı" anlamına gelmez. Bir komponentin datasheet değerleri aynı görünse bile, anahtarlama hızları veya gürültü toleransları farklı olabilir. Bu durum, Saleae örneğinde olduğu gibi, uzun vadede ürün kalitesini ve güvenilirliğini doğrudan etkileyen bir faktör haline gelmiştir.
 
 [Haberin Orijinal Kaynağı: Hackaday](https://hackaday.com/2026/06/09/how-the-2020s-chip-crisis-led-to-a-buggy-saeleae-analyzer-in-2026/)
-
-### Teknisyenin Sahadan Notu
-Saha tecrübem bana şunu öğretti: En pahalı ölçüm cihazı bile olsa, tek bir kaynağa körü körüne güvenmek risklidir. Özellikle donanım revizyonu şüphesi olan cihazlarla çalışırken, osiloskop ile doğrulama yapmak hayat kurtarır. Unutmayın, doğru teşhis, doğru ekipmanla ve şüpheci bir yaklaşımla başlar.

@@ -2067,15 +2067,15 @@ def enrich_news_with_comment(draft_data, user_comment):
         raise ValueError("API anahtarları bulunamadı!")
         
     prompt = f"""
-Aşağıda yapay zeka tarafından yazılmış bir haber makalesi ve bu makalenin en tepesine eklenecek olan uzman teknisyenin kişisel yorumu/görüşü yer almaktadır.
+Aşağıda yapay zeka tarafından yazılmış bir haber makalesi ve bu makalenin en tepesine eklenecek olan editörün kişisel tecrübesi/görüşü yer almaktadır.
 
 GÖREVİN:
-1. Teknisyenin kişisel yorumunu/görüşünü incele. Harf hataları veya basit yazım hataları varsa düzelt ancak konuşma tonunu, teknik üslubunu, argolarını, teknik terimlerini ve düşüncelerini KESİNLİKLE değiştirme, yumuşatma veya resmileştirme. Onun "sahadan gelen usta" samimi ve doğrudan konuşan kimliğini, jargonunu ve sesini aynen koru.
+1. Editörün kişisel tecrübesini/görüşünü incele. Harf hataları veya basit yazım hataları varsa düzelt ancak konuşma tonunu, teknik üslubunu, samimiyetini, argolarını, teknik terimlerini ve düşüncelerini KESİNLİKLE değiştirme, yumuşatma veya resmileştirme. Onun usta ve tecrübeli editör kimliğini, samimi sesini aynen koru.
 2. Bu yorumu makale metninin EN TEPESİNE (ilk paragrafa), yapay zeka tarafından yazılmadığı, bizzat bir insan görüşü olduğu açıkça anlaşılan özel bir stil halinde ekle:
-   > 💬 **Teknisyenin Sahadan Görüşü:** [Teknisyenin yorumunu/görüşünü kelimesi kelimesine, tonunu bozmadan buraya yerleştir]
+   > 💬 **Editörün Kaleminden:** [Editörün yorumunu/görüşünü kelimesi kelimesine, tonunu bozmadan buraya yerleştir]
    
    Ardından bir boşluk bırakıp makalenin orijinal içeriğini devam ettir.
-3. Haberin başlığını, teknisyenin kişisel yorumunun/görüşünün ana fikrini içerecek veya onun görüşünü yansıtacak şekilde güncelle. Başlığın en başında veya içinde teknisyenin görüşü ana fikir olmalıdır.
+3. Haberin başlığını, editörün kişisel tecrübesinin/görüşünün ana fikrini içerecek veya onun görüşünü yansıtacak şekilde güncelle. Başlığın en başında veya içinde editörün görüşü ana fikir olmalıdır.
 4. Çıktıyı kesinlikle aşağıdaki JSON formatında ver (başka açıklama ekleme, markdown kod bloğu içinde olmalıdır):
 ```json
 {{
@@ -2088,7 +2088,7 @@ Makale Başlığı: {draft_data['title']}
 Makale İçeriği:
 {draft_data['content']}
 
-Teknisyenin Kişisel Görüşü:
+Editörün Kişisel Görüşü:
 {user_comment}
 """
 
@@ -3096,8 +3096,8 @@ class handler(BaseHTTPRequestHandler):
             <h2>{title}</h2>
             
             <div id="form-container">
-                <label for="comment">✍️ Teknisyenin Kişisel Görüşü / Editörün Yorumu:</label>
-                <textarea id="comment" placeholder="Sahadan gelen usta jargonu ve samimi teknik görüşlerinizi buraya yazın..."></textarea>
+                <label for="comment">✍️ Editörün Kaleminden / Görüşü:</label>
+                <textarea id="comment" placeholder="Editörün kaleminden çıkmış tecrübe ve değerlendirmelerinizi buraya yazın..."></textarea>
                 <button id="submit-btn" onclick="submitComment()">🚀 Onayla ve Yayınla</button>
             </div>
             

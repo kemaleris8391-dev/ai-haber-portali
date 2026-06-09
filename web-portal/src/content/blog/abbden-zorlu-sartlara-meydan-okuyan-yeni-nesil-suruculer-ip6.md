@@ -17,8 +17,3 @@ ABB'nin yeni sürücü serisi, endüstriyel standartların zirvesi olan IP66 ve 
 Bu yenilik, özellikle kimya tesisleri, su arıtma merkezleri ve ağır sanayi bölgeleri gibi agresif ortamlar için devrim niteliğindedir. Pano maliyetlerinin ortadan kalkması, sadece ilk yatırım maliyetlerini (CAPEX) düşürmekle kalmaz, aynı zamanda pano içi ısınma problemlerini ve buna bağlı gelişen soğutma enerji giderlerini de minimize eder. Montaj süresinin kısalması ve alan tasarrufu, mühendislerin sistem tasarımlarında çok daha esnek hareket etmesine olanak tanımaktadır.
 
 Sürücülerin doğrudan motor yanına veya dış ortama konumlandırılabilmesi, kablolama mesafelerini kısaltarak elektromanyetik girişimi (EMI) azaltır ve sinyal kalitesini artırır. Bu durum, sistemin genel kararlılığını yükseltirken, bakım ekiplerinin cihazlara erişimini kolaylaştırarak arıza müdahale sürelerini ciddi oranda düşürür.
-
-### Teknisyenin Sahadan Notu
-Saha tecrübelerimize dayanarak söyleyebilirim ki, pano içi yoğuşma ve filtre temizliği endüstriyel sürücülerin en büyük düşmanıdır. ABB'nin bu çözümü ile pano derdini ortadan kaldırmak, hem işletme maliyetlerini düşürecek hem de 'kondansatör sızıntısı' veya 'toz kaynaklı kısa devreler' gibi kronik arızaları tarihe gömecektir.
-
-[Haberin Orijinal Kaynağı: Control.com](https://control.com/news/abb-introduces-outdoor-rated-drives-for-harsh-environments/)

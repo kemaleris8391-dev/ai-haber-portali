@@ -68,14 +68,8 @@ Hayati Güvenlik ve İçerik Kuralları (MANDATORY):
 6. Kaynak haberde politik veya hukuki bir tartışma/polemik varsa, bu kısımları tamamen temizle ve konuyu yalnızca nesnel teknolojik/endüstriyel/oyun boyutuyla ele al.
 
 Genel Yapı & E-E-A-T Katma Değer Kuralları:
-1. Haber içeriði en az 4 paragraflık, kapsamlı ve doyurucu bir teknik inceleme/makale metni olmalıdır.
-2. Metin içinde kesinlikle en az 2 adet analitik alt başlık (markdown ## olarak) kullanılmalıdır. Haber konusuyla en iyi eşleşen iki başlığı seçerek metne entegre et:
-   - ## Teknolojik Altyapı ve Çalışma Prensibi (Teknik detaylar, mimari, kullanılan yöntemler)
-   - ## Sahadaki Kullanım ve Endüstriyel/Sektörel Etkileri (Kullanım alanları, verimlilik ve sektörel etkileri)
-   - ## Pratik Uygulama ve Sorun Giderme Öngörüleri (Karşılaşılabilecek sorunlar ve arıza çözme önerileri)
-   - ## Olası Riskler ve Güvenlik Önlemleri (Güvenlik önlemleri, iş güvenliği ve veri güvenliği hususları)
-3. Haberin en sonuna mutlaka "### Teknisyenin Sahadan Notu" başlığı altında, okuyucuyla bağ kuran, samimi, objektif ve zenginleştirici 2-3 cümlelik derinlemesine bir değerlendirme ekle.
-4. "Editörün Kaleminden" paragrafının BİTİMİNDE, haberin orijinal kaynağını kesinlikle şu Markdown formatında ekle: `[Haberin Orijinal Kaynağı: {source_name}]({raw_link})`. Kaynak linki için asla "Link burada", "haberin devamı" gibi ifadeler kullanma.
+1. Haber içeriği öz ve net olmalı, gereksiz uzatmalardan kaçınarak okuyucuyu uzun yazıyla sıkmayan, akıcı 2-3 paragraflık kısa bir haber metni olmalıdır. (Ara başlık kullanmana gerek yoktur).
+2. Makale metninin en son cümlesinde, haberin orijinal kaynağını kesinlikle şu Markdown formatında ekle: `[Haberin Orijinal Kaynağı: {source_name}]({raw_link})`. Kaynak linki için asla "Link burada", "haberin devamı" gibi ifadeler kullanma.
 5. Haber için en fazla 160 karakterlik bir SEO meta açıklaması (description) oluştur.
 6. Haberle ilgili 5 adet Türkçe etiket (keywords) belirle.
 7. Pexels görsel arama motoru için haberin ana konusunu, markasını ve modelini içeren İngilizce 2-3 kelimelik net ve nokta atışı bir görsel arama sorgusu (pexels_query) yaz. Örnek: "playstation 5 console" (sadece "playstation" yazma), "intel arc gpu" (sadece "gpu" yazma), "quantum computing chip" (sadece "quantum" yazma), "volkswagen ID electric car" (sadece "car" yazma).
@@ -154,14 +148,8 @@ Hayati Güvenlik ve İçerik Kuralları (MANDATORY):
 6. Kaynak haberde veya arama sonuçlarında politik veya hukuki bir tartışma/polemik varsa, bu kısımları tamamen temizle ve konuyu yalnızca nesnel teknolojik/endüstriyel/oyun boyutuyla ele al.
 
 Genel Yapı & E-E-A-T Katma Değer Kuralları:
-1. Haber içeriði en az 4 paragraflık, kapsamıdı ve doyurucu bir metin olmalıdır.
-2. Metin içinde kesinlikle en az 2 adet analitik alt başlık (markdown ## olarak) kullanılmalıdır. Haber konusuyla en iyi eşleşen iki başlığı seçerek metne entegre et:
-   - ## Teknolojik Altyapı ve Çalışma Prensibi (Teknik detaylar, mimari, kullanılan yöntemler)
-   - ## Sahadaki Kullanım ve Endüstriyel/Sektörel Etkileri (Kullanım alanları, verimlilik ve sektörel etkileri)
-   - ## Pratik Uygulama ve Sorun Giderme Öngörüleri (Karşılaşılabilecek sorunlar ve arıza çözme önerileri)
-   - ## Olası Riskler ve Güvenlik Önlemleri (Güvenlik önlemleri, iş güvenliği ve veri güvenliği hususları)
-3. Haberin en sonuna mutlaka "### Teknisyenin Sahadan Notu" başlığı altında, okuyucuyla bağ kuran, samimi, objektif ve zenginleştirici 2-3 cümlelik derinlemesine bir değerlendirme ekle.
-4. Haber için en fazla 160 karakterlik bir SEO meta açıklaması (description) oluştur.
+1. Haber içeriği öz ve net olmalı, gereksiz uzatmalardan kaçınarak okuyucuyu uzun yazıyla sıkmayan, akıcı 2-3 paragraflık kısa bir haber metni olmalıdır. (Ara başlık kullanmana gerek yoktur).
+2. Haber için en fazla 160 karakterlik bir SEO meta açıklaması (description) oluştur.
 5. Haber kategorisini konuya göre tam olarak şu altısından biri olarak belirle: "plc", "pc", "endustriyel-makinalar", "oyun", "yapay-zeka" veya "akilli-ev". Başka bir kategori adı kesinlikle kullanma.
 6. Haberle ilgili 5 adet Türkçe etiket (keywords) belirle.
 7. Pexels görsel arama motoru için haberin ana konusunu, markasını ve modelini içeren İngilizce 2-3 kelimelik net ve nokta atışı bir görsel arama sorgusu (pexels_query) yaz. Örnek: "playstation 5 console" (sadece "playstation" yazma), "intel arc gpu" (sadece "gpu" yazma), "quantum computing chip" (sadece "quantum" yazma), "volkswagen ID electric car" (sadece "car" yazma).
@@ -202,14 +190,8 @@ Hayati Güvenlik ve İçerik Kuralları (MANDATORY):
 6. Kaynak haberde veya arama sonuçlarında politik veya hukuki bir tartışma/polemik varsa, bu kısımları tamamen temizle ve konuyu yalnızca nesnel teknolojik/endüstriyel/oyun boyutuyla ele al.
 
 Genel Yapı & E-E-A-T Katma Değer Kuralları:
-1. Haber içeriði en az 4 paragraflık, kapsamlı ve doyurucu bir metin olmalıdır. Ara başlıklar (markdown ## olarak) kullanabilirsin.
-2. Metin içinde kesinlikle en az 2 adet analitik alt başlık (markdown ## olarak) kullanılmalıdır. Haber konusuyla en iyi eşleşen iki başlığı seçerek metne entegre et:
-   - ## Teknolojik Altyapı ve Çalışma Prensibi (Teknik detaylar, mimari, kullanılan yöntemler)
-   - ## Sahadaki Kullanım ve Endüstriyel/Sektörel Etkileri (Kullanım alanları, verimlilik ve sektörel etkileri)
-   - ## Pratik Uygulama ve Sorun Giderme Öngörüleri (Karşılaşılabilecek sorunlar ve arıza çözme önerileri)
-   - ## Olası Riskler ve Güvenlik Önlemleri (Güvenlik önlemleri, iş güvenliği ve veri güvenliği hususları)
-3. Haberin en sonuna mutlaka "### Teknisyenin Sahadan Notu" başlığı altında, okuyucuyla bağ kuran, samimi, objektif ve zenginleştirici 2-3 cümlelik derinlemesine bir değerlendirme ekle.
-4. Haber için en fazla 160 karakterlik bir SEO meta açıklaması (description) oluştur.
+1. Haber içeriği öz ve net olmalı, gereksiz uzatmalardan kaçınarak okuyucuyu uzun yazıyla sıkmayan, akıcı 2-3 paragraflık kısa bir haber metni olmalıdır. (Ara başlık kullanmana gerek yoktur).
+2. Haber için en fazla 160 karakterlik bir SEO meta açıklaması (description) oluştur.
 5. Haber kategorisini konuya göre tam olarak şu altısından biri olarak belirle: "plc", "pc", "endustriyel-makinalar", "oyun", "yapay-zeka" veya "akilli-ev". Başka bir kategori adı kesinlikle kullanma.
 6. Haberle ilgili 5 adet Türkçe etiket (keywords) belirle.
 7. Pexels görsel arama motoru için haberin ana konusunu, markasını ve modelini içeren İngilizce 2-3 kelimelik net ve nokta atışı bir görsel arama sorgusu (pexels_query) yaz. Örnek: "playstation 5 console" (sadece "playstation" yazma), "intel arc gpu" (sadece "gpu" yazma), "quantum computing chip" (sadece "quantum" yazma), "volkswagen ID electric car" (sadece "car" yazma).

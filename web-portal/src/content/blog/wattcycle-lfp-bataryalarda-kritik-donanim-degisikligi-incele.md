@@ -19,6 +19,3 @@ Sahada çalışan bir teknisyen için bu tür 'gizli' değişiklikler, beklenmed
 Bu tür uygulamalar, sadece teknik bir sorun değil, aynı zamanda mühendislik etiği ve kullanıcı güvenliği meselesidir. Endüstriyel standartlarda üretilen bir ürünün, tanıtım aşamasındaki kalitesini seri üretimde koruması gerekir. Donanım bileşenlerindeki kontrolsüz değişiklikler, sistemin toplam verimliliğini düşürürken, uzun vadede bakım maliyetlerini artırır ve sistem güvenilirliğini riske atar.
 
 [Haberin Orijinal Kaynağı: Hackaday](https://hackaday.com/2026/06/09/the-secret-wattcycle-lfp-battery-downgrade/)
-
-### Teknisyenin Sahadan Notu
-Arkadaşlar, piyasada 'yüksek performans' vaadiyle satılan her ürüne hemen güvenmeyin. Özellikle BMS kartındaki kondansatör ve MOSFET kalitesi, bataryanın ömrünü belirleyen asıl unsurdur; markanın reklamlarına değil, kartın üzerindeki bileşen kodlarına bakın. Eğer bir ürün inceleme videolarında harikalar yaratıp sizin elinizde sorun çıkarıyorsa, muhtemelen üretim bandında maliyet odaklı bir 'budama' yapılmıştır.

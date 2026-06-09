@@ -19,6 +19,3 @@ Saha uygulamalarında en sık karşılaşılan sorunlardan biri olan 'soğuk leh
 Profesyonel bir kurulumda, sadece havya değil, aynı zamanda duman emici fanlar ve ESD (elektrostatik deşarj) korumalı matlar da güvenlik zincirinin ayrılmaz parçalarıdır. Endüstriyel otomasyon kartlarında yer alan hassas mikrodenetleyiciler, statik elektrikten kolayca etkilenebilir. Bu nedenle, tüm kurulumun topraklama standartlarına uygun olması, yapılan tamirin uzun ömürlü olmasını garanti eder.
 
 [Haberin Orijinal Kaynağı: iFixit News](https://www.ifixit.com/News/117404/buyers-guide-what-soldering-setup-do-you-actually-need)
-
-### Teknisyenin Sahadan Notu
-Sahada gördüğüm en büyük hata, 'her işi gören' ucuz havyalara güvenmektir. Unutmayın, kaliteli bir istasyona yapılan yatırım, yaktığınız tek bir pahalı PLC giriş-çıkış modülüyle kendini amorti eder. Hassasiyet ve güvenlik, hızdan her zaman önce gelmelidir.

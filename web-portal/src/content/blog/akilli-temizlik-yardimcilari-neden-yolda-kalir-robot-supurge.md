@@ -17,8 +17,3 @@ Robot süpürgelerin kalbinde, çevresel haritalama yapabilen LiDAR veya kızıl
 Sahada karşılaştığımız en yaygın sorunlar genellikle mekanik engeller ve elektriksel yıpranmalardır. Tekerleklere dolanan saç ve ipler, motorların zorlanmasına ve yüksek akım çekerek sürücü devrelerinin ısınmasına yol açabilir. Sensör camlarının kirlenmesi ise cihazın önündeki engeli görmemesine veya olmayan bir engeli varmış gibi algılamasına neden olur. Bu durumlarda ilk adım, sensörlerin izopropil alkol ile temizlenmesi ve hareketli aksamların mekanik olarak kontrol edilmesidir. Eğer sorun devam ediyorsa, batarya hücrelerinin voltaj değerleri kontrol edilmeli; düşük voltajın işlemci üzerinde kararsızlıklara yol açıp açmadığı analiz edilmelidir.
 
 Sürekli tekrarlayan navigasyon hataları, genellikle donanımsal bir kalibrasyon ihtiyacına işaret eder. Özellikle tekerlek kodlayıcılarının (encoder) kirlenmesi, cihazın ne kadar mesafe kat ettiğini yanlış hesaplamasına neden olur. Profesyonel bir müdahale ile bu bileşenlerin temizliği ve gerekirse yazılımsal resetleme işlemleri, cihazı yeniden işlevsel hale getirecektir.
-
-### Teknisyenin Sahadan Notu
-Robot süpürgeler, 'kur ve unut' cihazları değildir; düzenli bakım gerektiren hassas otomasyon sistemleridir. Sensörleri haftalık olarak temizlemek ve fırça milindeki dolanmaları temizlemek, ana kart üzerindeki komponentlerin ömrünü ciddi oranda uzatır.
-
-[Haberin Orijinal Kaynağı: iFixit News](https://www.ifixit.com/News/117490/when-your-little-helper-needs-help)

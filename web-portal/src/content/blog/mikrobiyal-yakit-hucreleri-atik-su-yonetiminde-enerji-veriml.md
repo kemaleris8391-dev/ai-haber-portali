@@ -21,6 +21,3 @@ Sistemin modüler yapısı, mevcut tesislerin altyapısına entegre edilmesini k
 Editörün Kaleminden: MFC teknolojisi, sadece bir enerji kaynağı değil, aynı zamanda çevresel restorasyonun bir parçasıdır. Atığı kaynağında enerjiye dönüştürmek, endüstri 4.0 vizyonunun sürdürülebilirlik ayağıyla tam bir uyum içerisindedir.
 
 [Haberin Orijinal Kaynağı: Phys.org Tech](https://techxplore.com/news/2026-06-microbial-fuel-cells-electricity.html)
-
-### Teknisyenin Sahadan Notu
-Saha tecrübelerime dayanarak söyleyebilirim ki, bu tür biyolojik sistemlerin en kritik noktası elektrot yüzeylerinin kirlenmesi (fouling) ve bakteri kolonilerinin stabilitesidir. Eğer bu sistemler endüstriyel PLC kontrol döngülerine doğru şekilde entegre edilir ve düzenli bakım periyotları uygulanırsa, işletme maliyetlerinde ciddi bir tasarruf sağlanabilir.

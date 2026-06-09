@@ -17,8 +17,3 @@ LFP bataryaların performansı, sadece hücre kalitesine değil, aynı zamanda b
 Saha teknisyenleri için bu durum, cihazların nominal değerlerinde çalışıyor görünse bile, yüksek yük altında beklenmedik voltaj düşüşleri veya erken ısınma sorunları olarak karşımıza çıkabilir. Eğer bir LFP bataryada belirtilen şarj-deşarj döngüleri karşılanmıyorsa veya BMS üzerinden gelen hata kodları tutarsızsa, donanım revizyonlarını kontrol etmek kritik önem taşır. Özellikle seri üretimde yapılan gizli malzeme değişiklikleri, zamanla hücreler arası dengesizliklere (imbalance) yol açarak paketin toplam kapasitesini düşürebilir. Bu tür durumların tespiti için multimetre ve osiloskop ile ripple voltaj ölçümleri yapılması, bileşenlerin katalog değerleriyle fiziksel olarak karşılaştırılması en sağlıklı yöntemdir.
 
 Endüstriyel otomasyon ve enerji sistemlerinde kullanılan donanımların, tanıtım videolarındaki performansıyla sahada karşılaştığımız performans arasındaki fark, güvenilirlik zincirini kıran en büyük etkendir. Kullanıcıların ve sistem entegratörlerinin, marka vaatlerinden ziyade gerçek saha verilerine ve bağımsız teknik analizlere odaklanması, sistem duruş sürelerini azaltmak adına hayati önem taşımaktadır.
-
-### Teknisyenin Sahadan Notu
-Arkadaşlar, piyasada 'inceleme ürünü' ile 'müşteri ürünü' arasındaki farka sık rastlıyoruz. Bir donanımı satın almadan önce sadece popüler videolara değil, kullanıcı forumlarındaki gerçek arıza kayıtlarına ve PCB revizyon numaralarına bakmanızı öneririm; zira kağıt üzerindeki spec'ler her zaman kutudan çıkanla aynı olmayabiliyor.
-
-[Haberin Orijinal Kaynağı: Hackaday](https://hackaday.com/2026/06/09/the-secret-wattcycle-lfp-battery-downgrade/)

@@ -17,8 +17,3 @@ Sistemin kalbinde, dijital içerikleri yöneten ve yayın akışını düzenleye
 Bu tarz bir kurulumda karşılaşılabilecek en büyük teknik zorluk, sinyal kararlılığı ve frekans kaymalarıdır. Özellikle düşük maliyetli kristal osilatörler kullanan vericilerde, sıcaklık değişimleri frekans kaymasına neden olabilir. Teknik olarak bu durum, vericinin besleme voltajının regüle edilmesi ve mümkünse bir PLL (Phase-Locked Loop) devresi kullanılmasıyla çözülebilir. Yazılım tarafında ise, betiklerin (scripts) dosya yolları ve izinleri konusundaki hatalar yayının kesilmesine yol açabilir; bu nedenle sistemin bir 'watchdog' mekanizmasıyla izlenmesi ve hata anında otomatik yeniden başlatma senaryolarının kurgulanması kritik önem taşır.
 
 Sonuç olarak, basit bir shell script yapısının endüstriyel mantıkla birleştirilmesi, gündelik bir ihtiyacı teknik bir çözüme dönüştürmüştür. Bu proje, donanım ve yazılımın doğru kombinasyonuyla, modern cihazların yarattığı dikkat dağınıklığının önüne geçilebileceğini kanıtlar niteliktedir.
-
-### Teknisyenin Sahadan Notu
-Saha tecrübelerimize dayanarak söyleyebiliriz ki, karmaşık PLC sistemleri kurmak kadar, basit bir shell script ile donanımı konuşturmak da mühendislik zekası gerektirir. FM vericilerde anten boyu ve empedans uyumuna dikkat edilmezse, sinyal gücü düşük kalabilir; bu yüzden anteni 1/4 dalga boyuna göre ayarlamak verimliliği ciddi oranda artıracaktır.
-
-[Haberin Orijinal Kaynağı: Hackaday](https://hackaday.com/2026/06/09/custom-fm-radio-station-powered-by-shell-scripts/)

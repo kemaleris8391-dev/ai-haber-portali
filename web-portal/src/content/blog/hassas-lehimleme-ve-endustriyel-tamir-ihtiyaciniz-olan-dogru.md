@@ -17,8 +17,3 @@ Modern lehimleme istasyonları, sadece ısı üreten basit araçlar değil, hass
 Saha uygulamalarında en sık karşılaşılan sorunlar genellikle uç temizliğinin ihmal edilmesi ve yanlış uç seçimiyle ilgilidir. Oksitlenmiş bir havya ucu, ısıyı transfer edemez ve bu durum teknisyeni sıcaklığı daha da artırmaya iter, bu da kart üzerindeki bakır yolların yanmasına neden olur. Sorun giderme aşamasında, lehim emme pompaları veya lehim fitilleri (desoldering wick) kullanmak, hatalı bağlantıları temizlemek için standart bir prosedürdür. Profesyonel bir kurulumda, statik elektriğin hassas komponentlere zarar vermemesi için ESD (Electrostatic Discharge) güvenli bir çalışma alanı ve antistatik bileklik kullanımı olmazsa olmazdır.
 
 Doğru ekipman yatırımı, sadece iş kalitesini artırmakla kalmaz, aynı zamanda onarım süresini ciddi oranda kısaltır. Kalitesiz bir havya ile saatlerce uğraşacağınız bir komponent değişimi, doğru uç ve sıcaklık kontrolü ile saniyeler içinde, kartın geri kalanına zarar vermeden tamamlanabilir. Endüstriyel standartlarda bir tamir süreci, ekipmanın yeteneği ile teknisyenin tecrübesinin birleştiği noktada mükemmelleşir.
-
-### Teknisyenin Sahadan Notu
-Arkadaşlar, yanlış havya ucuyla saatlerce uğraşmak yerine, işin doğasına uygun bir uç seçmek size hem zaman kazandırır hem de kartın yollarını kaldırma riskini sıfıra indirir. Unutmayın, kaliteli bir ekipman sadece işi kolaylaştırmaz, aynı zamanda yaptığınız işin profesyonel standartlarda olduğunun bir göstergesidir.
-
-[Haberin Orijinal Kaynağı: iFixit News](https://www.ifixit.com/News/117404/buyers-guide-what-soldering-setup-do-you-actually-need)
