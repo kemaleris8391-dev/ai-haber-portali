@@ -3123,6 +3123,11 @@ class handler(BaseHTTPRequestHandler):
             btn.disabled = true;
             btn.innerText = "⏳ Yayınlanıyor...";
             
+            // Onay alındığı mesajını hemen göster
+            statusDiv.className = "status success";
+            statusDiv.innerHTML = "⏳ <b>Görüşünüz Alındı!</b><br>İşleminiz arka planda tamamlanacaktır, dilerseniz bu pencereyi kapatabilirsiniz.";
+            statusDiv.style.display = "block";
+            
             try {{
                 const response = await fetch("/api/webhook", {{
                     method: "POST",
