@@ -144,23 +144,29 @@ def get_research_config():
         interval_hours = data.get("interval_hours", 24)
         last_run_time = data.get("last_run_time", 0.0)
         is_running = data.get("is_running", False)
+        inspiration_hours = data.get("inspiration_hours", 24)
+        max_topics = data.get("max_topics", 2)
         return {
             "is_active": bool(is_active),
             "interval_hours": int(interval_hours),
             "last_run_time": float(last_run_time),
-            "is_running": bool(is_running)
+            "is_running": bool(is_running),
+            "inspiration_hours": int(inspiration_hours),
+            "max_topics": int(max_topics)
         }
     else:
         default_config = {
             "is_active": True,
             "interval_hours": 24,
             "last_run_time": 0.0,
-            "is_running": False
+            "is_running": False,
+            "inspiration_hours": 24,
+            "max_topics": 2
         }
         doc_ref.set(default_config)
         return default_config
 
-def update_research_config(interval_hours=None, last_run_time=None, is_running=None, is_active=None):
+def update_research_config(interval_hours=None, last_run_time=None, is_running=None, is_active=None, inspiration_hours=None, max_topics=None):
     """Updates autonomous research config on Firestore."""
     db = init_firebase()
     doc_ref = db.collection("system_config").document("autonomous_research")
@@ -174,6 +180,10 @@ def update_research_config(interval_hours=None, last_run_time=None, is_running=N
         update_data["is_running"] = bool(is_running)
     if is_active is not None:
         update_data["is_active"] = bool(is_active)
+    if inspiration_hours is not None:
+        update_data["inspiration_hours"] = int(inspiration_hours)
+    if max_topics is not None:
+        update_data["max_topics"] = int(max_topics)
         
     if update_data:
         doc_ref.set(update_data, merge=True)
@@ -1857,6 +1867,16 @@ def handle_callback_query_routing(callback_query):
         update_research_config(interval_hours=hours)
         answer_callback_query(callback_query["id"], f"⏱️ Araştırma periyodu {hours} saat yapıldı!", show_alert=True)
         handle_otoarastirma_menu(callback_query)
+    elif data.startswith("research_insp_set:"):
+        hours = int(data.split(":", 1)[1])
+        update_research_config(inspiration_hours=hours)
+        answer_callback_query(callback_query["id"], f"🔍 İlham aralığı {hours} saat yapıldı!", show_alert=True)
+        handle_otoarastirma_menu(callback_query)
+    elif data.startswith("research_limit_set:"):
+        limit = int(data.split(":", 1)[1])
+        update_research_config(max_topics=limit)
+        answer_callback_query(callback_query["id"], f"✍️ Yazım adedi {limit} haber yapıldı!", show_alert=True)
+        handle_otoarastirma_menu(callback_query)
     elif data == "research_trigger_now":
         success = trigger_github_workflow(research=True)
         if success:
@@ -2422,7 +2442,8 @@ def handle_otoarastirma_menu(callback_query):
             "• Son eklenen haberleri inceleyerek yepyeni **araştırma konuları** bulur.\n"
             "• Bu konuları <b>Google Arama</b> ile araştırıp tamamen özgün makaleler yazar ve yayınlar.\n"
             "──────────────────────────────\n\n"
-            "Aşağıdaki butonları kullanarak otonom araştırma durumunu açıp kapatabilir veya çalışma periyodunu değiştirebilirsiniz:"
+            "Aşağıdaki butonları kullanarak otonom araştırma ayarlarını yönetebilirsiniz:\n"
+            "⏱️: Sıklık | 🔍: İlham Aralığı | ✍️: Yazım Adedi"
         )
         
         keyboard = [
@@ -2430,12 +2451,22 @@ def handle_otoarastirma_menu(callback_query):
                 {"text": f"{'🔴 Kapat (Devre Dışı Bırak)' if is_active else '🟢 Aktifleştir (Çalıştır)'}", "callback_data": f"research_toggle:{'off' if is_active else 'on'}"}
             ],
             [
-                {"text": "⏱️ 12 Saat", "callback_data": "research_freq_set:12"},
-                {"text": "⏱️ 24 Saat", "callback_data": "research_freq_set:24"}
+                {"text": "⏱️ 12S" if interval_hours == 12 else "12S", "callback_data": "research_freq_set:12"},
+                {"text": "⏱️ 24S" if interval_hours == 24 else "24S", "callback_data": "research_freq_set:24"},
+                {"text": "⏱️ 48S" if interval_hours == 48 else "48S", "callback_data": "research_freq_set:48"},
+                {"text": "⏱️ 72S" if interval_hours == 72 else "72S", "callback_data": "research_freq_set:72"}
             ],
             [
-                {"text": "⏱️ 48 Saat", "callback_data": "research_freq_set:48"},
-                {"text": "⏱️ 72 Saat", "callback_data": "research_freq_set:72"}
+                {"text": "🔍 12S" if inspiration_hours == 12 else "12S", "callback_data": "research_insp_set:12"},
+                {"text": "🔍 24S" if inspiration_hours == 24 else "24S", "callback_data": "research_insp_set:24"},
+                {"text": "🔍 48S" if inspiration_hours == 48 else "48S", "callback_data": "research_insp_set:48"},
+                {"text": "🔍 72S" if inspiration_hours == 72 else "72S", "callback_data": "research_insp_set:72"}
+            ],
+            [
+                {"text": "✍️ 1" if max_topics == 1 else "1", "callback_data": "research_limit_set:1"},
+                {"text": "✍️ 2" if max_topics == 2 else "2", "callback_data": "research_limit_set:2"},
+                {"text": "✍️ 3" if max_topics == 3 else "3", "callback_data": "research_limit_set:3"},
+                {"text": "✍️ 5" if max_topics == 5 else "5", "callback_data": "research_limit_set:5"}
             ],
             [
                 {"text": "⚡ Şimdi Araştır (Manuel)", "callback_data": "research_trigger_now"},
@@ -2480,7 +2511,8 @@ def send_otoarastirma_menu_message():
             "• Son eklenen haberleri inceleyerek yepyeni **araştırma konuları** bulur.\n"
             "• Bu konuları <b>Google Arama</b> ile araştırıp tamamen özgün makaleler yazar ve yayınlar.\n"
             "──────────────────────────────\n\n"
-            "Aşağıdaki butonları kullanarak otonom araştırma durumunu açıp kapatabilir veya çalışma periyodunu değiştirebilirsiniz:"
+            "Aşağıdaki butonları kullanarak otonom araştırma ayarlarını yönetebilirsiniz:\n"
+            "⏱️: Sıklık | 🔍: İlham Aralığı | ✍️: Yazım Adedi"
         )
         
         keyboard = [
@@ -2488,12 +2520,22 @@ def send_otoarastirma_menu_message():
                 {"text": f"{'🔴 Kapat (Devre Dışı Bırak)' if is_active else '🟢 Aktifleştir (Çalıştır)'}", "callback_data": f"research_toggle:{'off' if is_active else 'on'}"}
             ],
             [
-                {"text": "⏱️ 12 Saat", "callback_data": "research_freq_set:12"},
-                {"text": "⏱️ 24 Saat", "callback_data": "research_freq_set:24"}
+                {"text": "⏱️ 12S" if interval_hours == 12 else "12S", "callback_data": "research_freq_set:12"},
+                {"text": "⏱️ 24S" if interval_hours == 24 else "24S", "callback_data": "research_freq_set:24"},
+                {"text": "⏱️ 48S" if interval_hours == 48 else "48S", "callback_data": "research_freq_set:48"},
+                {"text": "⏱️ 72S" if interval_hours == 72 else "72S", "callback_data": "research_freq_set:72"}
             ],
             [
-                {"text": "⏱️ 48 Saat", "callback_data": "research_freq_set:48"},
-                {"text": "⏱️ 72 Saat", "callback_data": "research_freq_set:72"}
+                {"text": "🔍 12S" if inspiration_hours == 12 else "12S", "callback_data": "research_insp_set:12"},
+                {"text": "🔍 24S" if inspiration_hours == 24 else "24S", "callback_data": "research_insp_set:24"},
+                {"text": "🔍 48S" if inspiration_hours == 48 else "48S", "callback_data": "research_insp_set:48"},
+                {"text": "🔍 72S" if inspiration_hours == 72 else "72S", "callback_data": "research_insp_set:72"}
+            ],
+            [
+                {"text": "✍️ 1" if max_topics == 1 else "1", "callback_data": "research_limit_set:1"},
+                {"text": "✍️ 2" if max_topics == 2 else "2", "callback_data": "research_limit_set:2"},
+                {"text": "✍️ 3" if max_topics == 3 else "3", "callback_data": "research_limit_set:3"},
+                {"text": "✍️ 5" if max_topics == 5 else "5", "callback_data": "research_limit_set:5"}
             ],
             [
                 {"text": "⚡ Şimdi Araştır (Manuel)", "callback_data": "research_trigger_now"},
