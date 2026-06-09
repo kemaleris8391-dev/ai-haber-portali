@@ -274,7 +274,7 @@ def main():
                     category = category.strip().lower()
                     
                     # Kategori koruması
-                    ALLOWED_CATEGORIES = {"plc", "pc", "endustriyel-makinalar", "oyun"}
+                    ALLOWED_CATEGORIES = {"plc", "pc", "endustriyel-makinalar", "oyun", "yapay-zeka", "akilli-ev"}
                     if category not in ALLOWED_CATEGORIES:
                         category = "pc"
                         
