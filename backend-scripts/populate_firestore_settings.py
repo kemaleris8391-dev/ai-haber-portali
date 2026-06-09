@@ -37,6 +37,14 @@ def populate_firestore():
     })
     print("✅ Site ayarları eklendi.")
 
+    # 1.5. Gemini API Keys (Vercel Entegrasyonu İçin Yedekleme)
+    gemini_keys = os.getenv("GEMINI_API_KEYS") or os.getenv("GEMINI_API_KEY")
+    if gemini_keys:
+        db.collection('system_config').document('api_keys').set({
+            "gemini_api_keys": gemini_keys
+        })
+        print("✅ Gemini API anahtarları Firestore'a yedeklendi.")
+
     # 2. Gemini Promptları (E-E-A-T & Google Discover & AdSense Uyumlu)
     
     rewrite_prompt = """Aşağıdaki haber başlığı ve özetini analiz et. Bu haberi tamamen özgün, Türkçe, akıcı, SEO dostu ve profesyonel bir teknoloji editörü ve teknik uzman üslubuyla yeniden yaz. 

@@ -52,6 +52,31 @@ def init_firebase():
     db_client = firestore.client()
     return db_client
 
+def get_gemini_api_keys():
+    """Fetches Gemini API keys from environment variables or falls back to Firestore."""
+    # 1. Environment variables check
+    keys_str = os.getenv("GEMINI_API_KEYS")
+    if keys_str:
+        return [k.strip() for k in keys_str.split(",") if k.strip()]
+        
+    fallback_key = os.getenv("GEMINI_API_KEY")
+    if fallback_key:
+        return [fallback_key.strip()]
+        
+    # 2. Firestore fallback
+    try:
+        db = init_firebase()
+        doc = db.collection("system_config").document("api_keys").get()
+        if doc.exists:
+            data = doc.to_dict()
+            keys_val = data.get("gemini_api_keys")
+            if keys_val:
+                return [k.strip() for k in keys_val.split(",") if k.strip()]
+    except Exception as e:
+        print(f"Error fetching API keys from Firestore: {e}")
+        
+    return []
+
 # DATABASE HELPER METHODS
 def get_scheduler_config():
     """Fetches scheduler config from Firestore."""
@@ -612,14 +637,10 @@ def check_similar_news_locally():
         return "BENZER_HABER_YOK", []
         
     # Prepare API keys
-    api_keys = []
-    keys_str = os.getenv("GEMINI_API_KEYS")
-    if keys_str:
-        api_keys = [k.strip() for k in keys_str.split(",") if k.strip()]
-    else:
-        fallback_key = os.getenv("GEMINI_API_KEY")
-        if fallback_key:
-            api_keys = [fallback_key.strip()]
+    api_keys = get_gemini_api_keys()
+    if not api_keys:
+        print("HATA: Benzer haber kontrolü için GEMINI_API_KEYS veya GEMINI_API_KEY bulunamadı!")
+        return "❌ <b>API Anahtarları Bulunamadı.</b>", []
             
     if not api_keys:
         print("HATA: Benzer haber kontrolü için GEMINI_API_KEYS veya GEMINI_API_KEY bulunamadı!")
@@ -2041,15 +2062,7 @@ def handle_approve_delete(callback_query, doc_id):
         edit_message_text(f"❌ Taslak silinirken hata oluştu: <code>{e}</code>", message_id)
 
 def enrich_news_with_comment(draft_data, user_comment):
-    api_keys = []
-    keys_str = os.getenv("GEMINI_API_KEYS")
-    if keys_str:
-        api_keys = [k.strip() for k in keys_str.split(",") if k.strip()]
-    else:
-        fallback_key = os.getenv("GEMINI_API_KEY")
-        if fallback_key:
-            api_keys = [fallback_key.strip()]
-            
+    api_keys = get_gemini_api_keys()
     if not api_keys:
         raise ValueError("API anahtarları bulunamadı!")
         
