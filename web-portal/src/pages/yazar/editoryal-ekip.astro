@@ -8,7 +8,9 @@ const allPosts = await getCollection('blog');
 const editorialPosts = allPosts.filter(post => 
   post.data.sourceName === "Editörün Kalemi" || 
   post.data.sourceName === "Telegram Arama" || 
-  post.data.sourceName === "Telegram Araştırma"
+  post.data.sourceName === "Telegram Araştırma" ||
+  post.data.sourceName === "Otonom Araştırma (AI)" ||
+  post.data.sourceName === "Otonom Araştırma"
 );
 
 const sortedPosts = editorialPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());

@@ -347,24 +347,30 @@ def get_research_config():
         interval_hours = data.get("interval_hours", 24)
         last_run_time = data.get("last_run_time", 0.0)
         is_running = data.get("is_running", False)
+        inspiration_hours = data.get("inspiration_hours", 24)
+        max_topics = data.get("max_topics", 2)
         return {
             "is_active": bool(is_active),
             "interval_hours": int(interval_hours),
             "last_run_time": float(last_run_time),
-            "is_running": bool(is_running)
+            "is_running": bool(is_running),
+            "inspiration_hours": int(inspiration_hours),
+            "max_topics": int(max_topics)
         }
     else:
         default_config = {
             "is_active": True,
             "interval_hours": 24,
             "last_run_time": 0.0,
-            "is_running": False
+            "is_running": False,
+            "inspiration_hours": 24,
+            "max_topics": 2
         }
         doc_ref.set(default_config)
         print("Firestore üzerinde varsayılan otonom araştırma ayarları oluşturuldu.")
         return default_config
 
-def update_research_config(interval_hours=None, last_run_time=None, is_running=None, is_active=None):
+def update_research_config(interval_hours=None, last_run_time=None, is_running=None, is_active=None, inspiration_hours=None, max_topics=None):
     """Firestore'daki otonom araştırma ayarlarını günceller."""
     db = init_firebase()
     doc_ref = db.collection("system_config").document("autonomous_research")
@@ -378,6 +384,10 @@ def update_research_config(interval_hours=None, last_run_time=None, is_running=N
         update_data["is_running"] = bool(is_running)
     if is_active is not None:
         update_data["is_active"] = bool(is_active)
+    if inspiration_hours is not None:
+        update_data["inspiration_hours"] = int(inspiration_hours)
+    if max_topics is not None:
+        update_data["max_topics"] = int(max_topics)
         
     if update_data:
         doc_ref.set(update_data, merge=True)

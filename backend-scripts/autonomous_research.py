@@ -100,10 +100,10 @@ def get_recent_news_titles(max_hours=24):
 
     return []
 
-def generate_research_topics_with_gemini(inspiration_titles):
+def generate_research_topics_with_gemini(inspiration_titles, max_topics=2):
     """
     Verilen haber başlıklarından ilham alarak Gemini 2.5 Flash ile
-    1-2 adet derinlemesine araştırma konusu üretir.
+    belirtilen adette derinlemesine araştırma konusu üretir.
     """
     prompt = f"""
 Sen son derece uzman, teknoloji, bilim, oyun ve geek kültürü alanında çalışan kıdemli bir editörsün.
@@ -111,9 +111,9 @@ Aşağıda, portalımızda son yayınlanan haberlerin başlıkları listelenmiş
 {json.dumps(inspiration_titles, ensure_ascii=False, indent=2)}
 
 GÖREVİN:
-Bu haber başlıklarını analiz et. Bu konulardan ilham alarak ama onlarla doğrudan aynı gelişmeyi ele almayan, tamamen yeni, bağımsız, güncel ve Google Arama ile derinlemesine araştırılıp 4 paragraflık kapsamlı makaleler yazılabilecek 1 veya 2 adet otonom araştırma konusu üret.
+Bu haber başlıklarını analiz et. Bu konulardan ilham alarak ama onlarla doğrudan aynı gelişmeyi ele almayan, tamamen yeni, bağımsız, güncel ve Google Arama ile derinlemesine araştırılıp 4 paragraflık kapsamlı makaleler yazılabilecek maksimum {max_topics} adet otonom araştırma konusu üret.
 
-YAYIN POLİTİKASI VE KATEGORİ KURALLARI:
+YAYIN POLİTİKASI VEYA KATEGORİ KURALLARI:
 1. Konuların kategorisi sadece şu dörtten biri olmalıdır: "teknoloji", "oyun", "dizi-film", "kuantum-evreni".
 2. Suya sabuna dokunmayan, yasal riski sıfır, siyaset dışı, magazin dışı, borsa/yatırım/fiyat spekülasyonu içermeyen, tamamen nesnel, teknoloji/bilim/geek kültürü odaklı konular olmalıdır.
 3. Her konu için:
@@ -208,6 +208,8 @@ def run_autonomous_research(force=False):
     interval_hours = config.get("interval_hours", 24)
     last_run_time = config.get("last_run_time", 0.0)
     is_running = config.get("is_running", False)
+    inspiration_hours = config.get("inspiration_hours", 24)
+    max_topics = config.get("max_topics", 2)
 
     now = time.time()
     elapsed_hours = (now - last_run_time) / 3600.0
@@ -244,14 +246,14 @@ def run_autonomous_research(force=False):
         ai_writer.FAILED_KEYS_THIS_RUN = []
 
         # 3. Son Haber Başlıklarını Çek
-        inspiration_titles = get_recent_news_titles()
+        inspiration_titles = get_recent_news_titles(max_hours=inspiration_hours)
         if not inspiration_titles:
             print("İlham alınacak hiçbir haber bulunamadı. Akış sonlandırılıyor.")
             firebase_helper.update_research_config(is_running=False, last_run_time=time.time())
             sys.exit(0)
 
         # 4. Gemini ile Konuları Belirle
-        topics = generate_research_topics_with_gemini(inspiration_titles)
+        topics = generate_research_topics_with_gemini(inspiration_titles, max_topics=max_topics)
         if not topics:
             raise ValueError("Gemini otonom araştırma konusu üretemedi.")
 

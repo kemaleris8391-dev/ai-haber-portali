@@ -286,14 +286,15 @@ Araştırılacak Konu / Girdi: {user_prompt}
 
     # 4. Otonom Araştırma Ayarları
     research_ref = db.collection('system_config').document('autonomous_research')
-    if not research_ref.get().exists:
-        research_ref.set({
-            "is_active": True,
-            "interval_hours": 24,
-            "last_run_time": 0.0,
-            "is_running": False
-        })
-        print("✅ Otonom araştırma başlangıç ayarları eklendi.")
+    research_ref.set({
+        "is_active": True,
+        "interval_hours": 24,
+        "last_run_time": 0.0,
+        "is_running": False,
+        "inspiration_hours": 24,
+        "max_topics": 2
+    }, merge=True)
+    print("✅ Otonom araştırma başlangıç ayarları eklendi.")
 
     print("🎉 İşlem tamamlandı! Hassas veriler ve küresel RSS kaynakları Firestore üzerinde güncellendi.")
 

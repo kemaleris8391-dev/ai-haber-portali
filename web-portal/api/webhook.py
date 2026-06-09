@@ -2396,6 +2396,8 @@ def handle_otoarastirma_menu(callback_query):
         is_active = config.get("is_active", True)
         interval_hours = config.get("interval_hours", 24)
         last_run = config.get("last_run_time", 0.0)
+        inspiration_hours = config.get("inspiration_hours", 24)
+        max_topics = config.get("max_topics", 2)
         
         status_text = "🟢 AKTİF (OTOMATİK ÇALIŞIYOR)" if is_active else "🔴 PASİF (DURDURULDU)"
         
@@ -2410,15 +2412,17 @@ def handle_otoarastirma_menu(callback_query):
             "🧠 <b>Otonom Haber Araştırma Paneli</b> 🧠\n"
             "──────────────────────────────\n"
             f"🎯 <b>Mevcut Durum:</b> {status_text}\n"
-            f"⏱️ <b>Kontrol Periyodu:</b> Her {interval_hours} saatte bir\n"
+            f"⏱️ <b>Kontrol Sıklığı (Zamanlayıcı):</b> Her {interval_hours} saatte bir\n"
+            f"🔍 <b>İlham Taraması:</b> Son {inspiration_hours} saatlik haberlerden esinlenilir\n"
+            f"✍️ <b>Yazım Adedi:</b> Çalışma başına maks {max_topics} haber üretilir\n"
             f"📅 <b>Son Araştırma Zamanı:</b> {last_run_str}\n\n"
             "──────────────────────────────\n"
             "📖 <b>Açıklayıcı Bilgi:</b>\n"
-            "• Bu sistem, belirlediğiniz periyot dolduğunda <b>son eklenen haberleri analiz eder.</b>\n"
-            "• Bu haberlerle ilişkili ama bağımsız yeni **araştırma başlıkları** üretir.\n"
-            "• Bu başlıkları <b>Google Arama entegrasyonu</b> ile derinlemesine araştırarak tamamen özgün, kapsamlı yeni haber makaleleri yazar ve yayınlar.\n"
+            "• Sistem, belirlediğiniz sıklık dolduğunda (örn: 12 veya 24 saatte bir) otonom çalışır.\n"
+            "• Son eklenen haberleri inceleyerek yepyeni **araştırma konuları** bulur.\n"
+            "• Bu konuları <b>Google Arama</b> ile araştırıp tamamen özgün makaleler yazar ve yayınlar.\n"
             "──────────────────────────────\n\n"
-            "Aşağıdaki butonları kullanarak otonom araştırma durumunu açıp kapatabilir veya periyodu değiştirebilirsiniz:"
+            "Aşağıdaki butonları kullanarak otonom araştırma durumunu açıp kapatabilir veya çalışma periyodunu değiştirebilirsiniz:"
         )
         
         keyboard = [
@@ -2450,6 +2454,8 @@ def send_otoarastirma_menu_message():
         is_active = config.get("is_active", True)
         interval_hours = config.get("interval_hours", 24)
         last_run = config.get("last_run_time", 0.0)
+        inspiration_hours = config.get("inspiration_hours", 24)
+        max_topics = config.get("max_topics", 2)
         
         status_text = "🟢 AKTİF (OTOMATİK ÇALIŞIYOR)" if is_active else "🔴 PASİF (DURDURULDU)"
         
@@ -2464,15 +2470,17 @@ def send_otoarastirma_menu_message():
             "🧠 <b>Otonom Haber Araştırma Paneli</b> 🧠\n"
             "──────────────────────────────\n"
             f"🎯 <b>Mevcut Durum:</b> {status_text}\n"
-            f"⏱️ <b>Kontrol Periyodu:</b> Her {interval_hours} saatte bir\n"
+            f"⏱️ <b>Kontrol Sıklığı (Zamanlayıcı):</b> Her {interval_hours} saatte bir\n"
+            f"🔍 <b>İlham Taraması:</b> Son {inspiration_hours} saatlik haberlerden esinlenilir\n"
+            f"✍️ <b>Yazım Adedi:</b> Çalışma başına maks {max_topics} haber üretilir\n"
             f"📅 <b>Son Araştırma Zamanı:</b> {last_run_str}\n\n"
             "──────────────────────────────\n"
             "📖 <b>Açıklayıcı Bilgi:</b>\n"
-            "• Bu sistem, belirlediğiniz periyot dolduğunda <b>son eklenen haberleri analiz eder.</b>\n"
-            "• Bu haberlerle ilişkili ama bağımsız yeni **araştırma başlıkları** üretir.\n"
-            "• Bu başlıkları <b>Google Arama entegrasyonu</b> ile derinlemesine araştırarak tamamen özgün, kapsamlı yeni haber makaleleri yazar ve yayınlar.\n"
+            "• Sistem, belirlediğiniz sıklık dolduğunda (örn: 12 veya 24 saatte bir) otonom çalışır.\n"
+            "• Son eklenen haberleri inceleyerek yepyeni **araştırma konuları** bulur.\n"
+            "• Bu konuları <b>Google Arama</b> ile araştırıp tamamen özgün makaleler yazar ve yayınlar.\n"
             "──────────────────────────────\n\n"
-            "Aşağıdaki butonları kullanarak otonom araştırma durumunu açıp kapatabilir veya periyodu değiştirebilirsiniz:"
+            "Aşağıdaki butonları kullanarak otonom araştırma durumunu açıp kapatabilir veya çalışma periyodunu değiştirebilirsiniz:"
         )
         
         keyboard = [
