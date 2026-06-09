@@ -314,6 +314,15 @@ Araştırılacak Konu / Girdi: {user_prompt}
     })
     print("✅ Varsayılan kategoriler listesi Firestore'a eklendi.")
 
+    # 6. Auto Cleanup (Pasifleştirildi)
+    cleanup_ref = db.collection('system_config').document('auto_cleanup')
+    cleanup_ref.set({
+        "is_active": False,
+        "interval_hours": 24,
+        "last_cleanup_time": 0.0
+    })
+    print("✅ Otonom temizlik sistemi pasifleştirildi.")
+
     print("Ἰ9 İşlem tamamlandı! Hassas veriler ve küresel RSS kaynakları Firestore üzerinde güncellendi.")
 
 if __name__ == "__main__":

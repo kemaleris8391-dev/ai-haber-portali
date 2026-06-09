@@ -327,6 +327,17 @@ def fetch_new_news():
         except Exception as e:
             print(f"UYARI: Kara listeye yazım başarısız oldu: {e}")
             
+    # ═══ KATEGORİ BAŞINA MAKSİMUM 1 HABER KISITLAMASI ═══
+    if new_news_list:
+        category_picks = {}
+        for item in new_news_list:
+            cat = item["category"]
+            if cat not in category_picks:
+                category_picks[cat] = item
+            else:
+                print(f"Kategori Limiti: '{item['title']}' haberi, '{cat}' kategorisinde zaten 1 haber seçildiği için elendi.")
+        new_news_list = list(category_picks.values())
+            
     # ═══ KATMAN 4: Orijinal Görsel (og:image) Çekimi ═══
     if new_news_list:
         print(f"\n🖼️ Katman 4: Onaylanan {len(new_news_list)} haberin orijinal görselleri (og:image) aranıyor...")

@@ -832,9 +832,6 @@ def send_professional_help_dashboard(message_id=None):
         ],
         [
             {"text": "🔍 Benzer Haber Ara", "callback_data": "menu:benzer"},
-            {"text": "🧹 Oto Temizlik", "callback_data": "menu:ototemizleme"}
-        ],
-        [
             {"text": "🧠 Otonom Araştırma", "callback_data": "menu:otoarastirma"}
         ]
     ]
@@ -867,12 +864,6 @@ def handle_durum_callback(callback_query):
         is_running_val = sched_conf["is_running"]
         is_active_val = sched_conf.get("is_active", True)
         
-        # Otonom temizlik durumunu alalım
-        cleanup_conf = get_cleanup_config()
-        cleanup_active = cleanup_conf.get("is_active", True)
-        cleanup_interval = cleanup_conf.get("interval_hours", 24)
-        cleanup_last = cleanup_conf.get("last_cleanup_time", 0.0)
-        
         elapsed_min = (time.time() - last_run_val) / 60.0
         next_run_min = max(0.0, interval_val - elapsed_min)
         
@@ -880,7 +871,6 @@ def handle_durum_callback(callback_query):
         tr_tz = timezone(timedelta(hours=3))
         last_run_str = datetime.fromtimestamp(last_run_val, tz=tr_tz).strftime("%d.%m.%Y %H:%M:%S")
         next_run_str = (datetime.now(tr_tz) + timedelta(minutes=next_run_min)).strftime("%d.%m.%Y %H:%M:%S")
-        cleanup_last_str = datetime.fromtimestamp(cleanup_last, tz=tr_tz).strftime("%d.%m.%Y %H:%M:%S") if cleanup_last > 0 else "Hiç çalıştırılmadı"
         
         status_msg = (
             "📊 <b>Sistem Durum Raporu (Bulut Entegreli)</b>\n\n"
@@ -890,10 +880,6 @@ def handle_durum_callback(callback_query):
             f"• <b>Tarama Sıklığı:</b> {interval_val} dakikada bir\n"
             f"• <b>Son Tarama Zamanı:</b> {last_run_str}\n"
             f"• <b>Sonraki Tarama:</b> {next_run_str} (~{int(next_run_min)} dakika sonra)\n\n"
-            "🧹 <b>OTONOM HABER TEMİZLİK SİSTEMİ:</b>\n"
-            f"• <b>Oto Temizlik:</b> {'🟢 Aktif' if cleanup_active else '🔴 Pasif'}\n"
-            f"• <b>Temizlik Periyodu:</b> {cleanup_interval} saatte bir\n"
-            f"• <b>Son Temizlik Zamanı:</b> {cleanup_last_str}\n\n"
             f"📰 <b>Toplam Yayınlanan Haber:</b> {get_total_posts_count()} adet\n\n"
             f"🔗 <b>Canlı Site:</b> https://aihaberler.web.app"
         )
@@ -2028,32 +2014,13 @@ def handle_callback_query_routing(callback_query):
     elif data == "menu:benzer":
         handle_benzer_haber_callback(callback_query)
     elif data == "menu:ototemizleme":
-        handle_ototemizleme_menu(callback_query)
+        answer_callback_query(callback_query["id"], "🧹 Otonom Temizlik Sistemi Kaldırılmıştır.", show_alert=True)
     elif data.startswith("ototemizlik_toggle:"):
-        set_to = data.split(":", 1)[1]
-        is_active = (set_to == "on")
-        update_cleanup_config(is_active=is_active)
-        answer_callback_query(callback_query["id"], f"🟢 Oto temizlik {'aktif' if is_active else 'pasif'} yapıldı!", show_alert=True)
-        handle_ototemizleme_menu(callback_query)
+        answer_callback_query(callback_query["id"], "🧹 Bu özellik devre dışı bırakılmıştır.", show_alert=True)
     elif data.startswith("set_temizlik_sure:"):
-        hours = int(data.split(":", 1)[1])
-        update_cleanup_config(interval_hours=hours)
-        answer_callback_query(callback_query["id"], f"⏱️ Temizlik periyodu {hours} saat yapıldı!", show_alert=True)
-        handle_ototemizleme_menu(callback_query)
+        answer_callback_query(callback_query["id"], "🧹 Bu özellik devre dışı bırakılmıştır.", show_alert=True)
     elif data == "ototemizlik_manuel":
-        success = trigger_github_cleanup_workflow()
-        if success:
-            answer_callback_query(callback_query["id"], "Manuel temizlik tetiklendi!")
-            edit_message_text(
-                "⚡ <b>Manuel Otonom Temizlik Tetiklendi!</b>\n\n"
-                "GitHub Actions bulut sunucusu üzerinde otonom temizlik işlemi başarıyla başlatıldı.\n"
-                "🔍 Son 24 saatlik haberler Gemma 4 31b ile analiz edilip aykırı/mükerrer içerikler temizlenecektir.\n\n"
-                "📊 İşlem tamamlandığında detaylı rapor Telegram üzerinden size iletilecektir (yaklaşık 1-2 dakika sürer).",
-                callback_query["message"]["message_id"],
-                reply_markup={"inline_keyboard": [[{"text": "🔙 Ana Menüye Dön", "callback_data": "menu:yardim"}]]}
-            )
-        else:
-            answer_callback_query(callback_query["id"], "Tetikleme başarısız oldu!")
+        answer_callback_query(callback_query["id"], "🧹 Bu özellik devre dışı bırakılmıştır.", show_alert=True)
     elif data == "menu:otoarastirma":
         handle_otoarastirma_menu(callback_query)
     elif data.startswith("research_toggle:"):
@@ -2997,7 +2964,10 @@ sourceUrl: "{source_url}"
                 send_professional_help_dashboard()
                 
             elif text in ["/ototemizlik", "/ototemizleme"]:
-                send_ototemizleme_menu_message()
+                send_message(
+                    "🧹 <b>Otonom Haber Temizlik Sistemi Kaldırılmıştır</b>\n\n"
+                    "Artık tüm haberler sizin onayınız ve editoryal görüşünüz eklenmeden (Telegram yorumu) yayına alınmadığı için otonom silme sistemine ihtiyaç kalmamıştır."
+                )
                 
             elif text == "/sil":
                 send_date_selection_menu()

@@ -111,23 +111,7 @@ def main():
         
     # 1.5. Eğer sadece temizlik isteniyorsa
     if cleanup_force:
-        print("Sadece otonom temizlik tetiklendi. RSS taraması atlanıyor.")
-        try:
-            config = load_config()
-            
-            # Otonom temizliği zorla çalıştır
-            from auto_cleanup import run_auto_cleanup_if_needed
-            run_auto_cleanup_if_needed(config, force=True)
-            
-            # İndeksi yeniden oluştur
-            rebuild_posts_index_locally()
-            
-        except Exception as cleanup_err:
-            import traceback
-            print(f"Otonom temizlik sırasında hata oluştu: {cleanup_err}")
-            traceback.print_exc()
-            send_error("Otonom Temizlik Hatası", f"Hata: {cleanup_err}\n{traceback.format_exc()}")
-            sys.exit(1)
+        print("Otonom temizlik sistemi devre dışı bırakılmıştır.")
         sys.exit(0)
     
     # 2. Firestore Zamanlayıcı Kontrolü
@@ -179,13 +163,8 @@ def main():
         firebase_helper.update_scheduler_config(is_running=False)
         sys.exit(1)
         
-    # 3.5 Otonom Temizlik Periyot Kontrolü
-    try:
-        from auto_cleanup import run_auto_cleanup_if_needed
-        run_auto_cleanup_if_needed(config, force=False)
-    except Exception as cleanup_err:
-        print(f"Otonom temizlik kontrolü sırasında hata: {cleanup_err}")
-        traceback.print_exc()
+    # 3.5 Otonom Temizlik Periyot Kontrolü kaldırıldı (manuel yönetim)
+    pass
         
     # 4. Yeni haberleri çek
     try:
