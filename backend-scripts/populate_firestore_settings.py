@@ -152,11 +152,10 @@ Genel Yapı & E-E-A-T Katma Değer Kuralları:
    - ## Kullanıcı Deneyimi ve Gelecek Öngörüüsü (Tüketicinin veya oyuncunun elde edeceği fayda, gelecekteki olası gelişmeler)
    - ## Eleştirel Bakış ve Soru İşaretleri (Varsa olumsuz yönler, güvenlik riskleri veya cevaplanmamış sorular)
 3. Haberin en sonuna mutlaka "### Editörün Kaleminden" başlığı altında, okuyucuyla bağ kuran, samimi, objektif ve zenginleştirici 2-3 cümlelik derinlemesine bir değerlendirme ekle.
-4. "Editörün Kaleminden" paragrafının BİTİMİNDE, haberin orijinal kaynağını kesinlikle şu Markdown formatında ekle: `[Haberin Orijinal Kaynağı: Araştırma Raporu]({raw_link})`. Kaynak linki için asla "Link burada", "haberin devamı" gibi ifadeler kullanma.
-5. Haber için en fazla 160 karakterlik bir SEO meta açıklaması (description) oluştur.
-6. Haber kategorisini konuya göre tam olarak şu dördünden biri olarak belirle: "teknoloji", "oyun", "dizi-film" veya "kuantum-evreni". Başka bir kategori adı kesinlikle kullanma.
-7. Haberle ilgili 5 adet Türkçe etiket (keywords) belirle.
-8. Pexels görsel arama motoru için haberin ana konusunu, markasını ve modelini içeren İngilizce 2-3 kelimelik net ve nokta atışı bir görsel arama sorgusu (pexels_query) yaz. Örnek: "playstation 5 console" (sadece "playstation" yazma), "intel arc gpu" (sadece "gpu" yazma), "quantum computing chip" (sadece "quantum" yazma), "volkswagen ID electric car" (sadece "car" yazma).
+4. Haber için en fazla 160 karakterlik bir SEO meta açıklaması (description) oluştur.
+5. Haber kategorisini konuya göre tam olarak şu dördünden biri olarak belirle: "teknoloji", "oyun", "dizi-film" veya "kuantum-evreni". Başka bir kategori adı kesinlikle kullanma.
+6. Haberle ilgili 5 adet Türkçe etiket (keywords) belirle.
+7. Pexels görsel arama motoru için haberin ana konusunu, markasını ve modelini içeren İngilizce 2-3 kelimelik net ve nokta atışı bir görsel arama sorgusu (pexels_query) yaz. Örnek: "playstation 5 console" (sadece "playstation" yazma), "intel arc gpu" (sadece "gpu" yazma), "quantum computing chip" (sadece "quantum" yazma), "volkswagen ID electric car" (sadece "car" yazma).
 
 Kullanıcının Sunduğu Detaylı Araştırma Metni:
 {user_prompt}
@@ -201,11 +200,10 @@ Genel Yapı & E-E-A-T Katma Değer Kuralları:
    - ## Kullanıcı Deneyimi ve Gelecek Öngörüsü (Tüketicinin veya oyuncunun elde edeceği fayda, gelecekteki olası gelişmeler)
    - ## Eleştirel Bakış ve Soru İşaretleri (Varsa olumsuz yönler, güvenlik riskleri veya cevaplanmamış sorular)
 3. Haberin en sonuna mutlaka "### Editörün Kaleminden" başlığı altında, okuyucuyla bağ kuran, samimi, objektif ve zenginleştirici 2-3 cümlelik derinlemesine bir değerlendirme ekle.
-4. "Editörün Kaleminden" paragrafının BİTİMİNDE, haberin orijinal kaynağını kesinlikle şu Markdown formatında ekle: `[Haberin Orijinal Kaynağı: Google Arama]({raw_link})`. Kaynak linki için asla "Link burada", "haberin devamı" gibi ifadeler kullanma.
-5. Haber için en fazla 160 karakterlik bir SEO meta açıklaması (description) oluştur.
-6. Haber kategorisini konuya göre tam olarak şu dördünden biri olarak belirle: "teknoloji", "oyun", "dizi-film" veya "kuantum-evreni". Başka bir kategori adı kesinlikle kullanma.
-7. Haberle ilgili 5 adet Türkçe etiket (keywords) belirle.
-8. Pexels görsel arama motoru için haberin ana konusunu, markasını ve modelini içeren İngilizce 2-3 kelimelik net ve nokta atışı bir görsel arama sorgusu (pexels_query) yaz. Örnek: "playstation 5 console" (sadece "playstation" yazma), "intel arc gpu" (sadece "gpu" yazma), "quantum computing chip" (sadece "quantum" yazma), "volkswagen ID electric car" (sadece "car" yazma).
+4. Haber için en fazla 160 karakterlik bir SEO meta açıklaması (description) oluştur.
+5. Haber kategorisini konuya göre tam olarak şu dördünden biri olarak belirle: "teknoloji", "oyun", "dizi-film" veya "kuantum-evreni". Başka bir kategori adı kesinlikle kullanma.
+6. Haberle ilgili 5 adet Türkçe etiket (keywords) belirle.
+7. Pexels görsel arama motoru için haberin ana konusunu, markasını ve modelini içeren İngilizce 2-3 kelimelik net ve nokta atışı bir görsel arama sorgusu (pexels_query) yaz. Örnek: "playstation 5 console" (sadece "playstation" yazma), "intel arc gpu" (sadece "gpu" yazma), "quantum computing chip" (sadece "quantum" yazma), "volkswagen ID electric car" (sadece "car" yazma).
 
 Araştırılacak Konu / Girdi: {user_prompt}
 
