@@ -286,6 +286,17 @@ Araştırılacak Konu / Girdi: {user_prompt}
         rss_sources_ref.document(doc_id).set(src)
         print(f"✅ RSS Kaynağı eklendi: {src['name']}")
 
+    # 4. Otonom Araştırma Ayarları
+    research_ref = db.collection('system_config').document('autonomous_research')
+    if not research_ref.get().exists:
+        research_ref.set({
+            "is_active": True,
+            "interval_hours": 24,
+            "last_run_time": 0.0,
+            "is_running": False
+        })
+        print("✅ Otonom araştırma başlangıç ayarları eklendi.")
+
     print("🎉 İşlem tamamlandı! Hassas veriler ve küresel RSS kaynakları Firestore üzerinde güncellendi.")
 
 if __name__ == "__main__":

@@ -132,6 +132,52 @@ def update_cleanup_config(interval_hours=None, last_cleanup_time=None, is_active
     if update_data:
         doc_ref.set(update_data, merge=True)
 
+def get_research_config():
+    """Fetches autonomous research config from Firestore."""
+    db = init_firebase()
+    doc_ref = db.collection("system_config").document("autonomous_research")
+    doc = doc_ref.get()
+    
+    if doc.exists:
+        data = doc.to_dict()
+        is_active = data.get("is_active", True)
+        interval_hours = data.get("interval_hours", 24)
+        last_run_time = data.get("last_run_time", 0.0)
+        is_running = data.get("is_running", False)
+        return {
+            "is_active": bool(is_active),
+            "interval_hours": int(interval_hours),
+            "last_run_time": float(last_run_time),
+            "is_running": bool(is_running)
+        }
+    else:
+        default_config = {
+            "is_active": True,
+            "interval_hours": 24,
+            "last_run_time": 0.0,
+            "is_running": False
+        }
+        doc_ref.set(default_config)
+        return default_config
+
+def update_research_config(interval_hours=None, last_run_time=None, is_running=None, is_active=None):
+    """Updates autonomous research config on Firestore."""
+    db = init_firebase()
+    doc_ref = db.collection("system_config").document("autonomous_research")
+    
+    update_data = {}
+    if interval_hours is not None:
+        update_data["interval_hours"] = int(interval_hours)
+    if last_run_time is not None:
+        update_data["last_run_time"] = float(last_run_time)
+    if is_running is not None:
+        update_data["is_running"] = bool(is_running)
+    if is_active is not None:
+        update_data["is_active"] = bool(is_active)
+        
+    if update_data:
+        doc_ref.set(update_data, merge=True)
+
 def get_rss_sources():
     """Fetches RSS sources from Firestore."""
     db = init_firebase()
@@ -777,6 +823,9 @@ def send_professional_help_dashboard(message_id=None):
         [
             {"text": "🔍 Benzer Haber Ara", "callback_data": "menu:benzer"},
             {"text": "🧹 Oto Temizlik", "callback_data": "menu:ototemizleme"}
+        ],
+        [
+            {"text": "🧠 Otonom Araştırma", "callback_data": "menu:otoarastirma"}
         ]
     ]
     
@@ -1795,6 +1844,33 @@ def handle_callback_query_routing(callback_query):
             )
         else:
             answer_callback_query(callback_query["id"], "Tetikleme başarısız oldu!")
+    elif data == "menu:otoarastirma":
+        handle_otoarastirma_menu(callback_query)
+    elif data.startswith("research_toggle:"):
+        set_to = data.split(":", 1)[1]
+        is_active = (set_to == "on")
+        update_research_config(is_active=is_active)
+        answer_callback_query(callback_query["id"], f"🧠 Otonom Araştırma {'aktif' if is_active else 'pasif'} yapıldı!", show_alert=True)
+        handle_otoarastirma_menu(callback_query)
+    elif data.startswith("research_freq_set:"):
+        hours = int(data.split(":", 1)[1])
+        update_research_config(interval_hours=hours)
+        answer_callback_query(callback_query["id"], f"⏱️ Araştırma periyodu {hours} saat yapıldı!", show_alert=True)
+        handle_otoarastirma_menu(callback_query)
+    elif data == "research_trigger_now":
+        success = trigger_github_workflow(research=True)
+        if success:
+            answer_callback_query(callback_query["id"], "Otonom araştırma tetiklendi!")
+            edit_message_text(
+                "⚡ <b>Manuel Otonom Araştırma Tetiklendi!</b>\n\n"
+                "GitHub Actions bulut sunucusu üzerinde otonom haber araştırma işlemi başarıyla başlatıldı.\n"
+                "🔍 Son eklenen haberlerden ilham alınarak Google Arama Grounding ile tamamen yeni, özgün ve telif hakkı kurallarına uygun araştırma makaleleri yazılacaktır.\n\n"
+                "📊 İşlem tamamlandığında detaylı rapor Telegram üzerinden size iletilecektir (yaklaşık 1-2 dakika sürer).",
+                callback_query["message"]["message_id"],
+                reply_markup={"inline_keyboard": [[{"text": "🔙 Ana Menüye Dön", "callback_data": "menu:yardim"}]]}
+            )
+        else:
+            answer_callback_query(callback_query["id"], "Tetikleme başarısız oldu!")
     elif data == "menu:rss":
         send_rss_management_menu(callback_query)
     elif data == "rss_manage:main":
@@ -1916,7 +1992,7 @@ def send_error(title, message):
     send_message(text)
 
 # GITHUB WORKFLOW TRIGGER
-def trigger_github_workflow():
+def trigger_github_workflow(research=False):
     """Triggers GitHub Actions workflow via dispatch API or falls back to Firestore trigger."""
     github_token = os.getenv("GITHUB_PAT") or os.getenv("GITHUB_TOKEN")
     owner = "kemaleris8391-dev"
@@ -2008,20 +2084,21 @@ def trigger_github_workflow():
         except Exception as check_err:
             print(f"GitHub workflow active runs checking error: {check_err}")
             
-    send_message("🔄 <b>Manuel tarama isteği alındı.</b> Bulut sunucusu (GitHub Actions) ile bağlantı kuruluyor...")
+    req_type = "otonom araştırma" if research else "tarama"
+    send_message(f"🔄 <b>Manuel {req_type} isteği alındı.</b> Bulut sunucusu (GitHub Actions) ile bağlantı kuruluyor...")
     
     if not github_token:
         # Fallback to scheduling
         try:
             update_scheduler_config(last_run_time=0, is_running=False)
             send_success(
-                "Tarama Sıraya Eklendi (Bulut Zamanlayıcı)",
-                "GitHub erişim anahtarı (<code>GITHUB_PAT</code>) yapılandırılmadığı için işlem bulut zamanlayıcısına (Cron) havale edildi.\n\n"
-                "⚡ <b>Bulut Yazarı</b> en geç <b>10 dakika içinde</b> otomatik olarak uyanacak, taramayı yapacak ve yeni haberleri yayınlayacaktır.\n\n"
-                "💡 <i>Öneri: Vercel panelinden <code>GITHUB_PAT</code> anahtarını tanımlayarak <b>/tara</b> komutunun anında (1 saniyede) tetiklenmesini sağlayabilirsiniz!</i>"
+                f"İşlem Sıraya Eklendi (Bulut Zamanlayıcı)",
+                f"GitHub erişim anahtarı (<code>GITHUB_PAT</code>) yapılandırılmadığı için işlem bulut zamanlayıcısına (Cron) havale edildi.\n\n"
+                f"⚡ <b>Bulut Yazarı</b> en geç <b>10 dakika içinde</b> otomatik olarak uyanacak, işlemi yapacak ve yeni haberleri yayınlayacaktır.\n\n"
+                f"💡 <i>Öneri: Vercel panelinden <code>GITHUB_PAT</code> anahtarını tanımlayarak tetiklemelerin anında (1 saniyede) gerçekleşmesini sağlayabilirsiniz!</i>"
             )
         except Exception as e:
-            send_error("Manuel Tarama Hatası", f"Firestore zamanlayıcı tetiklenirken hata oluştu: {e}")
+            send_error("Manuel Tetikleme Hatası", f"Firestore zamanlayıcı tetiklenirken hata oluştu: {e}")
         return False
         
     url = f"https://api.github.com/repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches"
@@ -2034,19 +2111,25 @@ def trigger_github_workflow():
     data = {
         "ref": "main",
         "inputs": {
-            "force": "true"
+            "force": "true",
+            "research": "true" if research else "false"
         }
     }
     
     try:
         response = requests.post(url, json=data, headers=headers, timeout=15)
         if response.status_code == 204:
-            send_success(
-                "Bulut Taraması Tetiklendi!",
+            title_text = "Otonom Araştırma Tetiklendi!" if research else "Bulut Taraması Tetiklendi!"
+            desc_text = (
+                "🚀 <b>GitHub Actions Bulut Sunucusu ANINDA tetiklendi!</b>\n\n"
+                "Yapay zeka yazarımız son haberlerden esinlenen otonom araştırma konularını yazmaya başladı.\n"
+                "👉 İşlem tamamlandığında (yaklaşık 2-3 dakika) yeni makalelerin linklerini içeren başarı raporu doğrudan buraya iletilecektir."
+            ) if research else (
                 "🚀 <b>GitHub Actions Bulut Sunucusu ANINDA tetiklendi!</b>\n\n"
                 "Yapay zeka yazarımız bulutta RSS kaynaklarını taramaya ve makaleleri yazmaya başladı.\n"
                 "👉 İşlem tamamlandığında (yaklaşık 2-3 dakika) yeni haberlerin tıklanabilir linklerini içeren başarı raporu doğrudan buraya iletilecektir."
             )
+            send_success(title_text, desc_text)
             return True
         else:
             err_detail = response.text
@@ -2302,6 +2385,126 @@ def send_ototemizleme_menu_message():
         requests.post(url, json=payload, timeout=10)
     except Exception as e:
         print(f"Error sending ototemizleme menu: {e}")
+
+def handle_otoarastirma_menu(callback_query):
+    message_id = callback_query["message"]["message_id"]
+    callback_id = callback_query["id"]
+    chat_id = callback_query["message"]["chat"]["id"]
+    
+    try:
+        config = get_research_config()
+        is_active = config.get("is_active", True)
+        interval_hours = config.get("interval_hours", 24)
+        last_run = config.get("last_run_time", 0.0)
+        
+        status_text = "🟢 AKTİF (OTOMATİK ÇALIŞIYOR)" if is_active else "🔴 PASİF (DURDURULDU)"
+        
+        from datetime import timezone
+        tr_tz = timezone(timedelta(hours=3))
+        if last_run > 0:
+            last_run_str = datetime.fromtimestamp(last_run, tz=tr_tz).strftime("%d.%m.%Y %H:%M:%S")
+        else:
+            last_run_str = "Hiç çalıştırılmadı"
+            
+        text = (
+            "🧠 <b>Otonom Haber Araştırma Paneli</b> 🧠\n"
+            "──────────────────────────────\n"
+            f"🎯 <b>Mevcut Durum:</b> {status_text}\n"
+            f"⏱️ <b>Kontrol Periyodu:</b> Her {interval_hours} saatte bir\n"
+            f"📅 <b>Son Araştırma Zamanı:</b> {last_run_str}\n\n"
+            "──────────────────────────────\n"
+            "📖 <b>Açıklayıcı Bilgi:</b>\n"
+            "• Bu sistem, belirlediğiniz periyot dolduğunda <b>son eklenen haberleri analiz eder.</b>\n"
+            "• Bu haberlerle ilişkili ama bağımsız yeni **araştırma başlıkları** üretir.\n"
+            "• Bu başlıkları <b>Google Arama entegrasyonu</b> ile derinlemesine araştırarak tamamen özgün, kapsamlı yeni haber makaleleri yazar ve yayınlar.\n"
+            "──────────────────────────────\n\n"
+            "Aşağıdaki butonları kullanarak otonom araştırma durumunu açıp kapatabilir veya periyodu değiştirebilirsiniz:"
+        )
+        
+        keyboard = [
+            [
+                {"text": f"{'🔴 Kapat (Devre Dışı Bırak)' if is_active else '🟢 Aktifleştir (Çalıştır)'}", "callback_data": f"research_toggle:{'off' if is_active else 'on'}"}
+            ],
+            [
+                {"text": "⏱️ 12 Saat", "callback_data": "research_freq_set:12"},
+                {"text": "⏱️ 24 Saat", "callback_data": "research_freq_set:24"}
+            ],
+            [
+                {"text": "⏱️ 48 Saat", "callback_data": "research_freq_set:48"},
+                {"text": "⏱️ 72 Saat", "callback_data": "research_freq_set:72"}
+            ],
+            [
+                {"text": "⚡ Şimdi Araştır (Manuel)", "callback_data": "research_trigger_now"},
+                {"text": "🔙 Ana Menüye Dön", "callback_data": "menu:yardim"}
+            ]
+        ]
+        
+        edit_message_text(text, message_id, reply_markup={"inline_keyboard": keyboard}, chat_id=chat_id)
+        answer_callback_query(callback_id)
+    except Exception as e:
+        send_error("Otonom Araştırma Panel Hatası", f"Hata: {e}")
+
+def send_otoarastirma_menu_message():
+    try:
+        config = get_research_config()
+        is_active = config.get("is_active", True)
+        interval_hours = config.get("interval_hours", 24)
+        last_run = config.get("last_run_time", 0.0)
+        
+        status_text = "🟢 AKTİF (OTOMATİK ÇALIŞIYOR)" if is_active else "🔴 PASİF (DURDURULDU)"
+        
+        from datetime import timezone
+        tr_tz = timezone(timedelta(hours=3))
+        if last_run > 0:
+            last_run_str = datetime.fromtimestamp(last_run, tz=tr_tz).strftime("%d.%m.%Y %H:%M:%S")
+        else:
+            last_run_str = "Hiç çalıştırılmadı"
+            
+        text = (
+            "🧠 <b>Otonom Haber Araştırma Paneli</b> 🧠\n"
+            "──────────────────────────────\n"
+            f"🎯 <b>Mevcut Durum:</b> {status_text}\n"
+            f"⏱️ <b>Kontrol Periyodu:</b> Her {interval_hours} saatte bir\n"
+            f"📅 <b>Son Araştırma Zamanı:</b> {last_run_str}\n\n"
+            "──────────────────────────────\n"
+            "📖 <b>Açıklayıcı Bilgi:</b>\n"
+            "• Bu sistem, belirlediğiniz periyot dolduğunda <b>son eklenen haberleri analiz eder.</b>\n"
+            "• Bu haberlerle ilişkili ama bağımsız yeni **araştırma başlıkları** üretir.\n"
+            "• Bu başlıkları <b>Google Arama entegrasyonu</b> ile derinlemesine araştırarak tamamen özgün, kapsamlı yeni haber makaleleri yazar ve yayınlar.\n"
+            "──────────────────────────────\n\n"
+            "Aşağıdaki butonları kullanarak otonom araştırma durumunu açıp kapatabilir veya periyodu değiştirebilirsiniz:"
+        )
+        
+        keyboard = [
+            [
+                {"text": f"{'🔴 Kapat (Devre Dışı Bırak)' if is_active else '🟢 Aktifleştir (Çalıştır)'}", "callback_data": f"research_toggle:{'off' if is_active else 'on'}"}
+            ],
+            [
+                {"text": "⏱️ 12 Saat", "callback_data": "research_freq_set:12"},
+                {"text": "⏱️ 24 Saat", "callback_data": "research_freq_set:24"}
+            ],
+            [
+                {"text": "⏱️ 48 Saat", "callback_data": "research_freq_set:48"},
+                {"text": "⏱️ 72 Saat", "callback_data": "research_freq_set:72"}
+            ],
+            [
+                {"text": "⚡ Şimdi Araştır (Manuel)", "callback_data": "research_trigger_now"},
+                {"text": "🔙 Ana Menüye Dön", "callback_data": "menu:yardim"}
+            ]
+        ]
+        
+        bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
+        chat_id = os.getenv("TELEGRAM_CHAT_ID")
+        url = f"https://api.telegram.org/bot{bot_token.strip()}/sendMessage"
+        payload = {
+            "chat_id": chat_id.strip(),
+            "text": text,
+            "parse_mode": "HTML",
+            "reply_markup": {"inline_keyboard": keyboard}
+        }
+        requests.post(url, json=payload, timeout=10)
+    except Exception as e:
+        print(f"Error sending otoarastirma menu: {e}")
 
 # VERCEL SERVERLESS HANDLER
 class handler(BaseHTTPRequestHandler):

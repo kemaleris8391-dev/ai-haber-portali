@@ -94,7 +94,7 @@ def send_message(text):
     except Exception as e:
         print(f"Telegram mesaj gönderme hatası: {e}")
 
-def trigger_github_workflow():
+def trigger_github_workflow(research=False):
     github_token = os.getenv("GITHUB_PAT") or os.getenv("GITHUB_TOKEN")
     owner = "kemaleris8391-dev"
     repo = "ai-haber-portali"
@@ -116,7 +116,8 @@ def trigger_github_workflow():
     data = {
         "ref": "main",
         "inputs": {
-            "force": "true"
+            "force": "true",
+            "research": "true" if research else "false"
         }
     }
     

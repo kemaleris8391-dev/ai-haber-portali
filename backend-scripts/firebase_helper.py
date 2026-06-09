@@ -334,3 +334,51 @@ def add_to_blacklist(new_links):
         # Cache'i güncelle
         _blacklist_cache = set(current_links.keys())
         print(f"Kara listeye {added_count} yeni link eklendi. Toplam aktif: {len(_blacklist_cache)}")
+
+def get_research_config():
+    """Firestore'dan otonom araştırma ayarlarını çeker. Yoksa varsayılan oluşturur."""
+    db = init_firebase()
+    doc_ref = db.collection("system_config").document("autonomous_research")
+    doc = doc_ref.get()
+    
+    if doc.exists:
+        data = doc.to_dict()
+        is_active = data.get("is_active", True)
+        interval_hours = data.get("interval_hours", 24)
+        last_run_time = data.get("last_run_time", 0.0)
+        is_running = data.get("is_running", False)
+        return {
+            "is_active": bool(is_active),
+            "interval_hours": int(interval_hours),
+            "last_run_time": float(last_run_time),
+            "is_running": bool(is_running)
+        }
+    else:
+        default_config = {
+            "is_active": True,
+            "interval_hours": 24,
+            "last_run_time": 0.0,
+            "is_running": False
+        }
+        doc_ref.set(default_config)
+        print("Firestore üzerinde varsayılan otonom araştırma ayarları oluşturuldu.")
+        return default_config
+
+def update_research_config(interval_hours=None, last_run_time=None, is_running=None, is_active=None):
+    """Firestore'daki otonom araştırma ayarlarını günceller."""
+    db = init_firebase()
+    doc_ref = db.collection("system_config").document("autonomous_research")
+    
+    update_data = {}
+    if interval_hours is not None:
+        update_data["interval_hours"] = int(interval_hours)
+    if last_run_time is not None:
+        update_data["last_run_time"] = float(last_run_time)
+    if is_running is not None:
+        update_data["is_running"] = bool(is_running)
+    if is_active is not None:
+        update_data["is_active"] = bool(is_active)
+        
+    if update_data:
+        doc_ref.set(update_data, merge=True)
+        print(f"Firestore otonom araştırma ayarları güncellendi: {update_data}")

@@ -93,7 +93,22 @@ def main():
     # 1. Parametre Kontrolü
     force_run = "--force" in sys.argv
     cleanup_force = "--cleanup" in sys.argv
+    research_mode = "--research" in sys.argv
     
+    # 1.3. Eğer sadece otonom araştırma isteniyorsa
+    if research_mode:
+        print("Sadece otonom araştırma tetiklendi. RSS taraması atlanıyor.")
+        try:
+            from autonomous_research import run_autonomous_research
+            run_autonomous_research(force=True)
+        except Exception as research_err:
+            import traceback
+            print(f"Otonom araştırma sırasında hata oluştu: {research_err}")
+            traceback.print_exc()
+            send_error("Otonom Araştırma Çalıştırma Hatası", f"Hata: {research_err}\n{traceback.format_exc()}")
+            sys.exit(1)
+        sys.exit(0)
+        
     # 1.5. Eğer sadece temizlik isteniyorsa
     if cleanup_force:
         print("Sadece otonom temizlik tetiklendi. RSS taraması atlanıyor.")
@@ -356,6 +371,16 @@ def main():
                 "Haber Portalı Akışı - Başarılı!", 
                 report_msg
             )
+
+    # 9. Normal akış bittikten sonra, otonom araştırmanın vaktinin gelip gelmediğini kontrol et ve çalıştır
+    try:
+        print("\nOtonom araştırma kontrolü yapılıyor...")
+        from autonomous_research import run_autonomous_research
+        run_autonomous_research(force=False)
+    except Exception as research_err:
+        print(f"Otonom araştırma kontrolü sırasında hata: {research_err}")
+        import traceback
+        traceback.print_exc()
 
 if __name__ == "__main__":
     try:

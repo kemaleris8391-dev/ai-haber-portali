@@ -20,6 +20,11 @@ on:
         required: false
         type: boolean
         default: false
+      research:
+        description: 'Otonom Araştırma modunu tetikle (--research)'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   run-pipeline:
@@ -58,9 +63,11 @@ jobs:
         TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         FIREBASE_SERVICE_ACCOUNT_JSON: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
       run: |
-        # Eğer force veya cleanup parametresi seçildiyse ilgili argümanı ekle
+        # Eğer force, cleanup veya research parametresi seçildiyse ilgili argümanı ekle
         if [ "${{ github.event.inputs.cleanup }}" = "true" ] || [ "${{ github.event.inputs.cleanup }}" = "True" ] || [ "${{ inputs.cleanup }}" = "true" ] || [ "${{ inputs.cleanup }}" = "True" ]; then
           python backend-scripts/main.py --cleanup
+        elif [ "${{ github.event.inputs.research }}" = "true" ] || [ "${{ github.event.inputs.research }}" = "True" ] || [ "${{ inputs.research }}" = "true" ] || [ "${{ inputs.research }}" = "True" ]; then
+          python backend-scripts/main.py --research
         elif [ "${{ github.event.inputs.force }}" = "true" ] || [ "${{ github.event.inputs.force }}" = "True" ] || [ "${{ inputs.force }}" = "true" ] || [ "${{ inputs.force }}" = "True" ]; then
           python backend-scripts/main.py --force
         else
