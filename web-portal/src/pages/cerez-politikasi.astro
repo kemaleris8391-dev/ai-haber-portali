@@ -1,46 +1,138 @@
 ---
 import Layout from '../layouts/Layout.astro';
+const brandName = import.meta.env.PUBLIC_BRAND_NAME || "AIHaberler";
+const siteUrl = import.meta.env.PUBLIC_SITE_URL || "https://aihaberler.web.app";
 ---
 
-<Layout title="Çerez Politikası" description="AIHaberler Çerez (Cookie) Politikası: Çerezlerin kullanım amaçları, türleri ve nasıl yönetilebileceği hakkında detaylı bilgiler.">
+<Layout title="Çerez Politikası" description={`${brandName} Çerez (Cookie) Politikası: Sitemizde kullanılan çerez türleri, süreleri, amaçları ve çerez yönetimi hakkında detaylı bilgiler.`}>
   <div class="policy-container">
     <header class="policy-header">
       <h1 class="policy-title">Çerez Politikası</h1>
-      <p class="policy-tagline">Web deneyiminizi kişiselleştirmek için çerezleri (cookies) nasıl kullandığımız hakkında.</p>
+      <p class="policy-tagline">Web sitemizdeki deneyiminizi optimize etmek için kullandığımız çerezler hakkında bilgilendirme.</p>
     </header>
 
     <div class="glass-card policy-card glow-border">
       <p><strong>Son Güncelleme:</strong> {new Date().toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
       
+      <p>
+        {brandName} olarak sitemizi ziyaret eden tüm kullanıcılarımıza şeffaf ve güvenli bir dijital deneyim sunmayı amaçlıyoruz. Bu Çerez Politikası, web sitemizde ({siteUrl}) hangi tür çerezlerin kullanıldığını, bunların ne amaçla saklandığını ve çerez tercihlerinizi nasıl yönetebileceğinizi açıklamaktadır.
+      </p>
+
       <h2>1. Çerez (Cookie) Nedir?</h2>
       <p>
-        Çerezler, ziyaret ettiğiniz web siteleri tarafından bilgisayarınıza veya mobil cihazınıza kaydedilen küçük metin dosyalarıdır. 
-        Web sitelerinin daha verimli çalışmasını sağlamak, kullanıcı deneyimini iyileştirmek ve site sahiplerine raporlama yapabilmek amacıyla yaygın olarak kullanılırlar.
+        Çerezler, bir web sitesini ziyaret ettiğinizde bilgisayarınıza veya mobil cihazınıza indirilen ve tarayıcınız tarafından saklanan küçük metin dosyalarıdır. Çerezler, web sitesinin sizi hatırlamasını, tercihlerinizin kaydedilmesini, sitenin güvenli ve hızlı çalışmasını sağlar. Çerezler sitemiz üzerindeki kişisel kimlik bilgilerinizi doğrudan saklamaz.
       </p>
 
-      <h2>2. Hangi Tür Çerezleri Kullanıyoruz?</h2>
+      <h2>2. Kullanılan Çerezlerin Kategorileri ve Amaçları</h2>
+      <p>Sitemizde kullanılan çerezler işlevlerine ve sürelerine göre aşağıdaki kategorilere ayrılmaktadır:</p>
+      
+      <h3>A. Zorunlu ve Teknik Çerezler</h3>
+      <p>Sitenin temel fonksiyonlarının düzgün bir şekilde çalışabilmesi ve güvenli gezinim yapabilmeniz için bu çerezlerin kullanımı zorunludur. Devre dışı bırakılamazlar.</p>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Çerez Adı</th>
+              <th>Sağlayıcı</th>
+              <th>Amaç</th>
+              <th>Saklama Süresi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>cookie_consent</code></td>
+              <td>Lokal (Sitemiz)</td>
+              <td>Ziyaretçinin çerez onay tercihini (Kabul/Red) kaydeder.</td>
+              <td>1 Yıl</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>B. Analitik ve Performans Çerezleri</h3>
+      <p>Sitemizin trafiğini analiz etmek, en popüler haberlerimizi belirlemek ve yapay zeka editörlerimizin haber seçim mantığını geliştirmek amacıyla anonim istatistikler toplar.</p>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Çerez Adı</th>
+              <th>Sağlayıcı</th>
+              <th>Amaç</th>
+              <th>Saklama Süresi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>_ga</code></td>
+              <td>Google Analytics</td>
+              <td>Benzersiz kullanıcı kimliği atayarak site ziyaret istatistiklerini anonim izler.</td>
+              <td>2 Yıl</td>
+            </tr>
+            <tr>
+              <td><code>_gid</code></td>
+              <td>Google Analytics</td>
+              <td>Kullanıcıların sayfalar arası geçişlerini ve davranışlarını anonim ölçümler.</td>
+              <td>24 Saat</td>
+            </tr>
+            <tr>
+              <td><code>_gat</code></td>
+              <td>Google Analytics</td>
+              <td>Google sunucularına yapılan istek oranını sınırlandırarak performansı korur.</td>
+              <td>1 Dakika</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>C. Reklam ve Hedefleme Çerezleri</h3>
+      <p>Google AdSense gibi üçüncü taraf reklam ortaklarımız tarafından ilgi alanlarınıza göre kişiselleştirilmiş reklamlar sunulması ve aynı reklamların sıklığının sınırlandırılması için kullanılır.</p>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Çerez Adı</th>
+              <th>Sağlayıcı</th>
+              <th>Amaç</th>
+              <th>Saklama Süresi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>__gads</code></td>
+              <td>Google AdSense</td>
+              <td>Google reklamlarının sitemizde düzgün çalışmasını ve raporlanmasını sağlar.</td>
+              <td>13 Ay</td>
+            </tr>
+            <tr>
+              <td><code>IDE</code> / <code>DSID</code></td>
+              <td>Google DoubleClick</td>
+              <td>Reklamların etkililiğini ölçmek ve kullanıcılara ilgili reklamlar sunmak için tarayıcıyı tanımlar.</td>
+              <td>1 Yıl</td>
+            </tr>
+            <tr>
+              <td><code>ANID</code></td>
+              <td>Google Ads</td>
+              <td>Google dışı web sitelerinde yayınlanan reklamların kişiselleştirilmesini kontrol eder.</td>
+              <td>2 Yıl</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2>3. Çerez Tercihlerinizi Nasıl Yönetebilirsiniz?</h2>
       <p>
-        AIHaberler portalı, kendi sunucusunda kullanıcıyı doğrudan tanımaya yönelik (hesap veya oturum çerezleri) saklamaz. Ancak aşağıdaki çerez türleri kullanılmaktadır:
+        Çerez kullanımına ilişkin tercihlerinizi değiştirmek veya çerezleri tamamen engellemek oldukça kolaydır:
       </p>
       <ul>
-        <li><strong>Zorunlu Çerezler:</strong> Sitenin temel fonksiyonlarının (sayfa gezinimi ve teknik altyapı) düzgün çalışabilmesi için teknik olarak gerekli olan çerezlerdir.</li>
-        <li><strong>Analitik Çerezler (Google Analytics/Firebase):</strong> Ziyaretçilerin siteyi nasıl kullandığını (hangi haberlerin daha çok okunduğunu, sitede ne kadar süre kalındığını) analiz etmemizi sağlar. Bu veriler tamamen anonimleştirilmiştir.</li>
-        <li><strong>Reklam ve Pazarlama Çerezleri (Google AdSense):</strong> Kullanıcıların ilgi alanlarına uygun reklamlar sunmak, aynı reklamın tekrar gösterimini sınırlamak ve reklam kampanyalarının etkinliğini ölçmek için kullanılır.</li>
+        <li><strong>Site Çerez Banner'ı:</strong> Sitemize ilk girişinizde karşınıza çıkan onay banner'ı üzerinden analitik ve reklam çerezlerini tek bir tıkla onaylayabilir veya reddedebilirsiniz.</li>
+        <li><strong>Tarayıcı Ayarları:</strong> Tarayıcınızın (Chrome, Firefox, Safari, Edge vb.) ayarlar kısmına girerek çerezleri silebilir veya tamamen devre dışı bırakabilirsiniz. Bu durum sitemizin bazı görsel/teknik bileşenlerinin kısmen yavaş çalışmasına neden olabilir.</li>
+        <li><strong>Google Reklam Kontrolleri:</strong> Google'ın kişiselleştirilmiş reklam takibini devre dışı bırakmak için <a href="https://adssettings.google.com/" target="_blank" rel="noopener noreferrer" class="cyan-link">Google Reklam Tercihleri</a> sayfasını ziyaret edebilirsiniz.</li>
+        <li><strong>Uluslararası Kapatma Araçları:</strong> Birçok reklam ağının veri takibini toplu olarak kapatmak için <a href="https://www.aboutads.info/choices" target="_blank" rel="noopener noreferrer" class="cyan-link">AboutAds Choices</a> veya Avrupa'daki kullanıcılar için <a href="https://www.youronlinechoices.eu/" target="_blank" rel="noopener noreferrer" class="cyan-link">Your Online Choices</a> sitelerini kullanabilirsiniz.</li>
       </ul>
 
-      <h2>3. Çerezleri Nasıl Kontrol Edebilirsiniz?</h2>
+      <h2>4. Yürürlük ve Değişiklikler</h2>
       <p>
-        Tarayıcınızın ayarlarını değiştirerek çerezleri dilediğiniz gibi kontrol edebilir veya silebilirsiniz. Çoğu web tarayıcısı, çerezlerin bilgisayarınıza kaydedilmesini engelleme seçeneği sunar. 
-        Ancak, çerezleri devre dışı bırakmanız durumunda sitemizdeki bazı özellikler düzgün çalışmayabilir.
-      </p>
-      <p>
-        Reklam çerezlerini kişiselleştirmek veya kapatmak için Google'ın <a href="https://adssettings.google.com/" target="_blank" rel="noopener noreferrer" class="cyan-link">Reklam Ayarları</a> sayfasını ziyaret edebilirsiniz.
-      </p>
-
-      <h2>4. Politika Değişiklikleri</h2>
-      <p>
-        Teknolojik gelişmeler veya yasal gereklilikler doğrultusunda Çerez Politikamızda güncellemeler yapabiliriz. 
-        Değişiklikler bu sayfa üzerinden duyurulacaktır. Daha fazla bilgi için <a href="/gizlilik-politikasi" class="cyan-link">Gizlilik Politikamızı</a> okuyabilirsiniz.
+        Bu Çerez Politikası yasal düzenlemeler veya reklam sistemlerindeki güncellemeler doğrultusunda güncellenebilir. Herhangi bir güncelleme anında bu sayfa üzerinden yayınlanacaktır. Diğer veri politikalarımız için lütfen <a href="/gizlilik-politikasi" class="cyan-link">Gizlilik Politikası</a> sayfamızı inceleyin.
       </p>
     </div>
   </div>
@@ -82,9 +174,16 @@ import Layout from '../layouts/Layout.astro';
   .policy-card h2 {
     font-size: 1.6rem;
     color: #ffffff;
-    margin-top: 1rem;
+    margin-top: 1.5rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     padding-bottom: 0.5rem;
+  }
+
+  .policy-card h3 {
+    font-size: 1.25rem;
+    color: var(--color-cyan);
+    margin-top: 1rem;
+    font-weight: 600;
   }
 
   .policy-card p {
@@ -104,6 +203,47 @@ import Layout from '../layouts/Layout.astro';
     margin-bottom: 0.5rem;
   }
 
+  /* Tablo Tasarımı */
+  .table-wrapper {
+    overflow-x: auto;
+    margin: 1rem 0 2rem 0;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: rgba(255, 255, 255, 0.01);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+  }
+
+  th, td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  th {
+    background: rgba(255, 255, 255, 0.03);
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  tr:last-child td {
+    border-bottom: none;
+  }
+
+  code {
+    background: rgba(6, 182, 212, 0.1);
+    color: var(--color-cyan);
+    padding: 0.2rem 0.4rem;
+    border-radius: 6px;
+    font-family: monospace;
+    font-size: 0.85rem;
+  }
+
   .cyan-link {
     color: var(--color-cyan);
     text-decoration: none;
@@ -117,6 +257,10 @@ import Layout from '../layouts/Layout.astro';
   @media (max-width: 768px) {
     .policy-card {
       padding: 1.5rem;
+    }
+    th, td {
+      padding: 0.75rem;
+      font-size: 0.8rem;
     }
   }
 </style>

@@ -253,7 +253,18 @@ def main():
                     if not news_data:
                         raise ValueError("Gemini araştırma sonucunda boş veri döndü.")
                         
-                    category = news_data.get("category", "teknoloji")
+                    # Kategori belirleme yetkisi kullanıcıdadır veya AI'ın kısıtlı tahminindedir.
+                    # Eğer talepte (req) özellikle bir kategori belirtilmişse o kullanılır.
+                    # Belirtilmemişse AI'ın tahmin ettiği kategori (news_data.category) kullanılır.
+                    category = req.get("category") or news_data.get("category") or "teknoloji"
+                    category = category.strip().lower()
+                    
+                    # Kategori koruması (AI'ın yeni/izin verilmeyen kategori oluşturmasını engeller)
+                    ALLOWED_CATEGORIES = {"teknoloji", "oyun", "dizi-film", "kuantum-evreni"}
+                    if category not in ALLOWED_CATEGORIES:
+                        category = "teknoloji"
+                        
+                    news_data["category"] = category
                     title = news_data.get("title", "Yeni Haber")
                     
                     # 2. Markdown ve Görsel olarak kaydet

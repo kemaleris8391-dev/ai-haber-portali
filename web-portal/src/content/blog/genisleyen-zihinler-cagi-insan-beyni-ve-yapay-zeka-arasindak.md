@@ -3,7 +3,7 @@ title: "Genişleyen Zihinler Çağı: İnsan Beyni ve Yapay Zeka Arasındaki Yen
 description: "İnsan beyninin depolama yükünü dış kaynaklara nasıl devrettiğini, Genişletilmiş Zihin Hipotezi bağlamında AI ile olan simbiyotik ilişkisini keşfedin."
 pubDate: "2026-06-08T16:22:57"
 heroImage: "/images/news/genisleyen-zihinler-cagi-insan-beyni-ve-yapay-zeka-arasindak.webp"
-category: "bilim"
+category: "teknoloji"
 tags: ["Genişletilmiş Zihin Hipotezi", "Yapay Zeka", "İnsan Beyni", "Bilişsel Bilim", "Dijital Hafıza"]
 sourceName: "Editörün Kalemi"
 sourceUrl: "https://aihaberler.web.app"

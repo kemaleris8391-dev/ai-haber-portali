@@ -1,0 +1,349 @@
+---
+import { getCollection } from 'astro:content';
+
+const allPosts = await getCollection('blog');
+const sortedPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+const searchData = sortedPosts.map(post => ({
+  id: post.id,
+  title: post.data.title,
+  description: post.data.description || "",
+  category: post.data.category || "genel",
+  heroImage: post.data.heroImage || "/images/default-news.png",
+  pubDate: post.data.pubDate.toISOString()
+}));
+---
+
+<div class="search-container">
+  <div class="search-bar-wrapper">
+    <div class="search-input-group">
+      <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <input 
+        type="text" 
+        id="portal-search-input" 
+        placeholder="Haber veya konu ara..." 
+        aria-label="Arama"
+        autocomplete="off"
+      />
+      <button id="search-clear-btn" class="search-clear-btn hidden" aria-label="Temizle">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Arama Sonuçları Paneli -->
+  <div id="search-results-panel" class="search-results-panel hidden glass-card">
+    <div class="results-header">
+      <span id="results-count-text">0 sonuç bulundu</span>
+    </div>
+    <div id="search-results-list" class="results-list">
+      <!-- Sonuçlar Javascript ile buraya eklenecek -->
+    </div>
+  </div>
+</div>
+
+<!-- Arama Verisi -->
+<div id="search-data-store" data-posts={JSON.stringify(searchData)} style="display: none;"></div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const input = document.getElementById("portal-search-input") as HTMLInputElement;
+    const panel = document.getElementById("search-results-panel");
+    const list = document.getElementById("search-results-list");
+    const countText = document.getElementById("results-count-text");
+    const clearBtn = document.getElementById("search-clear-btn");
+    const store = document.getElementById("search-data-store");
+    
+    if (!input || !panel || !list || !countText || !clearBtn || !store) return;
+    
+    const posts = JSON.parse(store.getAttribute("data-posts") || "[]");
+    
+    // input alanını ve butonları dinle
+    input.addEventListener("input", () => {
+      const query = input.value.trim().toLowerCase();
+      
+      if (query.length < 2) {
+        panel.classList.add("hidden");
+        clearBtn.classList.add("hidden");
+        return;
+      }
+      
+      clearBtn.classList.remove("hidden");
+      
+      // Arama mantığı
+      const trMap: Record<string, string> = { "ç": "c", "ğ": "g", "ı": "i", "ö": "o", "ş": "s", "ü": "u", "İ": "i" };
+      const normalize = (text: string) => {
+        return text.toLowerCase()
+          .replace(/[çğıöşüİ]/g, m => trMap[m] || m)
+          .replace(/[^\w\s]/g, "");
+      };
+      
+      const normalizedQuery = normalize(query);
+      
+      const filtered = posts.filter((post: any) => {
+        return normalize(post.title).includes(normalizedQuery) || 
+               normalize(post.description).includes(normalizedQuery) ||
+               normalize(post.category).includes(normalizedQuery);
+      });
+      
+      // Sonuçları render et
+      list.innerHTML = "";
+      countText.textContent = `${filtered.length} sonuç bulundu`;
+      
+      if (filtered.length === 0) {
+        list.innerHTML = `<div class="no-results-msg">Aradığınız kriterlere uygun haber bulunamadı.</div>`;
+      } else {
+        // En fazla 5 sonucu göster
+        filtered.slice(0, 5).forEach((post: any) => {
+          const dateStr = new Date(post.pubDate).toLocaleDateString('tr-TR', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric'
+          });
+          
+          const item = document.createElement("a");
+          item.href = `/blog/${post.id}`;
+          item.className = "search-result-item";
+          item.innerHTML = `
+            <div class="result-img-container">
+              <img src="${post.heroImage}" alt="${post.title}" loading="lazy" />
+            </div>
+            <div class="result-info">
+              <span class="result-category badge-category badge-${post.category}">${post.category}</span>
+              <h4 class="result-title">${post.title}</h4>
+              <time class="result-date">${dateStr}</time>
+            </div>
+          `;
+          list.appendChild(item);
+        });
+      }
+      
+      panel.classList.remove("hidden");
+    });
+    
+    // Temizleme butonu
+    clearBtn.addEventListener("click", () => {
+      input.value = "";
+      panel.classList.add("hidden");
+      clearBtn.classList.add("hidden");
+      input.focus();
+    });
+    
+    // Dışarı tıklayınca kapatma
+    document.addEventListener("click", (e) => {
+      if (!input.contains(e.target as Node) && !panel.contains(e.target as Node)) {
+        panel.classList.add("hidden");
+      }
+    });
+    
+    // Inputa odaklanınca sonuç varsa tekrar göster
+    input.addEventListener("focus", () => {
+      if (input.value.trim().length >= 2) {
+        panel.classList.remove("hidden");
+      }
+    });
+  });
+</script>
+
+<style>
+  .search-container {
+    position: relative;
+    width: 320px;
+    z-index: 150;
+  }
+
+  .search-bar-wrapper {
+    width: 100%;
+  }
+
+  .search-input-group {
+    display: flex;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 0.4rem 0.8rem;
+    transition: var(--transition-smooth);
+    position: relative;
+  }
+
+  .search-input-group:focus-within {
+    border-color: var(--color-cyan);
+    box-shadow: 0 0 10px rgba(6, 182, 212, 0.2);
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .search-icon {
+    color: var(--text-muted);
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .search-input-group input {
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    font-size: 0.85rem;
+    width: 100%;
+    outline: none;
+    font-family: var(--font-sans);
+  }
+
+  .search-input-group input::placeholder {
+    color: var(--text-muted);
+  }
+
+  .search-clear-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0;
+    margin-left: 0.3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-smooth);
+  }
+
+  .search-clear-btn:hover {
+    color: #ffffff;
+  }
+
+  .search-clear-btn.hidden {
+    display: none;
+  }
+
+  /* Sonuç Paneli */
+  .search-results-panel {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    left: 0;
+    width: 420px;
+    background: rgba(12, 12, 16, 0.95);
+    border: 1px solid var(--border-color);
+    box-shadow: 0 15px 50px rgba(0, 0, 0, 0.8), 0 0 20px var(--color-cyan-glow);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: var(--transition-smooth);
+  }
+
+  .search-results-panel.hidden {
+    display: none;
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+  }
+
+  .results-header {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    background: rgba(255, 255, 255, 0.02);
+  }
+
+  .results-header span {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .results-list {
+    max-height: 400px;
+    overflow-y: auto;
+  }
+
+  .no-results-msg {
+    padding: 2rem 1rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+
+  .search-result-item {
+    display: flex;
+    gap: 1rem;
+    padding: 0.8rem 1rem;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+    transition: var(--transition-smooth);
+  }
+
+  .search-result-item:last-child {
+    border-bottom: none;
+  }
+
+  .search-result-item:hover {
+    background: rgba(255, 255, 255, 0.03);
+    border-left: 3px solid var(--color-cyan);
+    padding-left: calc(1rem - 3px);
+  }
+
+  .result-img-container {
+    width: 70px;
+    height: 45px;
+    border-radius: 6px;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .result-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .result-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    overflow: hidden;
+  }
+
+  .result-category {
+    font-size: 0.65rem;
+    padding: 0.05rem 0.4rem;
+    width: fit-content;
+  }
+
+  .result-title {
+    font-size: 0.85rem;
+    color: #ffffff;
+    font-weight: 600;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: var(--transition-smooth);
+  }
+
+  .search-result-item:hover .result-title {
+    color: var(--color-cyan);
+  }
+
+  .result-date {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+  }
+
+  /* Responsive Arama */
+  @media (max-width: 768px) {
+    .search-container {
+      width: 100%;
+      padding: 0 1.5rem;
+      box-sizing: border-box;
+    }
+    
+    .search-results-panel {
+      width: calc(100% - 3rem);
+      left: 1.5rem;
+      right: 1.5rem;
+    }
+  }
+</style>

@@ -1,15 +1,24 @@
 import os
+import sys
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 from dotenv import load_dotenv
+
+# Windows CP1254 terminal emoji encoding fix
+if sys.platform.startswith('win'):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    except AttributeError:
+        pass
 
 # .env dosyasından gelen Firebase Credentials
 load_dotenv(override=True)
 
 def initialize_firebase():
     if not firebase_admin._apps:
-        cred = credentials.Certificate(os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY_PATH", "serviceAccountKey.json"))
+        cred = credentials.Certificate(os.getenv("FIREBASE_SERVICE_ACCOUNT_KEY_PATH", "backend-scripts/firebase_credentials.json"))
         firebase_admin.initialize_app(cred)
     return firestore.client()
 
@@ -27,8 +36,7 @@ def populate_firestore():
     })
     print("✅ Site ayarları eklendi.")
 
-    # 2. Gemini Promptları
-    # ai_writer.py içindeki üç adet prompt
+    # 2. Gemini Promptları (E-E-A-T & Google Discover & AdSense Uyumlu)
     
     rewrite_prompt = """Aşağıdaki haber başlığı ve özetini analiz et. Bu haberi tamamen özgün, Türkçe, akıcı, SEO dostu ve profesyonel bir teknoloji/oyun/sinema editörü üslubuyla yeniden yaz. 
 
@@ -39,7 +47,7 @@ Yazım Tarzı ve Doğruluk Kuralları (MANDATORY):
 4. **Clickbait Olmayan Merak Uyandırıcı Başlık:** Clickbait (tık tuzağı veya aldatıcı) olmayan ama merak uyandıran, profesyonel, okuma potansiyeli yüksek Türkçe başlıklar oluştur.
 5. **Türkçe Dil ve Çeviri Hassasiyeti:** Girdi haber başlığı veya özeti İngilizce (veya başka bir dilde) ise, haberi anlam kaybı olmadan tamamen Türkçe diline çevirip yeniden yaz. Gerekli yerlerde veya teknik terminolojide (örneğin "CPU", "ray tracing", "pipeline" gibi) İngilizce terimleri olduğu gibi kullanabilirsin ancak haberin genel dili akıcı, anlaşılır ve tamamen Türkçe olmalıdır.
 
-Hayadi Güvenlik ve İçerik Kuralları (MANDATORY):
+Hayati Güvenlik ve İçerik Kuralları (MANDATORY):
 1. KESİNLİKLE siyaset, politika, devletlerarası krizler, dini konular, toplumsal tartışmalar, yasal ihtilaflar, kişisel karalamalar veya suçlamalar gibi hassas ve yasal risk barındıran konulara girme.
 2. Haberlerin odağı sadece saf teknoloji, bilimsel buluşlar, oyun güncellemeleri, yeni dizi/film duyuruları, fragmanlar ve kuantum fiziği/bilgisayarları/teknolojileri olmalıdır.
 3. Dizi-Film kategorisi altındaki haberler SADECE bilim kurgu, fantastik, oyun uyarlamaları, dijital yayın teknolojileri (Netflix/Disney+ vb. teknik haberleri) veya sinemada yapay zeka/CGI kullanımıyla ilgili olmalıdır. Yerel/standart aşk dizileri, magazin haberleri, alakasız dram veya genel sinema dedikoduları KESİNLİKLE haber yapılmamalıdır.
@@ -50,11 +58,15 @@ Hayadi Güvenlik ve İçerik Kuralları (MANDATORY):
 5. Suya sabuna dokunmayan, tamamen tarafsız, objektif, yasal açıdan %100 güvenli, sadece bilgilendirici ve nötr bir dil kullan.
 6. Kaynak haberde politik veya hukuki bir tartışma/polemik varsa, bu kısımları tamamen temizle ve konuyu yalnızca nesnel teknolojik/endüstriyel boyutuyla ele al.
 
-Genel Yapı:
-1. Haber içeriği en az 3-4 paragraflık detaylı ve doyurucu bir metin olmalıdır.
-2. İçeriği paragraflara böl. Okumayı kolaylaştırmak için ara başlıklar (markdown ## veya ### olarak) kullanabilirsin.
-3. Haberin en sonuna mutlaka "### Editörün Yorumu" başlığı altında, okuyucuyla bağ kuran, samimi ve objektif 1-2 cümlelik kısa bir değerlendirme ekle.
-4. "Editörün Yorumu" paragrafının BİTİMİNDE, haberin orijinal kaynağını kesinlikle şu Markdown formatında ekle: `[Haberin Orijinal Kaynağı]({raw_link})`. Kaynak linki için asla "Link burada", "haberin devamı" gibi ifadeler kullanma.
+Genel Yapı & E-E-A-T Katma Değer Kuralları:
+1. Haber içeriği en az 4 paragraflık, kapsamlı ve doyurucu bir teknik inceleme/makale metni olmalıdır.
+2. Metin içinde kesinlikle en az 2 adet analitik alt başlık (markdown ## olarak) kullanılmalıdır. Haber konusuyla en iyi eşleşen iki başlığı seçerek metne entegre et:
+   - ## Teknolojik Altyapı ve Yenilikler (Teknik detaylar, mimari, kullanılan yenilikçi yöntemler)
+   - ## Sektörel Etki ve Pazar Analizi (Rakiplerle karşılaştırma, endüstri üzerindeki kısa/uzun vadeli etkileri)
+   - ## Kullanıcı Deneyimi ve Gelecek Öngörüsü (Tüketicinin veya oyuncunun elde edeceği fayda, gelecekteki olası gelişmeler)
+   - ## Eleştirel Bakış ve Soru İşaretleri (Varsa olumsuz yönler, güvenlik riskleri veya cevaplanmamış sorular)
+3. Haberin en sonuna mutlaka "### Editörün Kaleminden" başlığı altında, okuyucuyla bağ kuran, samimi, objektif ve zenginleştirici 2-3 cümlelik derinlemesine bir değerlendirme ekle.
+4. "Editörün Kaleminden" paragrafının BİTİMİNDE, haberin orijinal kaynağını kesinlikle şu Markdown formatında ekle: `[Haberin Orijinal Kaynağı: {source_name}]({raw_link})`. Kaynak linki için asla "Link burada", "haberin devamı" gibi ifadeler kullanma.
 5. Haber için en fazla 160 karakterlik bir SEO meta açıklaması (description) oluştur.
 6. Haberle ilgili 5 adet Türkçe etiket (keywords) belirle.
 7. Pexels görsel arama motoru için haberin ana konusunu, markasını ve modelini içeren İngilizce 2-3 kelimelik net ve nokta atışı bir görsel arama sorgusu (pexels_query) yaz. Örnek: "playstation 5 console" (sadece "playstation" yazma), "intel arc gpu" (sadece "gpu" yazma), "quantum computing chip" (sadece "quantum" yazma), "volkswagen ID electric car" (sadece "car" yazma).
@@ -132,12 +144,19 @@ Hayati Güvenlik ve İçerik Kuralları (MANDATORY):
 5. Suya sabuna dokunmayan, tamamen tarafsız, objektif, yasal açıdan %100 güvenli, sadece bilgilendirici ve nötr bir dil kullan.
 6. Kaynak haberde veya arama sonuçlarında politik veya hukuki bir tartışma/polemik varsa, bu kısımları tamamen temizle ve konuyu yalnızca nesnel teknolojik/endüstriyel boyutuyla ele al.
 
-Genel Yapı:
-1. Haber içeriği en az 3-4 paragraflık detaylı ve doyurucu bir metin olmalıdır. Ara başlıklar (markdown ## veya ### olarak) kullanabilirsin.
-2. Haber için en fazla 160 karakterlik bir SEO meta açıklaması (description) oluştur.
-3. Haber kategorisini konuya göre tam olarak şu dördünden biri olarak belirle: "teknoloji", "oyun", "dizi-film" veya "kuantum-evreni". Başka bir kategori adı kesinlikle kullanma.
-4. Haberle ilgili 5 adet Türkçe etiket (keywords) belirle.
-5. Pexels görsel arama motoru için haberin ana konusunu, markasını ve modelini içeren İngilizce 2-3 kelimelik net ve nokta atışı bir görsel arama sorgusu (pexels_query) yaz. Örnek: "playstation 5 console" (sadece "playstation" yazma), "intel arc gpu" (sadece "gpu" yazma), "quantum computing chip" (sadece "quantum" yazma), "volkswagen ID electric car" (sadece "car" yazma).
+Genel Yapı & E-E-A-T Katma Değer Kuralları:
+1. Haber içeriği en az 4 paragraflık, kapsamlı ve doyurucu bir metin olmalıdır.
+2. Metin içinde kesinlikle en az 2 adet analitik alt başlık (markdown ## olarak) kullanılmalıdır. Haber konusuyla en iyi eşleşen iki başlığı seçerek metne entegre et:
+   - ## Teknolojik Altyapı ve Yenilikler (Teknik detaylar, mimari, kullanılan yenilikçi yöntemler)
+   - ## Sektörel Etki ve Pazar Analizi (Rakiplerle karşılaştırma, endüstri üzerindeki kısa/uzun vadeli etkileri)
+   - ## Kullanıcı Deneyimi ve Gelecek Öngörüüsü (Tüketicinin veya oyuncunun elde edeceği fayda, gelecekteki olası gelişmeler)
+   - ## Eleştirel Bakış ve Soru İşaretleri (Varsa olumsuz yönler, güvenlik riskleri veya cevaplanmamış sorular)
+3. Haberin en sonuna mutlaka "### Editörün Kaleminden" başlığı altında, okuyucuyla bağ kuran, samimi, objektif ve zenginleştirici 2-3 cümlelik derinlemesine bir değerlendirme ekle.
+4. "Editörün Kaleminden" paragrafının BİTİMİNDE, haberin orijinal kaynağını kesinlikle şu Markdown formatında ekle: `[Haberin Orijinal Kaynağı: Araştırma Raporu]({raw_link})`. Kaynak linki için asla "Link burada", "haberin devamı" gibi ifadeler kullanma.
+5. Haber için en fazla 160 karakterlik bir SEO meta açıklaması (description) oluştur.
+6. Haber kategorisini konuya göre tam olarak şu dördünden biri olarak belirle: "teknoloji", "oyun", "dizi-film" veya "kuantum-evreni". Başka bir kategori adı kesinlikle kullanma.
+7. Haberle ilgili 5 adet Türkçe etiket (keywords) belirle.
+8. Pexels görsel arama motoru için haberin ana konusunu, markasını ve modelini içeren İngilizce 2-3 kelimelik net ve nokta atışı bir görsel arama sorgusu (pexels_query) yaz. Örnek: "playstation 5 console" (sadece "playstation" yazma), "intel arc gpu" (sadece "gpu" yazma), "quantum computing chip" (sadece "quantum" yazma), "volkswagen ID electric car" (sadece "car" yazma).
 
 Kullanıcının Sunduğu Detaylı Araştırma Metni:
 {user_prompt}
@@ -174,12 +193,19 @@ Hayati Güvenlik ve İçerik Kuralları (MANDATORY):
 5. Suya sabuna dokunmayan, tamamen tarafsız, objektif, yasal açıdan %100 güvenli, sadece bilgilendirici ve nötr bir dil kullan.
 6. Kaynak haberde veya arama sonuçlarında politik veya hukuki bir tartışma/polemik varsa, bu kısımları tamamen temizle ve konuyu yalnızca nesnel teknolojik/endüstriyel boyutuyla ele al.
 
-Genel Yapı:
-1. Haber içeriği en az 3-4 paragraflık detaylı ve doyurucu bir metin olmalıdır. Ara başlıklar (markdown ## veya ### olarak) kullanabilirsin.
-2. Haber için en fazla 160 karakterlik bir SEO meta açıklaması (description) oluştur.
-3. Haber kategorisini konuya göre tam olarak şu dördünden biri olarak belirle: "teknoloji", "oyun", "dizi-film" veya "kuantum-evreni". Başka bir kategori adı kesinlikle kullanma.
-4. Haberle ilgili 5 adet Türkçe etiket (keywords) belirle.
-5. Pexels görsel arama motoru için haberin ana konusunu, markasını ve modelini içeren İngilizce 2-3 kelimelik net ve nokta atışı bir görsel arama sorgusu (pexels_query) yaz. Örnek: "playstation 5 console" (sadece "playstation" yazma), "intel arc gpu" (sadece "gpu" yazma), "quantum computing chip" (sadece "quantum" yazma), "volkswagen ID electric car" (sadece "car" yazma).
+Genel Yapı & E-E-A-T Katma Değer Kuralları:
+1. Haber içeriği en az 4 paragraflık, kapsamlı ve doyurucu bir metin olmalıdır. Ara başlıklar (markdown ## olarak) kullanabilirsin.
+2. Metin içinde kesinlikle en az 2 adet analitik alt başlık (markdown ## olarak) kullanılmalıdır. Haber konusuyla en iyi eşleşen iki başlığı seçerek metne entegre et:
+   - ## Teknolojik Altyapı ve Yenilikler (Teknik detaylar, mimari, kullanılan yenilikçi yöntemler)
+   - ## Sektörel Etki ve Pazar Analizi (Rakiplerle karşılaştırma, endüstri üzerindeki kısa/uzun vadeli etkileri)
+   - ## Kullanıcı Deneyimi ve Gelecek Öngörüsü (Tüketicinin veya oyuncunun elde edeceği fayda, gelecekteki olası gelişmeler)
+   - ## Eleştirel Bakış ve Soru İşaretleri (Varsa olumsuz yönler, güvenlik riskleri veya cevaplanmamış sorular)
+3. Haberin en sonuna mutlaka "### Editörün Kaleminden" başlığı altında, okuyucuyla bağ kuran, samimi, objektif ve zenginleştirici 2-3 cümlelik derinlemesine bir değerlendirme ekle.
+4. "Editörün Kaleminden" paragrafının BİTİMİNDE, haberin orijinal kaynağını kesinlikle şu Markdown formatında ekle: `[Haberin Orijinal Kaynağı: Google Arama]({raw_link})`. Kaynak linki için asla "Link burada", "haberin devamı" gibi ifadeler kullanma.
+5. Haber için en fazla 160 karakterlik bir SEO meta açıklaması (description) oluştur.
+6. Haber kategorisini konuya göre tam olarak şu dördünden biri olarak belirle: "teknoloji", "oyun", "dizi-film" veya "kuantum-evreni". Başka bir kategori adı kesinlikle kullanma.
+7. Haberle ilgili 5 adet Türkçe etiket (keywords) belirle.
+8. Pexels görsel arama motoru için haberin ana konusunu, markasını ve modelini içeren İngilizce 2-3 kelimelik net ve nokta atışı bir görsel arama sorgusu (pexels_query) yaz. Örnek: "playstation 5 console" (sadece "playstation" yazma), "intel arc gpu" (sadece "gpu" yazma), "quantum computing chip" (sadece "quantum" yazma), "volkswagen ID electric car" (sadece "car" yazma).
 
 Araştırılacak Konu / Girdi: {user_prompt}
 
@@ -204,7 +230,63 @@ Araştırılacak Konu / Girdi: {user_prompt}
     })
     print("✅ Gemini promptları eklendi.")
 
-    print("🎉 İşlem tamamlandı! Hassas veriler artık sadece Firestore üzerinde.")
+    # 3. RSS Kaynakları (Küresel & Yabancı & Telif Muafiyetli/Atıflı)
+    rss_sources_ref = db.collection('rss_sources')
+    
+    # Mevcut tüm kaynakları temizle
+    print("Mevcut RSS kaynakları temizleniyor...")
+    docs = rss_sources_ref.stream()
+    deleted_count = 0
+    for doc in docs:
+        doc.reference.delete()
+        deleted_count += 1
+    print(f"✅ Eski RSS kaynakları silindi. (Silinen Döküman: {deleted_count})")
+    
+    # Yeni küresel telif uyumlu kaynakları ekle
+    new_sources = [
+        {
+            "name": "IGN PC",
+            "url": "http://feeds.feedburner.com/ign/pc-articles",
+            "category": "oyun"
+        },
+        {
+            "name": "IGN Movies",
+            "url": "http://feeds.feedburner.com/ign/movies-articles",
+            "category": "dizi-film"
+        },
+        {
+            "name": "ScienceDaily Technology",
+            "url": "https://www.sciencedaily.com/rss/matter_energy/technology.xml",
+            "category": "teknoloji"
+        },
+        {
+            "name": "Phys.org Technology",
+            "url": "https://phys.org/rss-feed/technology-news",
+            "category": "teknoloji"
+        },
+        {
+            "name": "arXiv Quantum Physics",
+            "url": "https://rss.arxiv.org/rss/quant-ph",
+            "category": "kuantum-evreni"
+        },
+        {
+            "name": "ScienceDaily Quantum",
+            "url": "https://www.sciencedaily.com/rss/matter_energy/quantum_computing.xml",
+            "category": "kuantum-evreni"
+        },
+        {
+            "name": "Phys.org Physics",
+            "url": "https://phys.org/rss-feed/physics-news",
+            "category": "kuantum-evreni"
+        }
+    ]
+    
+    for src in new_sources:
+        doc_id = "".join(c for c in src["name"].lower() if c.isalnum() or c == "_")
+        rss_sources_ref.document(doc_id).set(src)
+        print(f"✅ RSS Kaynağı eklendi: {src['name']}")
+
+    print("🎉 İşlem tamamlandı! Hassas veriler ve küresel RSS kaynakları Firestore üzerinde güncellendi.")
 
 if __name__ == "__main__":
     populate_firestore()

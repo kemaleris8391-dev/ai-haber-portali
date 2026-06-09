@@ -1,9 +1,18 @@
 import os
+import sys
 import json
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 from dotenv import load_dotenv
+
+# Windows CP1254 terminal emoji encoding fix
+if sys.platform.startswith('win'):
+    try:
+        sys.stdout.reconfigure(encoding='utf-8')
+        sys.stderr.reconfigure(encoding='utf-8')
+    except AttributeError:
+        pass
 
 load_dotenv(override=True)
 

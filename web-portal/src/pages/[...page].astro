@@ -15,6 +15,10 @@ const isFirstPage = page.currentPage === 1;
 const heroPost = isFirstPage && page.data.length > 0 ? page.data[0] : null;
 const gridPosts = isFirstPage ? page.data.slice(1) : page.data;
 
+const allPosts = await getCollection('blog');
+const sortedAllPosts = allPosts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+const trendingPosts = sortedAllPosts.slice(0, 5);
+
 const formatDate = (date: Date) => {
   return date.toLocaleDateString('tr-TR', {
     year: 'numeric',
@@ -66,50 +70,86 @@ const formatDate = (date: Date) => {
 		</section>
 	)}
 
-	<!-- News Grid Section -->
+	<!-- News Grid & Sidebar Section -->
 	{gridPosts.length > 0 && (
-		<section class="grid-section">
-			<h2 class="section-title">Göz Atın</h2>
-			<div class="news-grid">
-				{gridPosts.map((post) => (
-					<article class="glass-card news-card" id={`post-${post.id}`}>
-						<div class="card-image-container">
-							<img src={post.data.heroImage} alt={post.data.title} class="card-image" loading="lazy" width="600" height="338" />
-							<span class={`badge-category badge-${post.data.category} card-badge`}>{post.data.category}</span>
-						</div>
-						<div class="card-content">
-							<div class="post-meta">
-								<time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
-							</div>
-							<h3 class="card-title">{post.data.title}</h3>
-							<p class="card-desc">{post.data.description}</p>
-							<a href={`/blog/${post.id}`} class="card-link" id={`link-${post.id}`}>Haber Detayı &rarr;</a>
-						</div>
-					</article>
-				))}
+		<div class="main-layout">
+			<!-- Main Feed Column -->
+			<div class="main-content-column">
+				<section class="grid-section">
+					<h2 class="section-title">Göz Atın</h2>
+					<div class="news-grid">
+						{gridPosts.map((post) => (
+							<article class="glass-card news-card" id={`post-${post.id}`}>
+								<div class="card-image-container">
+									<img src={post.data.heroImage} alt={post.data.title} class="card-image" loading="lazy" width="600" height="338" />
+									<span class={`badge-category badge-${post.data.category} card-badge`}>{post.data.category}</span>
+								</div>
+								<div class="card-content">
+									<div class="post-meta">
+										<time datetime={post.data.pubDate.toISOString()}>{formatDate(post.data.pubDate)}</time>
+									</div>
+									<h3 class="card-title">{post.data.title}</h3>
+									<p class="card-desc">{post.data.description}</p>
+									<a href={`/blog/${post.id}`} class="card-link" id={`link-${post.id}`}>Haber Detayı &rarr;</a>
+								</div>
+							</article>
+						))}
+					</div>
+
+					<!-- Pagination Controls -->
+					{page.lastPage > 1 && (
+						<nav class="pagination-nav" aria-label="Sayfalama">
+							{page.url.prev ? (
+								<a href={page.url.prev} class="btn-neon pagination-btn">&larr; Önceki</a>
+							) : (
+								<span class="btn-neon pagination-btn disabled">&larr; Önceki</span>
+							)}
+							
+							<span class="pagination-info">
+								Sayfa {page.currentPage} / {page.lastPage}
+							</span>
+							
+							{page.url.next ? (
+								<a href={page.url.next} class="btn-neon pagination-btn">Sonraki &rarr;</a>
+							) : (
+								<span class="btn-neon pagination-btn disabled">Sonraki &rarr;</span>
+							)}
+						</nav>
+					)}
+				</section>
 			</div>
 
-			<!-- Pagination Controls -->
-			{page.lastPage > 1 && (
-				<nav class="pagination-nav" aria-label="Sayfalama">
-					{page.url.prev ? (
-						<a href={page.url.prev} class="btn-neon pagination-btn">&larr; Önceki</a>
-					) : (
-						<span class="btn-neon pagination-btn disabled">&larr; Önceki</span>
-					)}
-					
-					<span class="pagination-info">
-						Sayfa {page.currentPage} / {page.lastPage}
-					</span>
-					
-					{page.url.next ? (
-						<a href={page.url.next} class="btn-neon pagination-btn">Sonraki &rarr;</a>
-					) : (
-						<span class="btn-neon pagination-btn disabled">Sonraki &rarr;</span>
-					)}
-				</nav>
-			)}
-		</section>
+			<!-- Sidebar Column -->
+			<aside class="sidebar-column">
+				<div class="sidebar-widget glass-card">
+					<h3 class="widget-title">Trend Haberler</h3>
+					<div class="trending-list">
+						{trendingPosts.map((post, index) => {
+							const formattedIndex = String(index + 1).padStart(2, '0');
+							return (
+								<a href={`/blog/${post.id}`} class="trending-item">
+									<span class="trending-number">{formattedIndex}</span>
+									<div class="trending-content">
+										<span class={`badge-category badge-${post.data.category} trending-badge`}>{post.data.category}</span>
+										<h4 class="trending-title">{post.data.title}</h4>
+										<time class="trending-date" datetime={post.data.pubDate.toISOString()}>
+											{post.data.pubDate.toLocaleDateString('tr-TR', { day: 'numeric', month: 'short' })}
+										</time>
+									</div>
+								</a>
+							);
+						})}
+					</div>
+				</div>
+
+				<div class="sidebar-widget glass-card ad-widget">
+					<div class="ad-label">Sponsorlu İçerik</div>
+					<div class="ad-placeholder-box">
+						<span>Yapay Zeka Destekli Medya Sponsorluğu</span>
+					</div>
+				</div>
+			</aside>
+		</div>
 	)}
 </Layout>
 
@@ -221,6 +261,151 @@ const formatDate = (date: Date) => {
 		font-size: 0.95rem;
 	}
 
+	/* Grid & Sidebar Layout */
+	.main-layout {
+		display: grid;
+		grid-template-columns: 2.2fr 1fr;
+		gap: 3rem;
+		align-items: start;
+	}
+
+	.main-content-column {
+		min-width: 0;
+	}
+
+	.sidebar-column {
+		position: sticky;
+		top: 100px;
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+	}
+
+	.sidebar-widget {
+		padding: 1.5rem;
+		border-radius: 16px;
+	}
+
+	.widget-title {
+		font-size: 1.25rem;
+		margin-bottom: 1.5rem;
+		font-family: var(--font-display);
+		background: var(--gradient-primary);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		font-weight: 700;
+		position: relative;
+		padding-bottom: 0.5rem;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+	}
+
+	.widget-title::after {
+		content: '';
+		position: absolute;
+		bottom: -1px;
+		left: 0;
+		width: 40px;
+		height: 2px;
+		background: var(--gradient-primary);
+	}
+
+	.trending-list {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+	}
+
+	.trending-item {
+		display: flex;
+		gap: 1rem;
+		text-decoration: none;
+		padding-bottom: 1rem;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.02);
+		transition: var(--transition-smooth);
+	}
+
+	.trending-item:last-child {
+		border-bottom: none;
+		padding-bottom: 0;
+	}
+
+	.trending-number {
+		font-size: 1.5rem;
+		font-weight: 800;
+		font-family: var(--font-display);
+		background: linear-gradient(135deg, #06b6d4, #8b5cf6);
+		-webkit-background-clip: text;
+		-webkit-text-fill-color: transparent;
+		opacity: 0.8;
+		line-height: 1;
+		flex-shrink: 0;
+	}
+
+	.trending-content {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.trending-badge {
+		font-size: 0.65rem;
+		padding: 0.05rem 0.35rem;
+		width: fit-content;
+		text-transform: capitalize;
+	}
+
+	.trending-title {
+		font-size: 0.95rem;
+		color: #ffffff;
+		font-weight: 600;
+		line-height: 1.4;
+		transition: var(--transition-smooth);
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.trending-item:hover .trending-title {
+		color: var(--color-cyan);
+	}
+
+	.trending-date {
+		font-size: 0.75rem;
+		color: var(--text-muted);
+	}
+
+	/* Sponsor Widget */
+	.ad-widget {
+		padding: 1.5rem;
+		text-align: center;
+	}
+
+	.ad-label {
+		font-size: 0.65rem;
+		text-transform: uppercase;
+		color: var(--text-muted);
+		letter-spacing: 0.05em;
+		margin-bottom: 0.75rem;
+	}
+
+	.ad-placeholder-box {
+		background: rgba(255, 255, 255, 0.02);
+		border: 1px dashed var(--border-color);
+		border-radius: 12px;
+		padding: 2rem 1rem;
+		color: var(--text-secondary);
+		font-size: 0.85rem;
+		font-weight: 500;
+		transition: var(--transition-smooth);
+	}
+
+	.ad-placeholder-box:hover {
+		border-color: var(--color-cyan);
+		background: rgba(6, 182, 212, 0.02);
+		color: #ffffff;
+	}
+
 	/* Grid Section */
 	.section-title {
 		font-size: 1.8rem;
@@ -242,7 +427,7 @@ const formatDate = (date: Date) => {
 
 	.news-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 		gap: 2rem;
 	}
 
@@ -342,6 +527,17 @@ const formatDate = (date: Date) => {
 		opacity: 0.5;
 		cursor: not-allowed;
 		pointer-events: none;
+	}
+
+	@media (max-width: 1024px) {
+		.main-layout {
+			grid-template-columns: 1fr;
+			gap: 2.5rem;
+		}
+
+		.sidebar-column {
+			position: static;
+		}
 	}
 
 	@media (max-width: 900px) {

@@ -39,7 +39,7 @@ const formatDate = (date: Date) => {
 };
 
 const categoryTitles: Record<string, string> = {
-  'teknoloji': 'Teknoloji Haberleri',
+  'teknoloji': 'Teknoloji & Bilim Haberleri',
   'oyun': 'Oyun Dünyası',
   'dizi-film': 'Dizi & Film Dünyası',
   'kuantum-evreni': 'Kuantum Evreni'
@@ -57,7 +57,7 @@ const categoryTitle = categoryTitles[category] || `${formatCategoryName(category
     <header class="category-header">
       <h1 class="category-title">{categoryTitle}</h1>
       <p class="category-desc">
-        {category === 'teknoloji' && "Bilişim dünyası, yapay zeka, donanım, yazılım ve teknoloji devlerinden en yeni haberler."}
+        {category === 'teknoloji' && "Bilişim dünyası, yapay zeka, donanım, yazılım, bilimsel gelişmeler ve teknoloji devlerinden en yeni haberler."}
         {category === 'oyun' && "PC, konsol, mobil oyun dünyasından son gelişmeler, güncellemeler ve oyun incelemeleri."}
         {category === 'dizi-film' && "Popüler dizi ve sinema yapımları, vizyona girecek filmler ve son yayınlanan fragmanlar."}
         {!['teknoloji', 'oyun', 'dizi-film'].includes(category) && `${formatCategoryName(category)} kategorisindeki en güncel gelişmeler, yapay zeka analizleri ve haberler.`}

@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import { getCollection } from 'astro:content';
+import Search from '../components/Search.astro';
 
 interface Props {
 	title: string;
@@ -36,7 +37,7 @@ const defaultCategories = ['teknoloji', 'oyun', 'dizi-film'];
 const mergedCategories = [...new Set([...defaultCategories, ...activeCategories])];
 
 const categoryLabels: Record<string, string> = {
-	'teknoloji': 'Teknoloji',
+	'teknoloji': 'Teknoloji & Bilim',
 	'oyun': 'Oyun',
 	'dizi-film': 'Dizi & Film',
 	'kuantum-evreni': 'Kuantum Evreni'
@@ -158,6 +159,9 @@ const jsonLd = type === 'article' && articleData ? {
 						</a>
 						<span class="logo-separator">|</span>
 						<span class="logo-slogan">Geleceğin Haberciliği: Otonom kontrol, Özgün İçerik, Teyitli Gerçek.</span>
+					</div>
+					<div class="nav-search-wrapper">
+						<Search />
 					</div>
 					<ul class="nav-links">
 						<li><a href="/" class="nav-link">Ana Sayfa</a></li>

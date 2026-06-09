@@ -90,12 +90,12 @@ def rotate_key():
         current_key_idx = (current_key_idx + 1) % len(API_KEYS)
         print(f"UYARI: API anahtarı bir sonraki ile değiştiriliyor. (Yeni Sıra: {current_key_idx + 1}/{len(API_KEYS)})")
 
-def rewrite_news_with_ai(raw_title, raw_summary, category, raw_link, model_name="gemma-4-31b-it"):
+def rewrite_news_with_ai(raw_title, raw_summary, category, raw_link, source_name, model_name="gemma-4-31b-it"):
     """Gemini API kullanarak haberi özgünleştirir. Hata (429/403/500) durumunda model fallback ve anahtar rotasyonu yapar."""
     prompt = PROMPTS_CONFIG.get("rewrite_prompt", "")
     if not prompt:
         raise ValueError("prompts_config.json içinden rewrite_prompt okunamadı!")
-    prompt = prompt.replace("{raw_title}", raw_title).replace("{raw_summary}", raw_summary).replace("{category}", category).replace("{raw_link}", raw_link)
+    prompt = prompt.replace("{raw_title}", raw_title).replace("{raw_summary}", raw_summary).replace("{category}", category).replace("{raw_link}", raw_link).replace("{source_name}", source_name)
     max_retries = len(API_KEYS) if API_KEYS else 3
     last_error = "Bilinmeyen API Hatası"
     
@@ -429,7 +429,17 @@ def save_news_as_markdown(news_data, output_dir, images_dir, source_name, source
     content = news_data["content"]
     description = news_data["description"].replace('"', "'")
     keywords = news_data["keywords"]
-    category = news_data.get("category", "genel")
+    category = news_data.get("category", "teknoloji").strip().lower()
+    
+    # Kategori Sınırlama Koruyucusu (Category Safeguard)
+    # Telegram/Bot taleplerinde veya AI halüsinasyonlarında izin verilmeyen kategoriler engellenir
+    ALLOWED_CATEGORIES = {"teknoloji", "oyun", "dizi-film", "kuantum-evreni"}
+    if category not in ALLOWED_CATEGORIES:
+        # 'bilim' veya türevleri gelirse otomatik olarak 'teknoloji'ye (Teknoloji & Bilim) yönlendirilir
+        if "bilim" in category or "science" in category:
+            category = "teknoloji"
+        else:
+            category = "teknoloji"
     
     slug = slugify(title)
     date_str = datetime.now(TR_TZ).strftime("%Y-%m-%d")
@@ -532,6 +542,7 @@ def process_single_news(raw_news, config):
             raw_news["summary"], 
             raw_news["category"],
             raw_news["link"],
+            raw_news["source"],
             model_name=config["gemini"]["model"]
         )
         

@@ -1,34 +1,39 @@
 {
   "sources": [
     {
-      "name": "Webtekno",
-      "url": "https://www.webtekno.com/rss.xml",
-      "category": "teknoloji"
-    },
-    {
-      "name": "DonanimHaber",
-      "url": "https://www.donanimhaber.com/rss/tum/",
-      "category": "teknoloji"
-    },
-    {
-      "name": "IGN Turkiye",
-      "url": "https://tr.ign.com/feed.xml",
+      "name": "IGN PC",
+      "url": "http://feeds.feedburner.com/ign/pc-articles",
       "category": "oyun"
     },
     {
-      "name": "LOG",
-      "url": "https://www.log.com.tr/feed/",
+      "name": "IGN Movies",
+      "url": "http://feeds.feedburner.com/ign/movies-articles",
+      "category": "dizi-film"
+    },
+    {
+      "name": "ScienceDaily Technology",
+      "url": "https://www.sciencedaily.com/rss/matter_energy/technology.xml",
       "category": "teknoloji"
     },
     {
-      "name": "Beyazperde",
-      "url": "https://www.beyazperde.com/rss/haberler.xml",
-      "category": "dizi-film"
+      "name": "Phys.org Technology",
+      "url": "https://phys.org/rss-feed/technology-news",
+      "category": "teknoloji"
     },
     {
-      "name": "Kayip Rihtim",
-      "url": "https://kayiprihtim.com/feed/",
-      "category": "dizi-film"
+      "name": "arXiv Quantum Physics",
+      "url": "https://rss.arxiv.org/rss/quant-ph",
+      "category": "kuantum-evreni"
+    },
+    {
+      "name": "ScienceDaily Quantum",
+      "url": "https://www.sciencedaily.com/rss/matter_energy/quantum_computing.xml",
+      "category": "kuantum-evreni"
+    },
+    {
+      "name": "Phys.org Physics",
+      "url": "https://phys.org/rss-feed/physics-news",
+      "category": "kuantum-evreni"
     }
   ],
   "gemini": {

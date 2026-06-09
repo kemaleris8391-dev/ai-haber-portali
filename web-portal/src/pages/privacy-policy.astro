@@ -6,42 +6,62 @@ const siteUrl = import.meta.env.PUBLIC_SITE_URL || "https://aihaberler.web.app";
 const domain = siteUrl.replace(/^https?:\/\//, '');
 ---
 
-<Layout title="Gizlilik Politikası" description={`${brandName} gizlilik ve çerez politikası.`}>
+<Layout title="Gizlilik Politikası" description={`${brandName} Gizlilik Politikası (Privacy Policy): Google AdSense, GDPR, CCPA ve çerez uyumluluk bilgilendirmesi.`}>
   <div class="policy-container">
     <header class="policy-header">
-      <h1 class="policy-title">Gizlilik Politikası</h1>
-      <p class="policy-tagline">Son Güncelleme: 4 Haziran 2026</p>
+      <h1 class="policy-title">Gizlilik Politikası (Privacy Policy)</h1>
+      <p class="policy-tagline">Veri gizliliğiniz ve güvenliğiniz bizim için en üst düzeyde önemlidir.</p>
     </header>
 
-    <div class="glass-card policy-content">
+    <div class="glass-card policy-card glow-border">
+      <p><strong>Son Güncelleme:</strong> {new Date().toLocaleDateString('tr-TR', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+      
       <p>
-        {brandName} ("biz", "bize" veya "bizim"), {domain} web sitemizi ziyaret eden kullanıcıların gizliliğini korumayı taahhüt eder. 
-        Bu Gizlilik Politikası, web sitemizi kullandığınızda bilgilerinizin nasıl toplandığını, kullanıldığını ve korunduğunu açıklar.
+        {brandName} ({siteUrl}) olarak ziyaretçilerimizin gizlilik haklarına saygı duyuyoruz. Bu Gizlilik Politikası belgesi, sitemizi ziyaret ettiğinizde toplanan veri türlerini, bunların nasıl kullanıldığını ve güvenliğinin nasıl sağlandığını açıklamaktadır.
       </p>
 
-      <h2>1. Toplanan Bilgiler</h2>
-      <p>Portalımız tamamen otonom olarak çalışır ve kullanıcılarımızdan doğrudan herhangi bir kişisel veri (isim, e-posta, telefon vb.) talep etmez veya üyelik sistemi barındırmaz. Ancak aşağıdaki durumlarda dolaylı veriler toplanabilir:</p>
+      <h2>1. Google AdSense ve Reklam Çerezleri</h2>
+      <p>
+        Web sitemizde gelir elde etmek ve hizmetlerimizi sürdürmek amacıyla Google AdSense reklam sistemi kullanılmaktadır. Google, üçüncü taraf bir satıcı olarak sitemizde reklam yayınlamak için çerezlerden (cookies) yararlanır:
+      </p>
       <ul>
-        <li><strong>Analiz Verileri:</strong> Google Analytics veya Firebase Analitik araçları aracılığıyla site trafiğini, kullanıcı davranışlarını, ziyaret sürelerini ve cihaz/tarayıcı türlerini analiz etmek amacıyla anonim kullanım verileri toplanabilir.</li>
-        <li><strong>Reklam Çerezleri:</strong> Google AdSense reklam ağını kullanmaktayız. Google, sitemizde reklam sunmak için çerezlerden (cookies) yararlanır.</li>
+        <li><strong>Kişiselleştirilmiş Reklamlar:</strong> Google dahil üçüncü taraf satıcılar, kullanıcıların web sitemize veya internetteki diğer web sitelerine yaptığı önceki ziyaretlere dayalı olarak reklam sunmak için çerezleri kullanır.</li>
+        <li><strong>DART Çerezi:</strong> Google'ın reklam çerezlerini kullanması, kullanıcılarımızın sitemize ve internetteki diğer sitelere yaptıkları ziyaretlere dayalı olarak reklam sunmasına olanak tanır.</li>
+        <li><strong>Kapatma Seçeneği:</strong> Kullanıcılar, <a href="https://adssettings.google.com/" target="_blank" rel="noopener noreferrer" class="cyan-link">Google Reklam Ayarları</a> sayfasını ziyaret ederek kişiselleştirilmiş reklamcılığı devre dışı bırakabilirler. Alternatif olarak, üçüncü taraf satıcıların kişiselleştirilmiş reklamcılık çerezlerini kullanmasını devre dışı bırakmak isteyen kullanıcılar <a href="https://www.aboutads.info/" target="_blank" rel="noopener noreferrer" class="cyan-link">www.aboutads.info</a> adresini ziyaret edebilirler.</li>
       </ul>
 
-      <h2>2. Çerezler (Cookies)</h2>
+      <h2>2. Toplanan Bilgiler ve Analitik Veriler</h2>
       <p>
-        Çerezler, web tarayıcınız tarafından bilgisayarınıza veya mobil cihazınıza kaydedilen küçük metin dosyalarıdır. 
-        Çerezleri, kullanıcı deneyimini iyileştirmek, site trafiğini analiz etmek ve ilgi alanlarınıza göre kişiselleştirilmiş reklamlar sunmak amacıyla kullanırız. 
-        Tarayıcı ayarlarınızdan çerezleri tamamen devre dışı bırakabilir veya çerez gönderildiğinde uyarılmayı seçebilirsiniz.
+        {brandName} tamamen otonom olarak çalışmakta olup, ziyaretçilerinden doğrudan herhangi bir kişisel veri (ad, soyad, e-posta, telephone numarası vb.) talep etmemekte ve site üzerinde üyelik/yorum sistemi barındırmamaktadır. Bununla birlikte, sitemizi ziyaretiniz sırasında otomatik olarak aşağıdaki anonim teknik veriler kaydedilebilir:
+      </p>
+      <ul>
+        <li><strong>Log Dosyaları:</strong> Birçok standart web sunucusu gibi, sitemiz de istatistiksel analizler için log dosyaları tutar. Bu dosyalar; IP adresiniz, tarayıcı türünüz, internet servis sağlayıcınız (ISP), siteye giriş-çıkış sayfalarınız, işletim sisteminiz ve tıklama sayınız gibi standart internet protokolü verilerini içerir. Bu veriler kişisel kimliğinizle asla ilişkilendirilmez.</li>
+        <li><strong>Kullanıcı Analitiği (Google Analytics):</strong> Site trafiğini izlemek, kullanıcı eğilimlerini anlamak ve otonom haber seçimi yapan yapay zeka algoritmalarımızı iyileştirmek amacıyla tamamen anonimleştirilmiş tarayıcı ve etkileşim verileri toplanmaktadır.</li>
+      </ul>
+
+      <h2>3. GDPR (Avrupa Genel Veri Koruma Yönetmeliği) Haklarınız</h2>
+      <p>
+        Avrupa Ekonomik Alanı'nda (EEA) ikamet ediyorsanız, kişisel verilerinizin korunmasına ilişkin belirli haklara sahipsiniz. {brandName} doğrudan kişisel tanımlayıcı veri depolamasa da, Google ve diğer ortaklarımızın çerezleri üzerinden işlenen verilerle ilgili şu haklara sahip olduğunuzu hatırlatırız:
+      </p>
+      <ul>
+        <li>Verilerinizin işlenmesine rıza gösterme veya rızanızı geri çekme hakkı (Çerez Onay Banner'ı üzerinden yönetilebilir).</li>
+        <li>Hakkınızda tutulan anonim çerez profillerinin silinmesini tarayıcı önbelleğinizi temizleyerek talep etme hakkı.</li>
+        <li>Google Reklam Tercihleri üzerinden kişiselleştirilmiş veri takibini tamamen kısıtlama hakkı.</li>
+      </ul>
+
+      <h2>4. CCPA (California Tüketici Gizliliği Yasası) Hakları</h2>
+      <p>
+        California'da ikamet eden kullanıcılarımız, CCPA kapsamında kişisel bilgilerinin satılmasını engelleme (Do Not Sell My Personal Information) hakkına sahiptir. Sitemizde doğrudan bir veri satışı yapılmamakla birlikte, üçüncü taraf reklam ortaklarımızın veri toplamasını engellemek için tarayıcı çerezlerinizi kapatabilir veya Google Reklam Tercihleri üzerinden veri paylaşımını devre dışı bırakabilirsiniz.
       </p>
 
-      <h2>3. Bilgi Paylaşımı ve Üçüncü Taraflar</h2>
+      <h2>5. Çocukların Gizliliği (COPPA Compliance)</h2>
       <p>
-        Kullanıcılardan toplanan anonim analiz veya reklam verileri, yasal zorunluluklar haricinde üçüncü şahıslarla paylaşılmaz veya satılmaz. 
-        Sitemizde yer alan dış bağlantılar (orijinal haber kaynakları vb.) kendi gizlilik politikalarına sahiptir ve bu sitelerin içeriklerinden {brandName} sorumlu değildir.
+        Çocukların internet kullanımındaki güvenliği bizim için son derece önemlidir. {brandName}, 13 yaşın altındaki çocuklardan bilerek veya isteyerek herhangi bir kişisel tanımlanabilir bilgi toplamamaktadır. Eğer bir ebeveyn olarak çocuğunuzun sitemizde bilgi bıraktığını düşünüyorsanız, lütfen derhal bizimle iletişime geçiniz; ilgili veriyi sistemlerimizden silmek için gerekli adımları hızla atacağız.
       </p>
 
-      <h2>4. İletişim</h2>
+      <h2>6. İletişim</h2>
       <p>
-        Bu Gizlilik Politikası ile ilgili herhangi bir sorunuz veya geri bildiriminiz olması durumunda bizimle <a href={`mailto:${contactEmail}`} class="cyan-link">{contactEmail}</a> adresinden veya <a href="/iletisim" class="cyan-link">iletişim sayfamızdan</a> irtibata geçebilirsiniz.
+        Gizlilik Politikamız ile ilgili her türlü soru, görüş veya geri bildiriminiz için bizimle <a href={`mailto:${contactEmail}`} class="cyan-link">{contactEmail}</a> e-posta adresi üzerinden veya <a href="/iletisim" class="cyan-link">İletişim</a> sayfamız aracılığıyla irtibata geçebilirsiniz.
       </p>
     </div>
   </div>
@@ -73,35 +93,36 @@ const domain = siteUrl.replace(/^https?:\/\//, '');
     font-size: 1.15rem;
   }
 
-  .policy-content {
-    padding: 2.5rem;
-    color: var(--text-secondary);
-    line-height: 1.7;
+  .policy-card {
+    padding: 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
   }
 
-  .policy-content h2 {
-    font-size: 1.5rem;
+  .policy-card h2 {
+    font-size: 1.6rem;
     color: #ffffff;
-    margin-top: 2.5rem;
-    margin-bottom: 1rem;
+    margin-top: 1rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
     padding-bottom: 0.5rem;
   }
 
-  .policy-content p {
-    margin-bottom: 1.25rem;
+  .policy-card p {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    font-size: 1.05rem;
   }
 
-  .policy-content ul {
-    margin-bottom: 1.5rem;
+  .policy-card ul {
+    list-style: square;
     padding-left: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
   }
 
-  .policy-content strong {
-    color: #ffffff;
+  .policy-card li {
+    margin-bottom: 0.5rem;
   }
 
   .cyan-link {
@@ -115,7 +136,7 @@ const domain = siteUrl.replace(/^https?:\/\//, '');
   }
 
   @media (max-width: 768px) {
-    .policy-content {
+    .policy-card {
       padding: 1.5rem;
     }
   }
