@@ -13,6 +13,14 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from google import genai
 from google.genai import types
+from dotenv import load_dotenv
+
+# Environment configuration
+load_dotenv(override=True)
+if os.path.exists("backend-scripts/.env"):
+    load_dotenv("backend-scripts/.env", override=True)
+elif os.path.exists("../../backend-scripts/.env"):
+    load_dotenv("../../backend-scripts/.env", override=True)
 
 
 # Firebase Firestore client initialization
