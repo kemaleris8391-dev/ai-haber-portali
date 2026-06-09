@@ -2756,6 +2756,9 @@ class handler(BaseHTTPRequestHandler):
             self.wfile.write(f"❌ <b>Hata:</b> {draft_id} kimlikli taslak haber bulunamadı veya zaten yayınlandı/silindi.".encode('utf-8'))
             return
             
+        action_list = params.get("action")
+        action = action_list[0].strip() if action_list else ""
+        
         post_data = doc.to_dict()
         title = post_data.get("title", "Taslak Haber")
         description = post_data.get("description", "")
@@ -2763,6 +2766,238 @@ class handler(BaseHTTPRequestHandler):
         category = post_data.get("category", "genel").upper()
         source_name = post_data.get("sourceName", "Kaynak")
         source_url = post_data.get("sourceUrl", "#")
+        
+        # Category neon colors mapping
+        cat_colors = {
+            "PLC": "#00f0ff",
+            "PC": "#39ff14",
+            "ENDUSTRIYEL-MAKINALAR": "#ff007f",
+            "OYUN": "#f857a6",
+            "YAPAY-ZEKA": "#bd00ff",
+            "AKILLI-EV": "#ffb703"
+        }
+        accent_color = cat_colors.get(category, "#e4e4e7")
+        
+        from datetime import timezone, timedelta
+        tr_tz = timezone(timedelta(hours=3))
+        
+        if action == "comment":
+            html_page = f"""<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Görüş Yaz ve Yayınla</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {{
+            --bg-color: #03001e;
+            --accent-color: {accent_color};
+            --text-color: #f3f4f6;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-glow: 0 0 25px rgba(189, 0, 255, 0.15);
+        }}
+        
+        * {{
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }}
+        
+        body {{
+            background: #03001e;
+            color: var(--text-color);
+            font-family: 'Outfit', sans-serif;
+            line-height: 1.6;
+            padding: 1.5rem 1rem;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }}
+        
+        .container {{
+            width: 100%;
+            max-width: 500px;
+        }}
+        
+        .glass-card {{
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), var(--shadow-glow);
+        }}
+        
+        .badge {{
+            display: inline-block;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            background: rgba(255, 255, 255, 0.02);
+            padding: 0.3rem 0.8rem;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }}
+        
+        h2 {{
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: #ffffff;
+            line-height: 1.3;
+        }}
+        
+        label {{
+            display: block;
+            font-size: 0.9rem;
+            color: #9ca3af;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }}
+        
+        textarea {{
+            width: 100%;
+            height: 150px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1rem;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 1rem;
+            resize: none;
+            outline: none;
+            transition: all 0.3s ease;
+        }}
+        
+        textarea:focus {{
+            border-color: var(--accent-color);
+            box-shadow: 0 0 10px rgba(189, 0, 255, 0.2);
+            background: rgba(255, 255, 255, 0.04);
+        }}
+        
+        button {{
+            width: 100%;
+            background: linear-gradient(135deg, #bd00ff, #ff007f);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(189, 0, 255, 0.3);
+        }}
+        
+        button:hover {{
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(189, 0, 255, 0.5);
+        }}
+        
+        button:disabled {{
+            background: #4b5563;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }}
+        
+        .status {{
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            text-align: center;
+            display: none;
+        }}
+        
+        .success {{ color: #10b981; }}
+        .error {{ color: #ef4444; }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="glass-card">
+            <span class="badge">{category}</span>
+            <h2>{title}</h2>
+            
+            <div id="form-container">
+                <label for="comment">✍️ Teknisyenin Kişisel Görüşü / Editörün Yorumu:</label>
+                <textarea id="comment" placeholder="Sahadan gelen usta jargonu ve samimi teknik görüşlerinizi buraya yazın..."></textarea>
+                <button id="submit-btn" onclick="submitComment()">🚀 Onayla ve Yayınla</button>
+            </div>
+            
+            <div id="status-msg" class="status"></div>
+        </div>
+    </div>
+    
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+        
+        async function submitComment() {{
+            const comment = document.getElementById("comment").value.trim();
+            const btn = document.getElementById("submit-btn");
+            const statusDiv = document.getElementById("status-msg");
+            
+            if (!comment) {{
+                alert("Lütfen görüşünüzü yazın.");
+                return;
+            }}
+            
+            btn.disabled = true;
+            btn.innerText = "⏳ Yayınlanıyor...";
+            
+            try {{
+                const response = await fetch("/api/webhook", {{
+                    method: "POST",
+                    headers: {{ "Content-Type": "application/json" }},
+                    body: JSON.stringify({{
+                        action: "publish_draft",
+                        draft_id: "{draft_id}",
+                        comment: comment
+                    }})
+                }});
+                
+                const result = await response.json();
+                
+                if (response.ok && result.status === "success") {{
+                    statusDiv.className = "status success";
+                    statusDiv.innerHTML = "🎉 <b>Haber Başarıyla Yayına Alındı!</b><br>Bu pencere otomatik kapatılıyor...";
+                    statusDiv.style.display = "block";
+                    
+                    setTimeout(() => {{
+                        tg.close();
+                    }}, 2000);
+                }} else {{
+                    throw new Error(result.error || "Sunucu hatası oluştu.");
+                }}
+            }} catch (err) {{
+                btn.disabled = false;
+                btn.innerText = "🚀 Onayla ve Yayınla";
+                statusDiv.className = "status error";
+                statusDiv.innerText = "❌ Hata: " + err.message;
+                statusDiv.style.display = "block";
+            }}
+        }}
+    </script>
+</body>
+</html>
+"""
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html; charset=utf-8')
+            self.end_headers()
+            self.wfile.write(html_page.encode('utf-8'))
+            return
         
         # Simple markdown to HTML conversion
         html_content = content
@@ -3015,7 +3250,7 @@ class handler(BaseHTTPRequestHandler):
         self.wfile.write(html_page.encode('utf-8'))
 
     def do_POST(self):
-        """Processes incoming Telegram Webhook post requests."""
+        """Processes incoming Telegram Webhook and WebApp post requests."""
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
         self.end_headers()
@@ -3027,6 +3262,105 @@ class handler(BaseHTTPRequestHandler):
             update = json.loads(post_data.decode('utf-8'))
         except Exception as parse_err:
             self.wfile.write(json.dumps({"status": "invalid json", "error": str(parse_err)}).encode())
+            return
+            
+        # 0. Check if this is a custom WebApp publishing POST request
+        action = update.get("action")
+        if action == "publish_draft":
+            draft_id = update.get("draft_id")
+            user_comment = update.get("comment", "").strip()
+            
+            if not draft_id or not user_comment:
+                self.wfile.write(json.dumps({"status": "error", "error": "Geçersiz parametreler. draft_id ve comment alanları zorunludur."}).encode())
+                return
+                
+            try:
+                db = init_firebase()
+                doc_ref = db.collection("pending_posts").document(draft_id)
+                doc = doc_ref.get()
+                if not doc.exists:
+                    self.wfile.write(json.dumps({"status": "error", "error": "Taslak haber bulunamadı veya zaten yayınlandı/silindi."}).encode())
+                    return
+                    
+                draft_data = doc.to_dict()
+                if draft_data.get("status") == "published":
+                    self.wfile.write(json.dumps({"status": "error", "error": "Bu haber zaten yayınlanmış."}).encode())
+                    return
+                    
+                # Gemma 4 31B ile başlık ve içeriği zenginleştir
+                enriched_data = enrich_news_with_comment(draft_data, user_comment)
+                if enriched_data:
+                    new_title = enriched_data["title"]
+                    new_content = enriched_data["content"]
+                    
+                    keywords = draft_data.get("keywords", [])
+                    category = draft_data.get("category", "pc")
+                    astro_image_path = draft_data.get("heroImage", "/images/default-news.png")
+                    source_name = draft_data.get("sourceName", "AI")
+                    source_url = draft_data.get("sourceUrl", "")
+                    slug = draft_data["slug"]
+                    
+                    # Define timezone locally
+                    from datetime import timezone, timedelta
+                    tr_tz = timezone(timedelta(hours=3))
+                    
+                    updated_markdown = f"""---
+title: "{new_title}"
+description: "{draft_data['description']}"
+pubDate: "{datetime.now(tr_tz).strftime('%Y-%m-%dT%H:%M:%S')}"
+heroImage: "{astro_image_path}"
+category: "{category}"
+tags: {json.dumps(keywords, ensure_ascii=False)}
+sourceName: "{source_name}"
+sourceUrl: "{source_url}"
+---
+{new_content}
+"""
+                    
+                    # GitHub'a yaz
+                    success = publish_markdown_to_github(slug, updated_markdown)
+                    if success:
+                        # Firestore taslağı güncelle
+                        doc_ref.update({
+                            "status": "published", 
+                            "published_at": time.time(),
+                            "title": new_title,
+                            "markdown_content": updated_markdown,
+                            "content": new_content
+                        })
+                        
+                        # Yeniden derleme tetikle
+                        try:
+                            trigger_github_workflow()
+                        except Exception as e:
+                            print(f"Trigger workflow error: {e}")
+                            
+                        # Orijinal Telegram bildirim mesajını güncelle
+                        telegram_message_id = draft_data.get("telegram_message_id")
+                        if telegram_message_id:
+                            success_text = (
+                                "✅ <b>Haber Kişisel Yorumunuzla Birlikte Yayınlandı! (Görüş Kutucuğu İle)</b>\n\n"
+                                f"<b>Yeni Başlık:</b> {html.escape(new_title)}\n"
+                                f"<b>Kategori:</b> {category.upper()}\n\n"
+                                f"<b>Editörün Görüşü:</b> <i>{html.escape(user_comment)}</i>\n\n"
+                                "🚀 Makale GitHub deposuna başarıyla yazıldı. Canlı site 1-2 dakika içinde güncellenecektir."
+                            )
+                            try:
+                                edit_message_text(success_text, telegram_message_id)
+                            except Exception as e:
+                                print(f"Error editing original telegram message: {e}")
+                                
+                        send_message(f"🎉 <b>{html.escape(new_title)}</b> başlığıyla haber başarıyla yayına alındı!")
+                        self.wfile.write(json.dumps({"status": "success"}).encode())
+                    else:
+                        self.wfile.write(json.dumps({"status": "error", "error": "Zenginleştirilmiş haber GitHub'a yazılamadı."}).encode())
+                else:
+                    self.wfile.write(json.dumps({"status": "error", "error": "Gemma zenginleştirme adımı başarısız oldu."}).encode())
+                    
+            except Exception as e:
+                import traceback
+                print(f"Error publishing draft via WebApp: {e}\n{traceback.format_exc()}")
+                self.wfile.write(json.dumps({"status": "error", "error": f"Kritik hata oluştu: {str(e)}"}).encode())
             return
             
         # 1. Callback Query intercept
@@ -3100,10 +3434,14 @@ class handler(BaseHTTPRequestHandler):
                         source_url = draft_data.get("sourceUrl", "")
                         slug = draft_data["slug"]
                         
+                        # Define timezone locally
+                        from datetime import timezone, timedelta
+                        tr_tz = timezone(timedelta(hours=3))
+                        
                         updated_markdown = f"""---
 title: "{new_title}"
 description: "{draft_data['description']}"
-pubDate: "{datetime.now(TR_TZ).strftime('%Y-%m-%dT%H:%M:%S')}"
+pubDate: "{datetime.now(tr_tz).strftime('%Y-%m-%dT%H:%M:%S')}"
 heroImage: "{astro_image_path}"
 category: "{category}"
 tags: {json.dumps(keywords, ensure_ascii=False)}
@@ -3145,6 +3483,7 @@ sourceUrl: "{source_url}"
                             send_message("🎉 <b>Haber başarıyla yayına alındı!</b>")
                         else:
                             send_message("❌ <b>Hata:</b> Zenginleştirilmiş haber GitHub'a yazılamadı.")
+                        return
                     else:
                         send_message("❌ <b>Hata:</b> Gemma 31B zenginleştirme adımı başarısız oldu.")
                 except Exception as e:
