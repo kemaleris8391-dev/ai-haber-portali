@@ -302,6 +302,10 @@ const jsonLd = type === 'article' && articleData ? {
 		color: var(--text-secondary);
 		font-weight: 500;
 		letter-spacing: 0.01em;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		max-width: 320px;
 	}
 
 	.logo-link {
