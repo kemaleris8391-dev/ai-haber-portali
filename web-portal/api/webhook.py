@@ -299,9 +299,9 @@ def get_categories():
     db = init_firebase()
     doc = db.collection("system_config").document("categories").get()
     if doc.exists:
-        return doc.to_dict().get("list", ["plc", "pc", "endustriyel-makinalar", "oyun"])
+        return doc.to_dict().get("list", ["plc", "pc", "endustriyel-makinalar", "oyun", "yapay-zeka"])
     else:
-        default_cats = ["plc", "pc", "endustriyel-makinalar", "oyun"]
+        default_cats = ["plc", "pc", "endustriyel-makinalar", "oyun", "yapay-zeka"]
         db.collection("system_config").document("categories").set({"list": default_cats})
         return default_cats
 
@@ -1215,8 +1215,8 @@ def handle_del_cat_confirm(callback_query, cat_slug):
         answer_callback_query(callback_id, "Silme başarısız.")
         return
         
-    # Standard protection: do not let them delete core 4 categories
-    if cat_slug in ["plc", "pc", "endustriyel-makinalar", "oyun"]:
+    # Standard protection: do not let them delete core 5 categories
+    if cat_slug in ["plc", "pc", "endustriyel-makinalar", "oyun", "yapay-zeka"]:
         text = (
             f"❌ <b>Kategori Silinemedi!</b>\n\n"
             f"<code>{cat_slug}</code> kategorisi sistemin temel (çekirdek) kategorilerinden biridir ve silinemez."
@@ -1859,43 +1859,12 @@ def handle_approve_direct(callback_query, doc_id):
     message_id = callback_query["message"]["message_id"]
     callback_id = callback_query["id"]
     
-    edit_message_text("⏳ <b>Haber doğrudan yayınlanıyor, lütfen bekleyin...</b>\n(Dosyalar GitHub'a yazılıyor)", message_id)
-    answer_callback_query(callback_id, "Yayınlama başlatıldı.")
-    
-    try:
-        db = init_firebase()
-        doc_ref = db.collection("pending_posts").document(doc_id)
-        doc = doc_ref.get()
-        if not doc.exists:
-            edit_message_text("❌ Hata: Taslak haber bulunamadı veya daha önce yayınlanmış/silinmiş.", message_id)
-            return
-            
-        post_data = doc.to_dict()
-        slug = post_data["slug"]
-        markdown_content = post_data["markdown_content"]
-        
-        success = publish_markdown_to_github(slug, markdown_content)
-        if success:
-            doc_ref.update({"status": "published", "published_at": time.time()})
-            
-            try:
-                trigger_github_workflow()
-            except Exception as e:
-                print(f"Trigger workflow error: {e}")
-                
-            success_text = (
-                "✅ <b>Haber Yorumsuz Başarıyla Yayınlandı!</b>\n\n"
-                f"<b>Başlık:</b> {html.escape(post_data['title'])}\n"
-                f"<b>Kategori:</b> {post_data['category'].upper()}\n\n"
-                "🚀 Haber dosyası GitHub deposuna başarıyla yazıldı. Canlı site 1-2 dakika içinde güncellenecektir."
-            )
-            keyboard = [[{"text": "🔙 Ana Menüye Dön", "callback_data": "menu:yardim"}]]
-            edit_message_text(success_text, message_id, reply_markup={"inline_keyboard": keyboard})
-        else:
-            edit_message_text("❌ Hata: Haber GitHub'a yazılamadı.", message_id)
-            
-    except Exception as e:
-        edit_message_text(f"❌ Haber yayınlanırken hata oluştu: <code>{e}</code>", message_id)
+    warning_text = (
+        "⚠️ <b>Yorumsuz doğrudan yayınlama özelliği devre dışı bırakılmıştır.</b>\n\n"
+        "Lütfen bu habere kendi görüşünüzü ekleyip yayınlamak için mesaja <b>YANIT (Reply) yazıp gönderin</b>."
+    )
+    edit_message_text(warning_text, message_id)
+    answer_callback_query(callback_id, "Bu özellik devre dışıdır.", show_alert=True)
 
 def handle_approve_delete(callback_query, doc_id):
     message_id = callback_query["message"]["message_id"]
@@ -1951,12 +1920,12 @@ def enrich_news_with_comment(draft_data, user_comment):
         raise ValueError("API anahtarları bulunamadı!")
         
     prompt = f"""
-Aşağıda yapay zeka tarafından yazılmış bir haber makalesi ve bu makalenin en tepesine eklenecek olan uzman teknisyenin kişisel yorumu yer almaktadır.
+Aşağıda yapay zeka tarafından yazılmış bir haber makalesi ve bu makalenin en tepesine eklenecek olan uzman teknisyenin kişisel yorumu/görüşü yer almaktadır.
 
 GÖREVİN:
-1. Teknisyenin kişisel yorumunu incele. Dilbilgisi ve yazım hatalarını düzelt ama onun teknik uzman, samimi, 'sahadan gelen usta' üslubunu kesinlikle bozma ve yumuşatma.
-2. Bu yorumu makale metninin EN TEPESİNE (ilk paragrafa), yapay zeka tarafından yazılmadığı, bizzat bir insan görüşü olduğu açıkça anlaşılan özel bir stil halinde ekle. Örneğin:
-   > 💬 **Teknisyenin Sahadan Görüşü:** {user_comment}
+1. Teknisyenin kişisel yorumunu/görüşünü incele. Harf hataları veya basit yazım hataları varsa düzelt ancak konuşma tonunu, teknik üslubunu, argolarını, teknik terimlerini ve düşüncelerini KESİNLİKLE değiştirme, yumuşatma veya resmileştirme. Onun "sahadan gelen usta" samimi ve doğrudan konuşan kimliğini, jargonunu ve sesini aynen koru.
+2. Bu yorumu makale metninin EN TEPESİNE (ilk paragrafa), yapay zeka tarafından yazılmadığı, bizzat bir insan görüşü olduğu açıkça anlaşılan özel bir stil halinde ekle:
+   > 💬 **Teknisyenin Sahadan Görüşü:** [Teknisyenin yorumunu/görüşünü kelimesi kelimesine, tonunu bozmadan buraya yerleştir]
    
    Ardından bir boşluk bırakıp makalenin orijinal içeriğini devam ettir.
 3. Haberin başlığını, teknisyenin kişisel yorumunun/görüşünün ana fikrini içerecek veya onun görüşünü yansıtacak şekilde güncelle. Başlığın en başında veya içinde teknisyenin görüşü ana fikir olmalıdır.
@@ -1971,6 +1940,9 @@ GÖREVİN:
 Makale Başlığı: {draft_data['title']}
 Makale İçeriği:
 {draft_data['content']}
+
+Teknisyenin Kişisel Görüşü:
+{user_comment}
 """
 
     models_to_try = ["gemma-4-31b-it", "gemma-4-26b-a4b-it", "gemma-4-26b-it", "gemini-2.5-flash"]

@@ -62,7 +62,6 @@ def send_pending_post_notification(title, summary, category, doc_id):
     reply_markup = {
         "inline_keyboard": [
             [
-                {"text": "🚀 Yorumsuz Yayınla", "callback_data": f"approve_direct:{doc_id}"},
                 {"text": "🗑️ İptal Et / Sil", "callback_data": f"approve_delete:{doc_id}"}
             ]
         ]
@@ -73,8 +72,8 @@ def send_pending_post_notification(title, summary, category, doc_id):
         f"📂 <b>Kategori:</b> {category}\n"
         f"📰 <b>Başlık:</b> {title}\n"
         f"🔍 <b>Özet:</b> {summary}\n\n"
-        f"✍️ Bu habere kendi yorumunuzu eklemek için <b>bu mesaja YANIT (Reply) yazıp gönderin</b>.\n\n"
-        f"⚡ Yorumsuz doğrudan yayınlamak veya haberi tamamen iptal etmek için aşağıdaki butonları kullanabilirsiniz."
+        f"✍️ Bu habere kendi görüşünüzü ekleyip yayınlamak için <b>bu mesaja YANIT (Reply) yazıp gönderin</b>.\n\n"
+        f"🗑️ Haberi tamamen silmek/iptal etmek için aşağıdaki butonu kullanabilirsiniz."
     )
     
     payload = {

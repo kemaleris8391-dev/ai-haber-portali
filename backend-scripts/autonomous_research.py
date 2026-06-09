@@ -114,12 +114,12 @@ GÖREVİN:
 Bu haber başlıklarını analiz et. Bu konulardan ilham alarak ama onlarla doğrudan aynı gelişmeyi ele almayan, tamamen yeni, bağımsız, güncel ve Google Arama ile derinlemesine araştırılıp 4 paragraflık kapsamlı makaleler yazılabilecek maksimum {max_topics} adet otonom araştırma konusu üret.
 
 YAYIN POLİTİKASI VEYA KATEGORİ KURALLARI:
-1. Konuların kategorisi sadece şu dördünden biri olmalıdır: "plc", "pc", "endustriyel-makinalar", "oyun".
+1. Konuların kategorisi sadece şu beşinden biri olmalıdır: "plc", "pc", "endustriyel-makinalar", "oyun", "yapay-zeka".
 2. Suya sabuna dokunmayan, yasal riski sıfır, siyaset dışı, magazin dışı, borsa/yatırım/fiyat spekülasyonu içermeyen, tamamen nesnel, otomasyon, bilgisayar teknolojileri, elektrik, oyun dünyası, PLC kontrolörler, motor sürücüler, pratik cihaz donanımları veya tamir çözümleri odaklı teknik konular olmalıdır.
 3. Her konu için:
    - `title`: Sürükleyici, profesyonel, clickbait olmayan merak uyandırıcı Türkçe bir haber başlığı.
    - `query`: Bu konunun detaylarını Google Arama ile araştırmak için kullanılacak İngilizce net ve nokta atışı bir arama sorgusu (Örn: "Siemens S7-1500 firmware updates plc", "intel arc gpu driver updates performance", "industrial assembly line cnc troubleshooting").
-   - `category`: "plc", "pc", "endustriyel-makinalar" veya "oyun" değerlerinden biri.
+   - `category`: "plc", "pc", "endustriyel-makinalar", "oyun" veya "yapay-zeka" değerlerinden biri.
 
 Çıktıyı kesinlikle aşağıdaki JSON formatında ver (başka açıklama ekleme, markdown kod bloğu içinde olmalıdır):
 ```json
@@ -157,7 +157,7 @@ YAYIN POLİTİKASI VEYA KATEGORİ KURALLARI:
             
             # Kategori ve veri kontrolü
             valid_topics = []
-            ALLOWED_CATEGORIES = {"plc", "pc", "endustriyel-makinalar", "oyun"}
+            ALLOWED_CATEGORIES = {"plc", "pc", "endustriyel-makinalar", "oyun", "yapay-zeka"}
             for t in topics:
                 title = t.get("title")
                 query = t.get("query")

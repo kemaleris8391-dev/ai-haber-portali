@@ -145,6 +145,12 @@ h1, h2, h3, h4, h5, h6 {
   background: rgba(248, 87, 166, 0.05);
 }
 
+.badge-yapay-zeka {
+  color: #bd00ff;
+  border: 1px solid rgba(189, 0, 255, 0.5);
+  background: rgba(189, 0, 255, 0.05);
+}
+
 .badge-genel {
   color: #e4e4e7;
   border: 1px solid rgba(161, 161, 170, 0.5);
