@@ -186,7 +186,7 @@ Aşağıda son periyotta eklenen haberler (dosya adı, başlık, kategori ve gö
 GÖREV:
 1. Bu haberlerin portalımızın yayın politikasına uygun olup olmadığını denetle.
    Yayın Politikası Odak Alanları:
-   - Sadece teknoloji, bilimsel buluşlar, oyun dünyası, geek dizileri/filmleri (bilim kurgu, fantastik, oyun uyarlamaları, sinema teknolojileri) ve kuantum dünyası/bilgisayarları hakkında olmalıdır.
+   - Sadece PLC otomasyonu (plc), kişisel bilgisayarlar ve donanımlar (pc), endüstriyel makineler ve tamirleri (endustriyel-makinalar), oyun dünyası (oyun), yapay zeka (yapay-zeka) ve ev elektroniği/akıllı ev sistemleri (akilli-ev) hakkında olmalıdır.
    Politika Dışı (Uygun Olmayan) Alanlar:
    - Siyaset, politika, standart aşk/dram dizileri, magazin haberleri, genel otomotiv incelemeleri (elektrikli/otonom teknolojiler dışındaki standart araçlar), genel borsa/finans, yasal ihtilaflar, yemek tarifi vb.
 

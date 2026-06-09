@@ -5,7 +5,7 @@ import Layout from '../../../layouts/Layout.astro';
 export async function getStaticPaths({ paginate }) {
   const allPosts = await getCollection('blog');
   const categories = [...new Set(allPosts.map(post => post.data.category).filter(Boolean))];
-  const defaultCategories = ['plc', 'pc', 'endustriyel-makinalar', 'oyun', 'yapay-zeka'];
+  const defaultCategories = ['plc', 'pc', 'endustriyel-makinalar', 'oyun', 'yapay-zeka', 'akilli-ev'];
   const uniqueCategories = [...new Set([...defaultCategories, ...categories])];
   
   return uniqueCategories.flatMap(category => {
@@ -43,7 +43,8 @@ const categoryTitles: Record<string, string> = {
   'pc': 'PC',
   'endustriyel-makinalar': 'Endüstriyel Makineler',
   'oyun': 'Oyun',
-  'yapay-zeka': 'Yapay Zeka'
+  'yapay-zeka': 'Yapay Zeka',
+  'akilli-ev': 'Akıllı Ev & Donanım'
 };
 
 const formatCategoryName = (cat: string) => {
@@ -63,7 +64,8 @@ const categoryTitle = categoryTitles[category] || `${formatCategoryName(category
         {category === 'endustriyel-makinalar' && "Fabrika makineleri, bakım ve tamir prosedürleri, endüstriyel CNC, hidrolik/pnömatik ve pano sistemleri."}
         {category === 'oyun' && "PC ve konsol oyunları, donanım gereksinimleri, oyun sektörü gelişmeleri ve yapay zeka odaklı analizler."}
         {category === 'yapay-zeka' && "Yapay zeka modelleri, üretken yapay zeka araçları, makine öğrenimi, derin öğrenme ve AI teknolojileri."}
-        {!['plc', 'pc', 'endustriyel-makinalar', 'oyun', 'yapay-zeka'].includes(category) && `${formatCategoryName(category)} kategorisindeki en güncel gelişmeler, yapay zeka analizleri ve haberler.`}
+        {category === 'akilli-ev' && "Akıllı ev sistemleri, robot süpürgeler, IoT cihazları, ev otomasyonu ve tüketici elektroniği tamir-bakım rehberleri."}
+        {!['plc', 'pc', 'endustriyel-makinalar', 'oyun', 'yapay-zeka', 'akilli-ev'].includes(category) && `${formatCategoryName(category)} kategorisindeki en güncel gelişmeler, yapay zeka analizleri ve haberler.`}
       </p>
     </header>
 

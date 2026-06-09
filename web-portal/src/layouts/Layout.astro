@@ -33,7 +33,7 @@ const adsenseClientId = import.meta.env.PUBLIC_ADSENSE_CLIENT_ID;
 // Dynamic categories extraction
 const allPosts = await getCollection('blog');
 const activeCategories = [...new Set(allPosts.map(post => post.data.category).filter(Boolean))];
-const defaultCategories = ['plc', 'pc', 'endustriyel-makinalar', 'oyun', 'yapay-zeka'];
+const defaultCategories = ['plc', 'pc', 'endustriyel-makinalar', 'oyun', 'yapay-zeka', 'akilli-ev'];
 const mergedCategories = [...new Set([...defaultCategories, ...activeCategories])];
 
 const categoryLabels: Record<string, string> = {
@@ -41,7 +41,8 @@ const categoryLabels: Record<string, string> = {
 	'pc': 'PC',
 	'endustriyel-makinalar': 'Endüstriyel Makineler',
 	'oyun': 'Oyun',
-	'yapay-zeka': 'Yapay Zeka'
+	'yapay-zeka': 'Yapay Zeka',
+	'akilli-ev': 'Akıllı Ev & Donanım'
 };
 
 const getCategoryLabel = (cat: string) => {

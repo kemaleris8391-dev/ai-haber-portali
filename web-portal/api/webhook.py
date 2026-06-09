@@ -299,9 +299,9 @@ def get_categories():
     db = init_firebase()
     doc = db.collection("system_config").document("categories").get()
     if doc.exists:
-        return doc.to_dict().get("list", ["plc", "pc", "endustriyel-makinalar", "oyun", "yapay-zeka"])
+        return doc.to_dict().get("list", ["plc", "pc", "endustriyel-makinalar", "oyun", "yapay-zeka", "akilli-ev"])
     else:
-        default_cats = ["plc", "pc", "endustriyel-makinalar", "oyun", "yapay-zeka"]
+        default_cats = ["plc", "pc", "endustriyel-makinalar", "oyun", "yapay-zeka", "akilli-ev"]
         db.collection("system_config").document("categories").set({"list": default_cats})
         return default_cats
 
@@ -1215,8 +1215,8 @@ def handle_del_cat_confirm(callback_query, cat_slug):
         answer_callback_query(callback_id, "Silme başarısız.")
         return
         
-    # Standard protection: do not let them delete core 5 categories
-    if cat_slug in ["plc", "pc", "endustriyel-makinalar", "oyun", "yapay-zeka"]:
+    # Standard protection: do not let them delete core categories
+    if cat_slug in ["plc", "pc", "endustriyel-makinalar", "oyun", "yapay-zeka", "akilli-ev"]:
         text = (
             f"❌ <b>Kategori Silinemedi!</b>\n\n"
             f"<code>{cat_slug}</code> kategorisi sistemin temel (çekirdek) kategorilerinden biridir ve silinemez."

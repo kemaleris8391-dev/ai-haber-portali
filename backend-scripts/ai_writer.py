@@ -433,7 +433,7 @@ def save_news_as_markdown(news_data, output_dir, images_dir, source_name, source
     
     # Kategori Sınırlama Koruyucusu (Category Safeguard)
     # Telegram/Bot taleplerinde veya AI halüsinasyonlarında izin verilmeyen kategoriler engellenir
-    ALLOWED_CATEGORIES = {"plc", "pc", "endustriyel-makinalar", "oyun", "yapay-zeka"}
+    ALLOWED_CATEGORIES = {"plc", "pc", "endustriyel-makinalar", "oyun", "yapay-zeka", "akilli-ev"}
     if category not in ALLOWED_CATEGORIES:
         if "plc" in category or "otomasyon" in category or "automation" in category:
             category = "plc"
@@ -443,6 +443,8 @@ def save_news_as_markdown(news_data, output_dir, images_dir, source_name, source
             category = "oyun"
         elif "yapay" in category or "ai" in category or "intelligence" in category:
             category = "yapay-zeka"
+        elif "ev" in category or "akıllı" in category or "smart" in category or "iot" in category or "süpürge" in category or "vacuum" in category:
+            category = "akilli-ev"
         else:
             category = "pc"
     
