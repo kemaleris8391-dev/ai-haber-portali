@@ -62,6 +62,7 @@ def send_pending_post_notification(title, summary, category, doc_id):
     reply_markup = {
         "inline_keyboard": [
             [
+                {"text": "📖 Haberi Oku", "url": f"https://ai-haber-portali.vercel.app/api/webhook?draft_id={doc_id}"},
                 {"text": "🗑️ İptal Et / Sil", "callback_data": f"approve_delete:{doc_id}"}
             ]
         ]
@@ -72,6 +73,7 @@ def send_pending_post_notification(title, summary, category, doc_id):
         f"📂 <b>Kategori:</b> {category}\n"
         f"📰 <b>Başlık:</b> {title}\n"
         f"🔍 <b>Özet:</b> {summary}\n\n"
+        f"🔗 <b>Önizleme Linki:</b> <a href='https://ai-haber-portali.vercel.app/api/webhook?draft_id={doc_id}'>Haberin Tamamını Oku</a>\n\n"
         f"✍️ Bu habere kendi görüşünüzü ekleyip yayınlamak için <b>bu mesaja YANIT (Reply) yazıp gönderin</b>.\n\n"
         f"🗑️ Haberi tamamen silmek/iptal etmek için aşağıdaki butonu kullanabilirsiniz."
     )

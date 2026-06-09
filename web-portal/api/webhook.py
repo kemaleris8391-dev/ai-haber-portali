@@ -2731,6 +2731,289 @@ def send_otoarastirma_menu_message():
 
 # VERCEL SERVERLESS HANDLER
 class handler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        """Serves draft preview page for review before publishing."""
+        from urllib.parse import urlparse, parse_qs
+        parsed_url = urlparse(self.path)
+        params = parse_qs(parsed_url.query)
+        draft_id_list = params.get("draft_id")
+        
+        if not draft_id_list:
+            self.send_response(400)
+            self.send_header('Content-type', 'text/html; charset=utf-8')
+            self.end_headers()
+            self.wfile.write("❌ <b>Hata:</b> Geçersiz istek. Lütfen geçerli bir draft_id belirtin.".encode('utf-8'))
+            return
+            
+        draft_id = draft_id_list[0].strip()
+        db = init_firebase()
+        doc = db.collection("pending_posts").document(draft_id).get()
+        
+        if not doc.exists:
+            self.send_response(404)
+            self.send_header('Content-type', 'text/html; charset=utf-8')
+            self.end_headers()
+            self.wfile.write(f"❌ <b>Hata:</b> {draft_id} kimlikli taslak haber bulunamadı veya zaten yayınlandı/silindi.".encode('utf-8'))
+            return
+            
+        post_data = doc.to_dict()
+        title = post_data.get("title", "Taslak Haber")
+        description = post_data.get("description", "")
+        content = post_data.get("content", "")
+        category = post_data.get("category", "genel").upper()
+        source_name = post_data.get("sourceName", "Kaynak")
+        source_url = post_data.get("sourceUrl", "#")
+        
+        # Simple markdown to HTML conversion
+        html_content = content
+        html_content = re.sub(r'^##\s+(.*?)$', r'<h2>\1</h2>', html_content, flags=re.MULTILINE)
+        html_content = re.sub(r'^###\s+(.*?)$', r'<h3>\1</h3>', html_content, flags=re.MULTILINE)
+        html_content = re.sub(r'^>\s+💬\s+(.*?)$', r'<div class="technician-note">💬 \1</div>', html_content, flags=re.MULTILINE)
+        html_content = re.sub(r'^>\s+(.*?)$', r'<blockquote>\1</blockquote>', html_content, flags=re.MULTILINE)
+        html_content = re.sub(r'\*\*(.*?)\*\*', r'<strong>\1</strong>', html_content)
+        html_content = re.sub(r'`(.*?)`', r'<code>\1</code>', html_content)
+        html_content = re.sub(r'\[(.*?)\]\((.*?)\)', r'<a href="\2" target="_blank">\1</a>', html_content)
+        
+        paragraphs = html_content.split('\n\n')
+        html_paragraphs = []
+        for p in paragraphs:
+            p = p.strip()
+            if p:
+                if p.startswith('<h') or p.startswith('<div') or p.startswith('<blockquote'):
+                    html_paragraphs.append(p)
+                else:
+                    html_paragraphs.append(f"<p>{p.replace(chr(10), '<br>')}</p>")
+        final_content_html = "\n".join(html_paragraphs)
+        
+        cat_colors = {
+            "PLC": "#00f0ff",
+            "PC": "#39ff14",
+            "ENDUSTRIYEL-MAKINALAR": "#ff007f",
+            "OYUN": "#f857a6",
+            "YAPAY-ZEKA": "#bd00ff",
+            "AKILLI-EV": "#ffb703"
+        }
+        accent_color = cat_colors.get(category, "#e4e4e7")
+        
+        from datetime import timezone, timedelta
+        tr_tz = timezone(timedelta(hours=3))
+        
+        html_page = f"""<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taslak Önizleme: {title}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {{
+            --bg-color: #03001e;
+            --accent-color: {accent_color};
+            --text-color: #f3f4f6;
+            --text-muted: #9ca3af;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --shadow-glow: 0 0 25px rgba(189, 0, 255, 0.15);
+        }}
+        
+        * {{
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }}
+        
+        body {{
+            background: radial-gradient(circle at 50% 0%, #11002e, var(--bg-color)) no-repeat;
+            background-attachment: fixed;
+            color: var(--text-color);
+            font-family: 'Outfit', sans-serif;
+            line-height: 1.7;
+            padding: 2rem 1rem;
+            min-height: 100vh;
+        }}
+        
+        .container {{
+            max-width: 780px;
+            margin: 0 auto;
+        }}
+        
+        .glass-card {{
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), var(--shadow-glow);
+            transition: all 0.3s ease;
+        }}
+        
+        .badge {{
+            display: inline-block;
+            color: var(--accent-color);
+            border: 1px solid var(--accent-color);
+            background: rgba(255, 255, 255, 0.02);
+            padding: 0.4rem 1rem;
+            border-radius: 9999px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            box-shadow: 0 0 10px rgba(255, 255, 255, 0.02);
+        }}
+        
+        h1 {{
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.2rem;
+            font-weight: 800;
+            line-height: 1.25;
+            margin-bottom: 1.2rem;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }}
+        
+        .meta-info {{
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            padding-bottom: 1rem;
+        }}
+        
+        .meta-info a {{
+            color: var(--accent-color);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }}
+        .meta-info a:hover {{
+            opacity: 0.8;
+            text-decoration: underline;
+        }}
+        
+        .description {{
+            font-size: 1.15rem;
+            color: #e5e7eb;
+            font-weight: 300;
+            margin-bottom: 2rem;
+            padding-left: 1.2rem;
+            border-left: 3px solid var(--accent-color);
+            line-height: 1.6;
+        }}
+        
+        .article-content {{
+            font-size: 1.05rem;
+            color: #f3f4f6;
+            margin-bottom: 2rem;
+        }}
+        
+        .article-content p {{
+            margin-bottom: 1.5rem;
+        }}
+        
+        .article-content h2 {{
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.6rem;
+            color: #ffffff;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+        }}
+        
+        .article-content h3 {{
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            color: #ffffff;
+            margin-top: 2rem;
+            margin-bottom: 0.8rem;
+            font-weight: 700;
+        }}
+        
+        .technician-note {{
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-left: 4px solid var(--accent-color);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 2rem 0;
+            font-style: italic;
+            font-weight: 300;
+            color: #f9fafb;
+        }}
+        
+        blockquote {{
+            border-left: 3px solid var(--text-muted);
+            padding-left: 1rem;
+            font-style: italic;
+            color: var(--text-muted);
+            margin: 1.5rem 0;
+        }}
+        
+        code {{
+            background: rgba(255, 255, 255, 0.08);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            color: var(--accent-color);
+        }}
+        
+        .article-content a {{
+            color: var(--accent-color);
+            text-decoration: none;
+            border-bottom: 1px dashed var(--accent-color);
+            transition: all 0.2s;
+        }}
+        
+        .article-content a:hover {{
+            color: #ffffff;
+            border-bottom: 1px solid #ffffff;
+        }}
+        
+        .footer {{
+            margin-top: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="glass-card">
+            <span class="badge">{category}</span>
+            <h1>{title}</h1>
+            
+            <div class="meta-info">
+                <span>📰 Kaynak: <a href="{source_url}" target="_blank">{source_name}</a></span>
+                <span>⏱️ Durum: Yayın Onayı Bekliyor</span>
+            </div>
+            
+            <div class="description">
+                {description}
+            </div>
+            
+            <div class="article-content">
+                {final_content_html}
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>AIHABERLER Editör Panel Önizleme Sistemi • {datetime.now(tr_tz).strftime('%Y')}</p>
+        </div>
+    </div>
+</body>
+</html>
+"""
+        self.send_response(200)
+        self.send_header('Content-type', 'text/html; charset=utf-8')
+        self.end_headers()
+        self.wfile.write(html_page.encode('utf-8'))
+
     def do_POST(self):
         """Processes incoming Telegram Webhook post requests."""
         self.send_response(200)
