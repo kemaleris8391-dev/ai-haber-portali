@@ -819,6 +819,9 @@ def send_professional_help_dashboard(message_id=None):
     
     keyboard = [
         [
+            {"text": "📝 Onay Bekleyen Haberler", "callback_data": "menu:bekleyenler"}
+        ],
+        [
             {"text": "📊 Sistem Durumu", "callback_data": "menu:durum"},
             {"text": "⚡ Anlık RSS Tara", "callback_data": "menu:tara"}
         ],
@@ -851,6 +854,140 @@ def send_professional_help_dashboard(message_id=None):
             "reply_markup": reply_markup
         }
         requests.post(url, json=payload, timeout=10)
+
+def handle_pending_posts_list(callback_query, chat_id=None):
+    """Fetches all pending approval posts and edits the callback message to show the list."""
+    message_id = callback_query["message"]["message_id"]
+    callback_id = callback_query["id"]
+    if not chat_id:
+        chat_id = callback_query["message"]["chat"]["id"]
+        
+    try:
+        db = init_firebase()
+        pending_docs = db.collection("pending_posts").where("status", "==", "pending_approval").get()
+        
+        docs_sorted = []
+        for doc in pending_docs:
+            data = doc.to_dict()
+            docs_sorted.append((doc.id, data))
+        docs_sorted.sort(key=lambda x: x[1].get("created_at", 0), reverse=True)
+        
+        if not docs_sorted:
+            text = (
+                "🟢 <b>Yayın Onayı Bekleyen Haber Yok!</b>\n\n"
+                "Sistemde onayınızı bekleyen herhangi bir taslak bulunmuyor. Her şey güncel."
+            )
+            keyboard = [[{"text": "🔙 Ana Menüye Dön", "callback_data": "menu:yardim"}]]
+        else:
+            text = f"📝 <b>Yayın Onayı Bekleyen Haberler ({len(docs_sorted)} adet):</b>\n\nLütfen incelemek ve görüş yazmak istediğiniz haberi seçin:"
+            keyboard = []
+            for doc_id, data in docs_sorted[:15]:
+                title = data.get("title", "Başlıksız")
+                category = data.get("category", "genel").upper()
+                if len(title) > 35:
+                    title = title[:32] + "..."
+                keyboard.append([{"text": f"📂 [{category}] {title}", "callback_data": f"review_pending:{doc_id}"}])
+            
+            if len(docs_sorted) > 15:
+                text += f"\n\n💡 <i>Not: Toplam {len(docs_sorted)} bekleyen haber var. En yeni 15 tanesi listelenmektedir.</i>"
+                
+            keyboard.append([{"text": "🔙 Ana Menüye Dön", "callback_data": "menu:yardim"}])
+            
+        edit_message_text(text, message_id, reply_markup={"inline_keyboard": keyboard}, chat_id=chat_id)
+        answer_callback_query(callback_id)
+    except Exception as e:
+        send_error("Taslak Listeleme Hatası", f"Hata: {e}")
+
+def handle_review_pending_post(callback_query, doc_id):
+    """Fetches details of a pending post and renders action buttons."""
+    message_id = callback_query["message"]["message_id"]
+    callback_id = callback_query["id"]
+    chat_id = callback_query["message"]["chat"]["id"]
+    
+    try:
+        db = init_firebase()
+        doc = db.collection("pending_posts").document(doc_id).get()
+        if not doc.exists:
+            answer_callback_query(callback_id, "Taslak bulunamadı veya silinmiş.", show_alert=True)
+            handle_pending_posts_list(callback_query, chat_id)
+            return
+            
+        data = doc.to_dict()
+        title = data.get("title", "Başlıksız")
+        category = data.get("category", "genel").upper()
+        summary = data.get("description", "Açıklama yok.")
+        
+        text = (
+            f"📝 <b>Taslak Haber Detayı</b>\n"
+            f"──────────────────────────────\n"
+            f"📂 <b>Kategori:</b> {category}\n"
+            f"📰 <b>Başlık:</b> {title}\n\n"
+            f"🔍 <b>Özet:</b> {summary}\n"
+            f"──────────────────────────────\n\n"
+            f"✍️ Bu habere kendi görüşünüzü ekleyip yayınlamak için <b>✍️ Görüş Yaz</b> butonuna basarak açılan profesyonel kutucuğu kullanabilirsiniz."
+        )
+        
+        keyboard = [
+            [
+                {"text": "📖 Haberi Oku", "url": f"https://ai-haber-portali.vercel.app/api/webhook?draft_id={doc_id}"},
+                {"text": "✍️ Görüş Yaz", "web_app": {"url": f"https://ai-haber-portali.vercel.app/api/webhook?action=comment&draft_id={doc_id}"}}
+            ],
+            [
+                {"text": "🗑️ İptal Et / Sil", "callback_data": f"approve_delete:{doc_id}"},
+                {"text": "🔙 Listeye Dön", "callback_data": "menu:bekleyenler"}
+            ]
+        ]
+        
+        edit_message_text(text, message_id, reply_markup={"inline_keyboard": keyboard}, chat_id=chat_id)
+        answer_callback_query(callback_id)
+    except Exception as e:
+        send_error("Taslak Önizleme Hatası", f"Hata: {e}")
+
+def send_pending_posts_list_message(chat_id):
+    """Sends a new message with the pending approval posts list."""
+    try:
+        db = init_firebase()
+        pending_docs = db.collection("pending_posts").where("status", "==", "pending_approval").get()
+        
+        docs_sorted = []
+        for doc in pending_docs:
+            data = doc.to_dict()
+            docs_sorted.append((doc.id, data))
+        docs_sorted.sort(key=lambda x: x[1].get("created_at", 0), reverse=True)
+        
+        if not docs_sorted:
+            text = (
+                "🟢 <b>Yayın Onayı Bekleyen Haber Yok!</b>\n\n"
+                "Sistemde onayınızı bekleyen herhangi bir taslak bulunmuyor. Her şey güncel."
+            )
+            keyboard = [[{"text": "🔙 Ana Menüye Dön", "callback_data": "menu:yardim"}]]
+        else:
+            text = f"📝 <b>Yayın Onayı Bekleyen Haberler ({len(docs_sorted)} adet):</b>\n\nLütfen incelemek ve görüş yazmak istediğiniz haberi seçin:"
+            keyboard = []
+            for doc_id, data in docs_sorted[:15]:
+                title = data.get("title", "Başlıksız")
+                category = data.get("category", "genel").upper()
+                if len(title) > 35:
+                    title = title[:32] + "..."
+                keyboard.append([{"text": f"📂 [{category}] {title}", "callback_data": f"review_pending:{doc_id}"}])
+            
+            if len(docs_sorted) > 15:
+                text += f"\n\n💡 <i>Not: Toplam {len(docs_sorted)} bekleyen haber var. En yeni 15 tanesi listelenmektedir.</i>"
+                
+            keyboard.append([{"text": "🔙 Ana Menüye Dön", "callback_data": "menu:yardim"}])
+            
+        bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
+        url = f"https://api.telegram.org/bot{bot_token.strip()}/sendMessage"
+        payload = {
+            "chat_id": str(chat_id).strip(),
+            "text": text,
+            "parse_mode": "HTML",
+            "reply_markup": {"inline_keyboard": keyboard}
+        }
+        requests.post(url, json=payload, timeout=10)
+    except Exception as e:
+        send_error("Taslak Mesajı Gönderme Hatası", f"Hata: {e}")
+
 
 def handle_durum_callback(callback_query):
     message_id = callback_query["message"]["message_id"]
@@ -1886,7 +2023,10 @@ def handle_approve_delete(callback_query, doc_id):
             f"<b>Kategori:</b> {post_data['category'].upper()}\n\n"
             "Taslak haber ve indirilmiş olan kapak görseli başarıyla kaldırıldı."
         )
-        keyboard = [[{"text": "🔙 Ana Menüye Dön", "callback_data": "menu:yardim"}]]
+        keyboard = [
+            [{"text": "🔙 Bekleyenler Listesine Dön", "callback_data": "menu:bekleyenler"}],
+            [{"text": "🔙 Ana Menüye Dön", "callback_data": "menu:yardim"}]
+        ]
         edit_message_text(success_text, message_id, reply_markup={"inline_keyboard": keyboard})
         
     except Exception as e:
@@ -2121,6 +2261,11 @@ def handle_callback_query_routing(callback_query):
     elif data.startswith("approve_delete:"):
         doc_id = data.split(":", 1)[1]
         handle_approve_delete(callback_query, doc_id)
+    elif data == "menu:bekleyenler":
+        handle_pending_posts_list(callback_query)
+    elif data.startswith("review_pending:"):
+        doc_id = data.split(":", 1)[1]
+        handle_review_pending_post(callback_query, doc_id)
 
 def add_custom_request(topic):
 
@@ -3593,6 +3738,9 @@ sourceUrl: "{source_url}"
                 
             elif text == "/sil":
                 send_date_selection_menu()
+                
+            elif text in ["/bekleyenler", "/bekleyen"]:
+                send_pending_posts_list_message(user_id)
                 
             elif text == "/durum":
                 try:
