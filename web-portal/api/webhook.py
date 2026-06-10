@@ -510,6 +510,14 @@ def get_or_init_multi_delete_state(chat_id, context, metadata=None):
                     new_meta = metadata or {}
                     if meta.get("date") == new_meta.get("date") and meta.get("category") == new_meta.get("category"):
                          return data.get("selected_ids", [])
+                elif context == "benzer":
+                    if metadata is not None:
+                        # Update metadata and reset selected_ids for new analysis
+                        data["metadata"] = metadata
+                        data["selected_ids"] = []
+                        doc_ref.set(data)
+                        return []
+                    return data.get("selected_ids", [])
                 else:
                     return data.get("selected_ids", [])
         
@@ -782,10 +790,44 @@ def handle_benzer_haber_callback(callback_query, is_toggle=False):
         answer_callback_query(callback_id, "Analiz başlatıldı.")
         
     try:
-        analysis_result, duplicate_posts = check_similar_news_locally()
+        db = init_firebase()
+        analysis_result = None
+        duplicate_posts = []
         
-        selected_ids = get_or_init_multi_delete_state(chat_id, "benzer")
-        
+        if is_toggle:
+            # Try to read cached similarity analysis from bot_state document
+            state_doc = db.collection("system_config").document("bot_state").get()
+            if state_doc.exists:
+                state_data = state_doc.to_dict()
+                if state_data.get("state") == "multi_delete" and state_data.get("context") == "benzer":
+                    metadata = state_data.get("metadata", {})
+                    analysis_result = metadata.get("analysis_result")
+                    raw_duplicates = metadata.get("duplicate_posts", [])
+                    duplicate_posts = []
+                    for item in raw_duplicates:
+                        if isinstance(item, list) and len(item) == 2:
+                            duplicate_posts.append((item[0], item[1]))
+                        elif isinstance(item, tuple) and len(item) == 2:
+                            duplicate_posts.append(item)
+            
+            # Fallback if cache is empty or incomplete
+            if not analysis_result:
+                analysis_result, duplicate_posts = check_similar_news_locally()
+                selected_ids = get_or_init_multi_delete_state(chat_id, "benzer", metadata={
+                    "analysis_result": analysis_result,
+                    "duplicate_posts": duplicate_posts
+                })
+            else:
+                selected_ids = get_or_init_multi_delete_state(chat_id, "benzer")
+        else:
+            # Fresh scan
+            analysis_result, duplicate_posts = check_similar_news_locally()
+            # Initialize state and cache the analysis
+            selected_ids = get_or_init_multi_delete_state(chat_id, "benzer", metadata={
+                "analysis_result": analysis_result,
+                "duplicate_posts": duplicate_posts
+            })
+            
         if "BENZER_HABER_YOK" in analysis_result or not duplicate_posts:
             success_text = (
                 "🟢 <b>Benzer Haber Bulunmadı!</b>\n\n"
