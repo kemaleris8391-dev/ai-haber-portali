@@ -293,6 +293,28 @@ def run_autonomous_research(force=False):
                     draft_only=True
                 )
                 
+                # Mükerrer haber kontrolü (Otonom araştırma için)
+                draft_url = draft_post.get("sourceUrl")
+                if draft_url and not (
+                    "aihaberler.web.app" in draft_url.lower() 
+                    or "ai-haber-portali.vercel.app" in draft_url.lower() 
+                    or "localhost" in draft_url.lower()
+                ):
+                    db = firebase_helper.init_firebase()
+                    all_drafts = db.collection("pending_posts").stream()
+                    existing_urls = set()
+                    for d in all_drafts:
+                        url_val = d.to_dict().get("sourceUrl")
+                        if url_val:
+                            existing_urls.add(url_val)
+                            
+                    from fetcher import get_all_published_urls
+                    published_urls = get_all_published_urls()
+                    
+                    if draft_url in existing_urls or draft_url in published_urls:
+                        print(f"⚠️ Otonom Araştırma Geçildi: '{title}' haberi ({draft_url}) zaten mevcut veya onay bekliyor.")
+                        continue
+                
                 # Firestore'a ekle ve Telegram onayı gönder
                 db = firebase_helper.init_firebase()
                 pending_ref = db.collection("pending_posts").document()

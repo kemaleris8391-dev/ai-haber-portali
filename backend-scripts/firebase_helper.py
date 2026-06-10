@@ -407,7 +407,7 @@ def get_pending_posts_info():
     for doc in docs:
         data = doc.to_dict()
         status = data.get("status")
-        if status in ["pending_approval", "queued_for_deletion", "queued_for_publish"]:
+        if status in ["pending_approval", "queued_for_deletion", "queued_for_publish", "published"]:
             title = data.get("title")
             source_url = data.get("sourceUrl")
             if title:

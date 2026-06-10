@@ -177,7 +177,79 @@ def process_daily_deletions():
         import traceback
         traceback.print_exc()
 
+def cleanup_duplicate_pending_posts():
+    print("Running duplicate pending approval drafts cleanup...")
+    try:
+        import firebase_helper
+        from telegram_notifier import edit_message_text
+        from fetcher import get_all_published_urls
+        
+        db = firebase_helper.init_firebase()
+        pending_ref = db.collection("pending_posts")
+        docs = pending_ref.stream()
+        
+        local_published_urls = get_all_published_urls()
+        
+        def is_internal_url(url):
+            if not url:
+                return True
+            url_lower = url.lower()
+            return "aihaberler.web.app" in url_lower or "ai-haber-portali.vercel.app" in url_lower or "localhost" in url_lower
+            
+        all_docs = []
+        published_or_queued_urls = set()
+        
+        for url in local_published_urls:
+            if not is_internal_url(url):
+                published_or_queued_urls.add(url)
+                
+        for doc in docs:
+            data = doc.to_dict()
+            data["_doc_id"] = doc.id
+            all_docs.append(data)
+            
+            status = data.get("status")
+            source_url = data.get("sourceUrl")
+            
+            if status in ["published", "queued_for_publish"] and source_url:
+                if not is_internal_url(source_url):
+                    published_or_queued_urls.add(source_url)
+                    
+        deleted_count = 0
+        for data in all_docs:
+            status = data.get("status")
+            source_url = data.get("sourceUrl")
+            doc_id = data["_doc_id"]
+            
+            if status == "pending_approval" and source_url in published_or_queued_urls:
+                if not is_internal_url(source_url):
+                    print(f"Deleting duplicate pending draft: {doc_id} | Title: {data.get('title')}")
+                    # Delete doc from Firestore
+                    pending_ref.document(doc_id).delete()
+                    
+                    # Update Telegram message
+                    msg_id = data.get("telegram_message_id")
+                    if msg_id:
+                        cancel_text = (
+                            "⚠️ <b>Bu taslak otomatik olarak iptal edilmiştir.</b>\n\n"
+                            f"<b>Başlık:</b> {data.get('title')}\n\n"
+                            "Bu haber zaten onaylanıp başka bir başlıkla yayınlandığı için bu mükerrer taslak kaldırılmıştır."
+                        )
+                        try:
+                            edit_message_text(cancel_text, msg_id)
+                        except Exception as tg_err:
+                            print(f"Error updating telegram message {msg_id}: {tg_err}")
+                            
+                    deleted_count += 1
+                    
+        print(f"Duplicate cleanup completed. Total deleted: {deleted_count}")
+    except Exception as e:
+        print(f"Error in cleanup_duplicate_pending_posts: {e}")
+
 def process_publish_queue():
+    # 0. Clean up duplicate pending posts first
+    cleanup_duplicate_pending_posts()
+    
     print("Checking publish queue for approved drafts...")
     try:
         import firebase_helper

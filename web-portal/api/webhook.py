@@ -941,6 +941,57 @@ def send_professional_help_dashboard(message_id=None):
         }
         requests.post(url, json=payload, timeout=10)
 
+def cleanup_duplicates_in_webhook(db):
+    try:
+        # Get all docs in pending_posts
+        docs = db.collection("pending_posts").get()
+        
+        def is_internal_url(url):
+            if not url:
+                return True
+            url_lower = url.lower()
+            return "aihaberler.web.app" in url_lower or "ai-haber-portali.vercel.app" in url_lower or "localhost" in url_lower
+            
+        all_docs = []
+        published_or_queued_urls = set()
+        
+        for doc in docs:
+            data = doc.to_dict()
+            data["_doc_id"] = doc.id
+            all_docs.append(data)
+            
+            status = data.get("status")
+            source_url = data.get("sourceUrl")
+            
+            if status in ["published", "queued_for_publish"] and source_url:
+                if not is_internal_url(source_url):
+                    published_or_queued_urls.add(source_url)
+                    
+        for data in all_docs:
+            status = data.get("status")
+            source_url = data.get("sourceUrl")
+            doc_id = data["_doc_id"]
+            
+            if status == "pending_approval" and source_url in published_or_queued_urls:
+                if not is_internal_url(source_url):
+                    print(f"Webhook Cleanup: Deleting duplicate pending draft: {doc_id}")
+                    db.collection("pending_posts").document(doc_id).delete()
+                    
+                    # Try to update Telegram message
+                    msg_id = data.get("telegram_message_id")
+                    if msg_id:
+                        cancel_text = (
+                            "⚠️ <b>Bu taslak otomatik olarak iptal edilmiştir.</b>\n\n"
+                            f"<b>Başlık:</b> {data.get('title')}\n\n"
+                            "Bu haber zaten onaylanıp başka bir başlıkla yayınlandığı için bu mükerrer taslak kaldırılmıştır."
+                        )
+                        try:
+                            edit_message_text(cancel_text, msg_id)
+                        except Exception as tg_err:
+                            print(f"Webhook Error updating telegram message {msg_id}: {tg_err}")
+    except Exception as e:
+        print(f"Error in cleanup_duplicates_in_webhook: {e}")
+
 def handle_pending_posts_list(callback_query, chat_id=None):
     """Fetches all pending approval posts and edits the callback message to show the list."""
     message_id = callback_query["message"]["message_id"]
@@ -950,6 +1001,7 @@ def handle_pending_posts_list(callback_query, chat_id=None):
         
     try:
         db = init_firebase()
+        cleanup_duplicates_in_webhook(db)
         pending_docs = db.collection("pending_posts").where("status", "==", "pending_approval").get()
         
         docs_sorted = []
@@ -1033,6 +1085,7 @@ def send_pending_posts_list_message(chat_id):
     """Sends a new message with the pending approval posts list."""
     try:
         db = init_firebase()
+        cleanup_duplicates_in_webhook(db)
         pending_docs = db.collection("pending_posts").where("status", "==", "pending_approval").get()
         
         docs_sorted = []
