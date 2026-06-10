@@ -79,5 +79,50 @@
     "editor_comment": "Neden dalek robotu yapılmıyor. Tam bir kült olmaz mı.",
     "slug": "efsanevi-robby-the-robot-yeniden-canlaniyor-3d-baski-ile-iko",
     "source_url": "https://hackaday.com/2026/06/09/print-your-own-robby-the-robot/"
+  },
+  {
+    "timestamp": "2026-06-10T16:38:01.319720+03:00",
+    "category": "akilli-ev",
+    "title": "Akıllı Ev Eko-Sistemlerinde Yeni Çağ: Matter Protokolü ile Kesintisiz Entegrasyon ve Gelişmiş Güvenlik",
+    "summary": "Matter protokolü, akıllı ev cihazları entegrasyonunda güvenlik standartlarını yükseltiyor. Şifreleme, cihaz doğrulama ve yerel iletişimle koruma sağlıyor.",
+    "editor_comment": "Wi-fi ile görünmeyen yerler kapalı duvarlar ardında kimlik tespiti yapılabildiği bu süreçte bu tarz şifrelemenin çok daha önemli olacağını düşünüyorum",
+    "slug": "akilli-ev-eko-sistemlerinde-yeni-cag-matter-protokolu-ile-ke",
+    "source_url": "https://aihaberler.web.app"
+  },
+  {
+    "timestamp": "2026-06-10T16:38:55.567151+03:00",
+    "category": "akilli-ev",
+    "title": "Akıllı Evlerde Gizliliğin Yeni Kalesi: Uç Bilişim ile Veri Güvenliği ve Yerel İşleme",
+    "summary": "Akıllı evlerde edge bilişimin gizlilik ve güvenlik avantajlarını, yerel veri işlemenin teknolojik altyapısını ve olası risklere karşı önlemleri keşfedin.",
+    "editor_comment": "Mutlaka uygulanması ve bu şekilde olması gereken bir sistem öteki türlü ben evimin içinde gezen ve benden habersiz sağa sola veri gönderen herhangi bir cihaz istemiyorum ve bunu kimse istemez.",
+    "slug": "akilli-evlerde-gizliligin-yeni-kalesi-uc-bilisim-ile-veri-gu",
+    "source_url": "https://aihaberler.web.app"
+  },
+  {
+    "timestamp": "2026-06-10T16:39:39.617533+03:00",
+    "category": "pc",
+    "title": "Nostaljik CRT TV'lere Modern Dokunuş: VCR Ruhlu Raspberry Pi Medya Oynatıcı",
+    "summary": "Raspberry Pi ile CRT TV'ler için geliştirilen VCR tarzı medya oynatıcı, retro donanımları modern dijital içeriklerle buluşturuyor. Nostalji tutkunlarına özel çözüm.",
+    "editor_comment": "Fikir düşünce güzel ancak insanların eskiye dönük karmaşık ve zor işlemleri bu şekilde halledebilecek olmasını isteyeceğini pek düşünmüyorum ama fikir olarak güzel.",
+    "slug": "nostaljik-crt-tvlere-modern-dokunus-vcr-ruhlu-raspberry-pi-m",
+    "source_url": "https://hackaday.com/2026/06/10/pi-media-player-with-vcr-vibe-is-perfect-for-crts/"
+  },
+  {
+    "timestamp": "2026-06-10T16:40:23.753598+03:00",
+    "category": "plc",
+    "title": "Qualcomm, Yapay Zekayı Giriş Seviyesi Laptoplara ve Robotik Sistemlere Taşıyor",
+    "summary": "Qualcomm, Computex 2026'da tanıttığı Snapdragon C Platformu ve Dragonwing IQ10 ile yapay zekayı giriş seviyesi laptoplara ve robotik sistemlere taşıyor.",
+    "editor_comment": "Giriş seviyesindeki bir laptopun yapay zeka çalıştırabilecek olması güzel ancak kişisel verilerin korunması ile ilgili önemli güvenlik önlemlerini alınması gerektiğini düşünüyorum",
+    "slug": "qualcomm-yapay-zekayi-giris-seviyesi-laptoplara-ve-robotik-s",
+    "source_url": "https://control.com/news/qualcomm-unwraps-products-bringing-ai-to-entrylevel-laptops-and-robotics/"
+  },
+  {
+    "timestamp": "2026-06-10T16:41:03.224282+03:00",
+    "category": "oyun",
+    "title": "Xbox'ın Özel Oyun Stratejisi Şartlara Bağlı: Asha Sharma Gelecek Planlarını Açıkladı",
+    "summary": "Xbox, özel oyun stratejisini finansal sağlığa bağlıyor. Asha Sharma, Microsoft'un gelecek içerik planları ve özel oyunlar hakkındaki detayları paylaştı.",
+    "editor_comment": "Oyunların geleceğini gelişimini finansal durumlar değil hayal gücünün durdurabilecgi bir gelecek diliyorum",
+    "slug": "xboxin-ozel-oyun-stratejisi-sartlara-bagli-asha-sharma-gelec",
+    "source_url": "https://www.ign.com/articles/xbox-will-try-and-do-more-exclusives-once-the-business-is-healthy-says-asha-sharma"
   }
 ]
