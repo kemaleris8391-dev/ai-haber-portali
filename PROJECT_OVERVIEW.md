@@ -301,6 +301,39 @@ Bu bölümde, otonom haber portalının temizlik ve derleme süreçlerini daha k
 * **Harita (Map) Yapısı:** Firestore `blacklisted_links` veritabanı alanı, arama performansını artırmak amacıyla düz liste yerine zaman damgalı bir harita (Map) yapısına dönüştürülmüştür.
 * **14 Günlük Otomatik Silme (TTL):** Kara listede bulunan linkler çekilirken 14 günden eski olanlar veritabanından **otomatik olarak temizlenmektedir.** Bu sayede veritabanının sonsuza kadar şişmesi (bloat) ve okuma yavaşlığı önlenmiştir.
 
+---
+
+## 15. Yapay Zeka Görüşlerinin Yasaklanması & Editör Merkezli Editoryal Yapı (Yeni Site Yönü & Teması)
+
+Haziran 2026'da alınan editoryal kararlar doğrultusunda, portalın yayın çizgisi ve yapay zekanın rolü köklü bir şekilde güncellenmiştir:
+
+* **Sıfır AI Görüş İlkesi (Zero AI Opinions):** Haber ve blog içeriklerinin sonunda yapay zeka tarafından kendi kendine üretilen sahte editoryal değerlendirmeler ("Teknisyenin Sahadan Notu", "Teknisyenin Görüşü" vb.) tamamen **yasaklanmıştır.**
+* **Editörün Mutlak Fikir Üstünlüğü:** Sitedeki tüm kişisel/editoryal görüş ve fikirler **bizzat insan editöre (kullanıcıya) ait olmalıdır.** AI, yalnızca nesnel, teknik ve bilgilendirici içerik üretmekle yükümlüdür.
+* **Prompt Kuralları:** `system_config/gemini_prompts` (ve yerel `prompts_config.json`) içindeki tüm yazım promptlarından "sahadan not" kuralları silinmiş ve yerine *"Haberlerin sonunda veya içeriğinde yapay zeka kendi kendine kişisel yorum veya not eklememelidir. Metin tamamen nesnel olmalıdır."* kuralı eklenmiştir.
+* **Editörün Kalemi Entegrasyonu:** Editör Telegram botu üzerinden bir habere bizzat kendi görüşünü yazıp onayladığında (`action=publish_draft`), bu yorum Gemma tarafından dil/yazım hataları düzeltilerek makalenin en tepesine `💬 **Editörün Kaleminden:**` başlığıyla (onun samimi ve teknik üslubu bozulmadan) yerleştirilir ve haber başlığı bu yoruma uygun olarak yeniden yazılır.
+* **Mevcut İçeriklerin Temizlenmesi:** Sitede daha önce yayınlanmış olan tüm makaleler taranarak sonlarındaki yapay zeka uydurması "Teknisyenin Sahadan Notu" paragrafları temizlenmiş, editörün kendi yazdığı samimi yorumlar ise korunmuştur.
+
+---
+
+## 16. Mükerrer Taslakların Engellenmesi & Gerçek Zamanlı Temizlik Altyapısı
+
+Daha önce onaylanıp yayınlanan haberlerin RSS crawler veya otonom araştırma sistemleri tarafından tekrar çekilmesini ve Telegram botundaki onay bekleyenler listesinde mükerrer taslaklar birikmesini önlemek amacıyla çift katmanlı bir koruma ve temizlik mimarisi kurulmuştur:
+
+### A. Taslak Aşamasında Mükerrer Engelleme:
+1. **Firestore Yayınlanmış URL Entegrasyonu (`firebase_helper.py`):** 
+   `get_pending_posts_info` işlevi, yalnızca onay bekleyenleri değil durumu `"published"` olan tüm taslakların URL'lerini de crawler'a iletecek şekilde güncellenmiştir. Böylece Git push veya disk senkronizasyonu gecikse dahi Firestore referansı ile mükerrer tarama engellenir.
+2. **Otonom Araştırma URL Koruması (`autonomous_research.py`):** 
+   Otonom araştırma sistemi Google Arama sonuçlarından haber üretirken, bulduğu kaynak URL'nin daha önce yayınlanmış (`published`) veya onay bekleyen (`pending_approval`) bir haber olup olmadığını kontrol eder. Eğer URL zaten mevcutsa o haberi pas geçer.
+
+### B. Otomatik ve Gerçek Zamanlı Temizlik (Real-time Cleanup):
+1. **Pipeline Temizliği (`main.py`):** 
+   Yayınlama kuyruğu her çalıştığında (`process_publish_queue` başında), diskteki ve Firestore'daki yayınlanmış URL'lerle eşleşen tüm bekleyen (`pending_approval`) kopyaları Firestore'dan otomatik siler.
+2. **Telegram Webhook Temizliği (`webhook.py`):** 
+   Yönetici bot menüsünden "Onay Bekleyen Haberler" listesini her açtığında, listedeki haberlerin mükerrer kopyaları anlık olarak taranıp silinir.
+3. **Telegram Mesaj Güncellemeleri:** 
+   Silinen mükerrer taslakların Telegram'daki orijinal onay mesajları otomatik olarak *"⚠️ Bu taslak otomatik olarak iptal edilmiştir. Bu haber zaten onaylanıp başka bir başlıkla yayınlandığı için bu mükerrer taslak kaldırılmıştır."* şeklinde güncellenerek kapatılır.
+
+
 
 
 
