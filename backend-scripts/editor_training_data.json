@@ -124,5 +124,41 @@
     "editor_comment": "Oyunların geleceğini gelişimini finansal durumlar değil hayal gücünün durdurabilecgi bir gelecek diliyorum",
     "slug": "xboxin-ozel-oyun-stratejisi-sartlara-bagli-asha-sharma-gelec",
     "source_url": "https://www.ign.com/articles/xbox-will-try-and-do-more-exclusives-once-the-business-is-healthy-says-asha-sharma"
+  },
+  {
+    "timestamp": "2026-06-10T17:15:03.431640+03:00",
+    "category": "plc",
+    "title": "Aubo'dan Endüstriyel Güç: G Serisi İş Birlikçi Robotlar Sahneye Çıkıyor",
+    "summary": "Aubo, 40 kg taşıma kapasitesi ve EtherCAT kontrolü sunan yeni G Serisi cobotlarını tanıttı. Kaynak ve montaj otomasyonunda yeni bir dönem başlıyor.",
+    "editor_comment": "40 kilogram gerçekten de yeterli bir ağırlık normal bir insanın kaldırma kapasitesinin üzerinde olduğunu düşünüyorum ileriye dönük olarak bu tarz robot teknolojisindeki gelişmeler çalışan güvenliği açısından da önemli olduğu kanaatindeyim mesleki hastalıkların da önlenmesinde önemli olduğunu düşünüyorum",
+    "slug": "aubodan-endustriyel-guc-g-serisi-is-birlikci-robotlar-sahney",
+    "source_url": "https://control.com/news/aubo-launches-g-series-cobots-for-heavy-duty-automation/"
+  },
+  {
+    "timestamp": "2026-06-10T17:16:13.157724+03:00",
+    "category": "akilli-ev",
+    "title": "Akıllı Evlerde Yapay Zeka Destekli Enerji Optimizasyonu: Konforu ve Tasarrufu Birleştiren Çözümler",
+    "summary": "Yapay zeka destekli akıllı ev enerji optimizasyonu algoritmaları, tüketim alışkanlıklarını öğrenerek konforu ve verimliliği artırırken faturaları düşürüyor.",
+    "editor_comment": "Bence bu harika bir haber evden çıktığımızda ve uzunca bir süre tekrar eve dönmek durumunda olmadığımız da açık bırakılan bir musluk açık bırakılan bir lamba veya gereksiz çalışan bir televizyon ileriye dönük olarak faturalarımızı aşırı derecede şişirebilir hatta daha da kötüsü daha açık bırakılan bir şarj cihazı bile yangın riski oluşturabilir yapay zeka önümüzdeki yıllarda işlerimizi daha da kolaylaştıracak ve  güvenli hale getireceğine inanıyorum",
+    "slug": "akilli-evlerde-yapay-zeka-destekli-enerji-optimizasyonu-konf",
+    "source_url": "https://aihaberler.web.app"
+  },
+  {
+    "timestamp": "2026-06-10T17:17:07.820454+03:00",
+    "category": "pc",
+    "title": "Malzeme Biliminde Devrim: Cambridge'den 'İmkansız' Denilen Yeni Nesil LED Teknolojisi",
+    "summary": "Cambridge Üniversitesi, yalıtkan nanoparçacıklar ve moleküler antenler kullanarak ultra verimli, yakın-kızılötesi ışık üreten yeni bir LED teknolojisi geliştirdi.",
+    "editor_comment": "Bu tarz led teknolojisindeki gelişmelerin evimizde kullandığımız televizyon bilgisayar monitör gibi cihazlarda ekonomik olarak daha alınabilir bir duruma getireceğini ve insan sağlığı açısından ve göz sağlığı açısından daha uygun hale getireceğini ümit ediyorum",
+    "slug": "malzeme-biliminde-devrim-cambridgeden-imkansiz-denilen-yeni",
+    "source_url": "https://www.sciencedaily.com/releases/2026/05/260518011222.htm"
+  },
+  {
+    "timestamp": "2026-06-10T17:18:19.419695+03:00",
+    "category": "pc",
+    "title": "Kodlamanın Karanlık Sanatı: 2025 Obfuscated C Code Yarışması Kazananları Belli Oldu",
+    "summary": "2025 Obfuscated C Code Contest kazananları belli oldu. Kodlamanın sınırlarını zorlayan, anlaşılmaz ama kusursuz çalışan C kodlarını keşfedin.",
+    "editor_comment": "Her ne kadar sahada teknisyenlerin işini zorlaştıran bir sitem olsa da gerçek hayatta farklı yerlerde veri güvenliği ve karşı mühendislik olaylarında fikir alma açısından önemli olacağını düşünüyorum. Her ne kadar eğlencesine yapılmış bir etkinlik olsa da önemli olacağını düşünüyorum",
+    "slug": "kodlamanin-karanlik-sanati-2025-obfuscated-c-code-yarismasi",
+    "source_url": "https://hackaday.com/2026/06/09/the-winners-of-the-2025-obfuscated-c-code-contest/"
   }
 ]
