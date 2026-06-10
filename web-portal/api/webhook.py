@@ -805,7 +805,12 @@ def handle_benzer_haber_callback(callback_query, is_toggle=False):
                     raw_duplicates = metadata.get("duplicate_posts", [])
                     duplicate_posts = []
                     for item in raw_duplicates:
-                        if isinstance(item, list) and len(item) == 2:
+                        if isinstance(item, dict) and "id" in item:
+                            p_id = item["id"]
+                            p_copy = dict(item)
+                            p_copy.pop("id", None)
+                            duplicate_posts.append((p_id, p_copy))
+                        elif isinstance(item, list) and len(item) == 2:
                             duplicate_posts.append((item[0], item[1]))
                         elif isinstance(item, tuple) and len(item) == 2:
                             duplicate_posts.append(item)
@@ -813,9 +818,14 @@ def handle_benzer_haber_callback(callback_query, is_toggle=False):
             # Fallback if cache is empty or incomplete
             if not analysis_result:
                 analysis_result, duplicate_posts = check_similar_news_locally()
+                serializable_duplicates = []
+                for p_id, p in duplicate_posts:
+                    p_copy = dict(p)
+                    p_copy["id"] = p_id
+                    serializable_duplicates.append(p_copy)
                 selected_ids = get_or_init_multi_delete_state(chat_id, "benzer", metadata={
                     "analysis_result": analysis_result,
-                    "duplicate_posts": duplicate_posts
+                    "duplicate_posts": serializable_duplicates
                 })
             else:
                 selected_ids = get_or_init_multi_delete_state(chat_id, "benzer")
@@ -823,9 +833,14 @@ def handle_benzer_haber_callback(callback_query, is_toggle=False):
             # Fresh scan
             analysis_result, duplicate_posts = check_similar_news_locally()
             # Initialize state and cache the analysis
+            serializable_duplicates = []
+            for p_id, p in duplicate_posts:
+                p_copy = dict(p)
+                p_copy["id"] = p_id
+                serializable_duplicates.append(p_copy)
             selected_ids = get_or_init_multi_delete_state(chat_id, "benzer", metadata={
                 "analysis_result": analysis_result,
-                "duplicate_posts": duplicate_posts
+                "duplicate_posts": serializable_duplicates
             })
             
         if "BENZER_HABER_YOK" in analysis_result or not duplicate_posts:
