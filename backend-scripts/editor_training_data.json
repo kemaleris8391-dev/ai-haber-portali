@@ -52,5 +52,32 @@
     "editor_comment": "MFC teknolojisi, sadece bir enerji kaynağı değil, aynı zamanda çevresel restorasyonun bir parçasıdır. Atığı kaynağında enerjiye dönüştürmek, endüstri 4.0 vizyonunun sürdürülebilirlik ayağıyla tam bir uyum içerisindedir.",
     "slug": "mikrobiyal-yakit-hucreleri-atik-su-yonetiminde-enerji-veriml",
     "source_url": "https://techxplore.com/news/2026-06-microbial-fuel-cells-electricity.html"
+  },
+  {
+    "timestamp": "2026-06-10T15:09:46.162851+03:00",
+    "category": "plc",
+    "title": "Emerson, IIoT ve Yapay Zeka ile Endüstriyel İzlemede Yeni Dönemi Başlatıyor",
+    "summary": "Emerson, endüstriyel tesisler için yeni kablosuz IIoT izleme çözümleri ve süreç karar verme mekanizmalarını optimize eden yapay zeka platformunu duyurdu.",
+    "editor_comment": "Fabrikalarımızda şahsen kullandığımız bir sistem olarak şunları söyleyebilirim. Evet veriler güzel ancak daha önemli olan ise o verileri gerçekten dikkate alıp önlemlerimizi uygulamaya başlamak. Yoksa sürekli gelenekten kötü haberler veren bir kahine dönüşür.",
+    "slug": "emerson-iiot-ve-yapay-zeka-ile-endustriyel-izlemede-yeni-don",
+    "source_url": "https://control.com/news/emerson-releases-wireless-monitoring-solutions-and-ai-platform/"
+  },
+  {
+    "timestamp": "2026-06-10T15:10:25.486534+03:00",
+    "category": "pc",
+    "title": "Kablosuz Kulaklıklarda Tamir Edilebilirlik Standartları Değişiyor: İlk Tam Not Geldi",
+    "summary": "iFixit, kablosuz kulak üstü kulaklıklar için tamir edilebilirlik puanlarını yayınlamaya başladı. İşte 10/10 puan alan model ve detaylar.",
+    "editor_comment": "Teknolojinin ilerlemesi ile artık bir ev kullanıcısı olarak bizlerin ekonomi yapması için en azından pil değiştirme gibi çokta teknik bilgi gerektirmeyen işlemleri yapabilmemiz lazım. Bu sebeple bu puanlama sisteminin sektörün kendisini bu konuda değiştirmesi gerektiğini anlamasını sağlayacağına inanıyorum açıkçası.",
+    "slug": "kablosuz-kulakliklarda-tamir-edilebilirlik-standartlari-degi",
+    "source_url": "https://www.ifixit.com/News/117206/were-now-scoring-wireless-headphones-for-repairability"
+  },
+  {
+    "timestamp": "2026-06-10T15:11:01.490168+03:00",
+    "category": "pc",
+    "title": "Efsanevi Robby the Robot Yeniden Canlanıyor: 3D Baskı ile İkonik Tasarım Evlere Geliyor",
+    "summary": "Robby the Robot efsanesi 3D baskı ile geri dönüyor. Ogrinz Labs'in orijinal modelden esinlenerek hazırladığı ikonik robot projesini keşfedin.",
+    "editor_comment": "Neden dalek robotu yapılmıyor. Tam bir kült olmaz mı.",
+    "slug": "efsanevi-robby-the-robot-yeniden-canlaniyor-3d-baski-ile-iko",
+    "source_url": "https://hackaday.com/2026/06/09/print-your-own-robby-the-robot/"
   }
 ]
