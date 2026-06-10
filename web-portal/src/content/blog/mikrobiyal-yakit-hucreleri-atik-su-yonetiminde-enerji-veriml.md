@@ -18,6 +18,4 @@ Bu teknolojinin endüstriyel ölçekteki en büyük potansiyeli, enerji yoğunlu
 
 Sistemin modüler yapısı, mevcut tesislerin altyapısına entegre edilmesini kolaylaştırırken, aynı zamanda suyun temizlenme oranını artırarak çevre mevzuatlarına uyumu hızlandırmaktadır. Enerji geçiş sürecinde, bu tür biyolojik donanımların kullanımı, endüstriyel tesislerin enerji bağımsızlığını artıracak ve işletme giderlerini optimize edecektir.
 
-Editörün Kaleminden: MFC teknolojisi, sadece bir enerji kaynağı değil, aynı zamanda çevresel restorasyonun bir parçasıdır. Atığı kaynağında enerjiye dönüştürmek, endüstri 4.0 vizyonunun sürdürülebilirlik ayağıyla tam bir uyum içerisindedir.
-
 [Haberin Orijinal Kaynağı: Phys.org Tech](https://techxplore.com/news/2026-06-microbial-fuel-cells-electricity.html)

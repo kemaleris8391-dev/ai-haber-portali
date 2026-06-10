@@ -18,7 +18,4 @@ Bu buluş, özellikle kritik altyapıları yöneten kurumlar ve yüksek güvenli
 
 Siber saldırganların hedefi artık sadece işletim sistemleri değil, doğrudan donanımın kendisi. Fabrika çıkışlı tehditlerin engellenmesi, dijital egemenlik ve veri gizliliği adına atılmış en büyük adımlardan biri olarak değerlendiriliyor. Bu gelişme, donanım üreticilerini daha şeffaf süreçler benimsemeye zorlarken, siber güvenlik uzmanlarına donanım katmanında yeni bir savunma hattı sağlıyor.
 
-### Editörün Kaleminden
-Donanım güvenliği genellikle göz ardı ettiğimiz, ancak çöktüğü an telafisi olmayan bir alan. Yazılım güncellemeleriyle kapatılabilen açıkların aksine, fabrikada eklenmiş bir 'arka kapı' fiziksel bir risk taşır; bu yüzden araştırmacıların ulaştığı bu çözüm, dijital dünyadaki görünmez savaşta savunma tarafına çok değerli bir koz kazandırmış durumda.
-
 [Haberin Orijinal Kaynağı: Phys.org Technology](https://techxplore.com/news/2026-06-hidden-chip-threats.html)
