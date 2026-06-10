@@ -245,7 +245,7 @@ def mark_custom_request_completed(doc_id):
 _blacklist_cache = None
 
 def get_blacklisted_links():
-    """Firestore'dan kalıcı kara listeyi çeker. 14 günden eski olanları otomatik temizler."""
+    """Firestore'dan kalıcı kara listeyi çeker. 30 günden eski olanları otomatik temizler."""
     global _blacklist_cache
     if _blacklist_cache is not None:
         return _blacklist_cache
@@ -255,7 +255,7 @@ def get_blacklisted_links():
     doc = doc_ref.get()
     
     now = time.time()
-    cutoff_time = now - (14 * 24 * 3600)  # 14 gün öncesi (14 gün * 24 saat * 3600 saniye)
+    cutoff_time = now - (30 * 24 * 3600)  # 30 gün öncesi (30 gün * 24 saat * 3600 saniye)
     
     dirty = False
     active_links = {}
@@ -270,7 +270,7 @@ def get_blacklisted_links():
             links_data = {link: now for link in links_data}
             dirty = True
             
-        # 14 günden eski olanları temizle
+        # 30 günden eski olanları temizle
         if isinstance(links_data, dict):
             for link, added_time in links_data.items():
                 if added_time >= cutoff_time:
@@ -290,7 +290,7 @@ def get_blacklisted_links():
             "links": active_links,
             "last_updated": now
         })
-        print(f"🧹 Temizlik: Kara listeden 14 günden eski olan linkler temizlendi. Aktif link sayısı: {len(active_links)}")
+        print(f"🧹 Temizlik: Kara listeden 30 günden eski olan linkler temizlendi. Aktif link sayısı: {len(active_links)}")
         
     _blacklist_cache = set(active_links.keys())
     print(f"Kara liste yüklendi: {len(_blacklist_cache)} adet aktif engellenmiş link.")

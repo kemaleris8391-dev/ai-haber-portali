@@ -1070,6 +1070,11 @@ def handle_review_pending_post(callback_query, doc_id):
             return
             
         data = doc.to_dict()
+        if data.get("status") != "pending":
+            answer_callback_query(callback_id, "⚠️ Bu taslak zaten silinmiş veya işlemde!", show_alert=True)
+            handle_pending_posts_list(callback_query, chat_id)
+            return
+            
         title = data.get("title", "Başlıksız")
         category = data.get("category", "genel").upper()
         summary = data.get("description", "Açıklama yok.")
@@ -1784,7 +1789,7 @@ def handle_select_callback(callback_query, p_id):
         
         p = posts.get(p_id)
         if not p:
-            answer_callback_query(callback_id, "Haber bilgisi bulunamadı.")
+            answer_callback_query(callback_id, "⚠️ Bu haber silinmiş veya silinmek üzere kuyruğa alınmış!", show_alert=True)
             return
             
         keyboard = [
@@ -1957,6 +1962,14 @@ def handle_toggle_callback(callback_query, p_id):
         return
         
     selected_ids = state_data.get("selected_ids", [])
+    
+    # Check if the post still exists in the filtered index (not queued for deletion)
+    if p_id not in selected_ids:
+        index_data = get_posts_index()
+        if p_id not in index_data.get("posts", {}):
+            answer_callback_query(callback_id, "⚠️ Bu haber zaten silinmiş veya silinmek üzere işaretlenmiş!", show_alert=True)
+            return
+
     if p_id in selected_ids:
         selected_ids.remove(p_id)
         action = "Seçim kaldırıldı."

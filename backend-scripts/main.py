@@ -155,11 +155,12 @@ def process_daily_deletions():
                 except Exception as e:
                     print(f"Error deleting draft document from Firestore: {e}")
             
-            # Update deletion_queue status
-            doc.reference.update({
-                "status": "processed",
-                "processed_at": time.time()
-            })
+            # Delete processed deletion_queue document from Firestore
+            try:
+                doc.reference.delete()
+                print(f"Deleted processed queue document: {doc.id}")
+            except Exception as e:
+                print(f"Error deleting queue document from Firestore: {e}")
             deleted_count += 1
             
         print(f"Deletion queue processing completed. Total processed: {deleted_count}")
