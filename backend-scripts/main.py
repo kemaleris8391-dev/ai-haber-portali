@@ -177,9 +177,147 @@ def process_daily_deletions():
         import traceback
         traceback.print_exc()
 
+def process_publish_queue():
+    print("Checking publish queue for approved drafts...")
+    try:
+        import firebase_helper
+        from ai_writer import enrich_news_with_comment_in_writer
+        from telegram_notifier import edit_message_text, send_message
+        import json
+        import html
+        from datetime import datetime, timezone, timedelta
+        tr_tz = timezone(timedelta(hours=3))
+        
+        db = firebase_helper.init_firebase()
+        pending_ref = db.collection("pending_posts")
+        
+        # Query drafts that are queued_for_publish
+        queued_drafts = pending_ref.where("status", "==", "queued_for_publish").stream()
+        
+        published_count = 0
+        
+        for doc in queued_drafts:
+            data = doc.to_dict()
+            doc_id = doc.id
+            title = data.get("title")
+            user_comment = data.get("user_comment", "")
+            slug = data.get("slug")
+            
+            print(f"Processing publish queue item: '{title}' (ID: {doc_id})")
+            
+            try:
+                # 1. Gemma ile başlık ve içeriği zenginleştir
+                enriched_data = enrich_news_with_comment_in_writer(data, user_comment)
+                if not enriched_data:
+                    raise ValueError("Gemma zenginleştirme sonucunda boş veri döndü.")
+                    
+                new_title = enriched_data["title"]
+                new_content = enriched_data["content"]
+                
+                keywords = data.get("keywords", [])
+                category = data.get("category", "pc")
+                astro_image_path = data.get("heroImage", "/images/default-news.png")
+                source_name = data.get("sourceName", "AI")
+                source_url = data.get("sourceUrl", "")
+                
+                # 2. Markdown içeriğini oluştur
+                updated_markdown = f"""---
+title: "{new_title}"
+description: "{data['description']}"
+pubDate: "{datetime.now(tr_tz).strftime('%Y-%m-%dT%H:%M:%S')}"
+heroImage: "{astro_image_path}"
+category: "{category}"
+tags: {json.dumps(keywords, ensure_ascii=False)}
+sourceName: "{source_name}"
+sourceUrl: "{source_url}"
+---
+{new_content}
+"""
+                
+                # 3. Markdown dosyasını diskte yerel olarak kaydet (böylece push adımı bunu algılar ve github'a yükler!)
+                blog_dir = os.path.abspath(os.path.join(base_dir, "../web-portal/src/content/blog"))
+                os.makedirs(blog_dir, exist_ok=True)
+                file_path = os.path.join(blog_dir, f"{slug}.md")
+                
+                with open(file_path, "w", encoding="utf-8") as f:
+                    f.write(updated_markdown)
+                print(f"Markdown file written locally: {file_path}")
+                
+                # 3.5. Editör Görüşünü Günlüğe Kaydet (Training Data)
+                try:
+                    training_file = os.path.abspath(os.path.join(base_dir, "editor_training_data.json"))
+                    training_records = []
+                    if os.path.exists(training_file):
+                        try:
+                            with open(training_file, "r", encoding="utf-8") as tf:
+                                training_records = json.load(tf)
+                        except Exception as read_err:
+                            print(f"Error reading existing training file, initializing new one: {read_err}")
+                            training_records = []
+                    
+                    training_records.append({
+                        "timestamp": datetime.now(tr_tz).isoformat(),
+                        "category": category,
+                        "title": title,
+                        "summary": data.get("description", ""),
+                        "editor_comment": user_comment,
+                        "slug": slug,
+                        "source_url": source_url
+                    })
+                    
+                    with open(training_file, "w", encoding="utf-8") as tf:
+                        json.dump(training_records, tf, ensure_ascii=False, indent=2)
+                    print(f"Editor training data logged successfully: {training_file}")
+                except Exception as log_err:
+                    print(f"Error logging editor training data: {log_err}")
+                
+                # 4. Firestore taslağı güncelle
+                doc.reference.update({
+                    "status": "published", 
+                    "published_at": time.time(),
+                    "title": new_title,
+                    "markdown_content": updated_markdown,
+                    "content": new_content
+                })
+                
+                # 5. Orijinal Telegram bildirim mesajını güncelle
+                telegram_message_id = data.get("telegram_message_id")
+                if telegram_message_id:
+                    success_text = (
+                        "✅ <b>Haber Kişisel Yorumunuzla Birlikte Yayınlandı! (Görüş Kutucuğu İle)</b>\n\n"
+                        f"<b>Yeni Başlık:</b> {html.escape(new_title)}\n"
+                        f"<b>Kategori:</b> {category.upper()}\n\n"
+                        f"<b>Editörün Görüşü:</b> <i>{html.escape(user_comment)}</i>\n\n"
+                        "🚀 Makale depoya başarıyla yazıldı. Canlı site 1-2 dakika içinde güncellenecektir."
+                    )
+                    try:
+                        edit_message_text(success_text, telegram_message_id)
+                    except Exception as e:
+                        print(f"Error editing original telegram message: {e}")
+                        
+                send_message(f"🎉 <b>{html.escape(new_title)}</b> başlığıyla haber başarıyla yayına alındı!")
+                published_count += 1
+                
+            except Exception as item_err:
+                print(f"Error publishing item {doc_id}: {item_err}")
+                import traceback
+                traceback.print_exc()
+                
+        print(f"Publish queue processing completed. Total published: {published_count}")
+        
+        # Eğer herhangi bir haber yayınlandıysa, yerel indeks rebuild edilmeli
+        if published_count > 0:
+            rebuild_posts_index_locally()
+            
+    except Exception as e:
+        print(f"Error in process_publish_queue: {e}")
+
 def main():
     # 0. Günlük silme kuyruğunu çalıştır
     process_daily_deletions()
+
+    # 0.5. Haber yayınlama kuyruğunu çalıştır
+    process_publish_queue()
 
     # 1. Parametre Kontrolü
     force_run = "--force" in sys.argv

@@ -1,0 +1,56 @@
+[
+  {
+    "timestamp": "2026-06-10T13:14:42",
+    "category": "oyun",
+    "title": "Zorluk Seviyesinde Denge Her Şeydir: Capcom, Onimusha: Way of the Sword Demo'sunun Zorluğuna Açıklık Getirdi",
+    "summary": "Capcom, Onimusha: Way of the Sword demosuna gelen 'çok kolay' eleştirilerine yanıt verdi. Yapımcı Akihito Kadowaki, final oyunun daha zor olacağını açıkladı.",
+    "editor_comment": "Bir oyundan zevk almanın en temel yolu onu oynarken seni sıkmamasıdır ya da sana çok saçma gelecek şeyler karşına çıkarmamasıdır. Zorluk seviyesi de buna benzer bir özelliğe sahiptir; aşırı derecede kolay yaparsan kullanıcı hiçbir şey hissetmez ve oyundan kopar, aşırı derecede zor olursa da ilerleyemediği için sıkılır ve bırakır. Bu ikisinin arasındaki dengeyi kurmak çok önemlidir.",
+    "slug": "capcom-onimusha-way-of-the-sword-demosunun-zorluk-seviyesine",
+    "source_url": "https://www.ign.com/articles/capcom-responds-to-concern-the-onimusha-way-of-the-sword-demo-feels-too-easy"
+  },
+  {
+    "timestamp": "2026-06-10T12:17:46",
+    "category": "plc",
+    "title": "Üretimde Kesintisiz Verimlilik ve Minimum Gecikme: GigE Vision 3.0 Yayınlandı",
+    "summary": "GigE Vision 3.0 standardı, RoCEv2 desteği ile CPU yükünü azaltarak endüstriyel makine görüşü sistemlerinde yüksek hız ve düşük gecikme sunuyor.",
+    "editor_comment": "Özellikle yüksek hızlı görüntü işleme gereken makinelerde gecikmenin minimuma inmesi üretimin devamlılığı ve arızaların, duruşların azalmasına harika bir katkı sağlayacaktır.",
+    "slug": "gige-vision-30-yayinlandi-endustriyel-goruntuleme-sistemleri",
+    "source_url": "https://control.com/news/association-for-advancing-automation-updates-gige-vision-standards/"
+  },
+  {
+    "timestamp": "2026-06-10T12:13:27",
+    "category": "pc",
+    "title": "Oyun Dünyasındaki Gelişmeler Kriptoyu Hızlandıracak: BC-250 Madencilik Kartları ve PS5 Gücü",
+    "summary": "PS5'in özel APU mimarisini kullanan BC-250 kripto madencilik kartlarında tüm hesaplama birimlerini aktif ederek performansı artırma çalışmaları başladı.",
+    "editor_comment": "Oyun dünyasındaki gelişmeler kripto dünyasında hızlanmanın kapılarını daha da açmaya yarayacak.",
+    "slug": "bc-250-madencilik-kartlari-ps5-apu-gucu-tam-kapasiteye-cikiy",
+    "source_url": "https://hackaday.com/2026/06/09/re-enable-all-compute-units-on-the-ps5-like-bc-250-cryptomining-card/"
+  },
+  {
+    "timestamp": "2026-06-10T12:02:42",
+    "category": "oyun",
+    "title": "RAM'den Sonra Oyunlara Sıra mı Geldi? Fire Emblem: Fortune's Weave ve Tartışmalı Fiyat Etiketi",
+    "summary": "Fire Emblem: Fortune's Weave'in çıkış tarihi belli oldu! Fiziksel sürüm için belirlenen 80 dolarlık fiyat etiketi oyun dünyasında dikkatleri üzerine çekti.",
+    "editor_comment": "RAM fiyatlarının aşırı yükselişinden sonra sıra oyun fiyatlarına mı geldi? Yapay zekanın getirilerini hissedenlerden biri olarak bundan fayda sağlayamayanların zararı ne olacak diye düşünüyorum.",
+    "slug": "fire-emblem-fortunes-weave-cikis-tarihini-ve-dikkat-ceken-fi",
+    "source_url": "https://www.ign.com/articles/fire-emblem-fortunes-weave-sets-standard-physical-price-at-80"
+  },
+  {
+    "timestamp": "2026-06-10T01:27:49",
+    "category": "akilli-ev",
+    "title": "Temassızlık ve Topraklama Sorunlarına Dikkat: Ses ve Görüntü Sistemlerinde Dip Gürültüsü ve Parazit Çözümleri",
+    "summary": "Ses ve görüntü sistemlerindeki dip gürültüsü (hum), parazit ve cızırtıları gidermek için profesyonel çözüm yöntemleri ve teknik ipuçlarını keşfedin.",
+    "editor_comment": "Kaliteli bir ses deneyimi için binlerce lira harcanan 'altın kaplama' veya 'butik' kabloların çoğu zaman pazarlama stratejisi olduğunu unutmayın. Önemli olan kablonun malzemesinden ziyade, elektriksel hijyenin sağlanması, doğru topraklamanın yapılması ve sinyal yollarının izole edilmesidir. [Haberin Orijinal Kaynağı: TechHive News](https://www.techhive.com/article/582313/how-to-get-rid-of-hum-and-eliminate-other-noises-from-your-audio-and-video-systems.html)",
+    "slug": "ses-ve-goruntu-sistemlerinde-dip-gurultusu-ve-parazit-cozuml",
+    "source_url": "https://www.techhive.com/article/582313/how-to-get-rid-of-hum-and-eliminate-other-noises-from-your-audio-and-video-systems.html"
+  },
+  {
+    "timestamp": "2026-06-09T23:22:02",
+    "category": "teknoloji",
+    "title": "Mikrobiyal Yakıt Hücreleri: Atık Su Yönetiminde Enerji Verimliliğinin Yeni Yolu",
+    "summary": "Mikrobiyal yakıt hücreleri (MFC), atık suları temizlerken aynı zamanda elektrik üreterek endüstriyel enerji dönüşümünde yeni bir dönem başlatıyor.",
+    "editor_comment": "MFC teknolojisi, sadece bir enerji kaynağı değil, aynı zamanda çevresel restorasyonun bir parçasıdır. Atığı kaynağında enerjiye dönüştürmek, endüstri 4.0 vizyonunun sürdürülebilirlik ayağıyla tam bir uyum içerisindedir.",
+    "slug": "mikrobiyal-yakit-hucreleri-atik-su-yonetiminde-enerji-veriml",
+    "source_url": "https://techxplore.com/news/2026-06-microbial-fuel-cells-electricity.html"
+  }
+]

@@ -959,7 +959,7 @@ def handle_review_pending_post(callback_query, doc_id):
         keyboard = [
             [
                 {"text": "📖 Haberi Oku", "url": f"https://ai-haber-portali.vercel.app/api/webhook?draft_id={doc_id}"},
-                {"text": "✍️ Görüş Yaz", "web_app": {"url": f"https://ai-haber-portali.vercel.app/api/webhook?action=comment&draft_id={doc_id}"}}
+                {"text": "✍️ Görüş Yaz", "web_app": {"url": f"https://ai-haber-portali.vercel.app/api/webhook?action=comment&draft_id={doc_id}&message_id={message_id}"}}
             ],
             [
                 {"text": "🗑️ İptal Et / Sil", "callback_data": f"approve_delete:{doc_id}"},
@@ -3221,7 +3221,8 @@ class handler(BaseHTTPRequestHandler):
                     body: JSON.stringify({{
                         action: "publish_draft",
                         draft_id: "{draft_id}",
-                        comment: comment
+                        comment: comment,
+                        message_id: new URLSearchParams(window.location.search).get("message_id")
                     }})
                 }});
                 
@@ -3526,6 +3527,7 @@ class handler(BaseHTTPRequestHandler):
         if action == "publish_draft":
             draft_id = update.get("draft_id")
             user_comment = update.get("comment", "").strip()
+            web_message_id = update.get("message_id")
             
             if not draft_id or not user_comment:
                 self.wfile.write(json.dumps({"status": "error", "error": "Geçersiz parametreler. draft_id ve comment alanları zorunludur."}).encode())
@@ -3540,83 +3542,54 @@ class handler(BaseHTTPRequestHandler):
                     return
                     
                 draft_data = doc.to_dict()
-                if draft_data.get("status") == "published":
-                    self.wfile.write(json.dumps({"status": "error", "error": "Bu haber zaten yayınlanmış."}).encode())
+                if draft_data.get("status") in ["published", "queued_for_publish"]:
+                    self.wfile.write(json.dumps({"status": "error", "error": "Bu haber zaten yayınlanmış veya sıraya alınmış."}).encode())
                     return
                     
-                # Gemma 4 31B ile başlık ve içeriği zenginleştir
-                enriched_data = enrich_news_with_comment(draft_data, user_comment)
-                if enriched_data:
-                    new_title = enriched_data["title"]
-                    new_content = enriched_data["content"]
-                    
-                    keywords = draft_data.get("keywords", [])
-                    category = draft_data.get("category", "pc")
-                    astro_image_path = draft_data.get("heroImage", "/images/default-news.png")
-                    source_name = draft_data.get("sourceName", "AI")
-                    source_url = draft_data.get("sourceUrl", "")
-                    slug = draft_data["slug"]
-                    
-                    # Define timezone locally
-                    from datetime import timezone, timedelta
-                    tr_tz = timezone(timedelta(hours=3))
-                    
-                    updated_markdown = f"""---
-title: "{new_title}"
-description: "{draft_data['description']}"
-pubDate: "{datetime.now(tr_tz).strftime('%Y-%m-%dT%H:%M:%S')}"
-heroImage: "{astro_image_path}"
-category: "{category}"
-tags: {json.dumps(keywords, ensure_ascii=False)}
-sourceName: "{source_name}"
-sourceUrl: "{source_url}"
----
-{new_content}
-"""
-                    
-                    # GitHub'a yaz
-                    success = publish_markdown_to_github(slug, updated_markdown)
-                    if success:
-                        # Firestore taslağı güncelle
-                        doc_ref.update({
-                            "status": "published", 
-                            "published_at": time.time(),
-                            "title": new_title,
-                            "markdown_content": updated_markdown,
-                            "content": new_content
-                        })
+                category = draft_data.get("category", "pc")
+                
+                # 1. Update status to queued_for_publish immediately so it disappears from pending lists
+                doc_ref.update({
+                    "status": "queued_for_publish",
+                    "user_comment": user_comment,
+                    "approved_at": time.time()
+                })
+                
+                # 2. Update the original Telegram notification message immediately
+                telegram_message_id = draft_data.get("telegram_message_id")
+                
+                success_text = (
+                    "✍️ <b>Görüşünüz Alındı ve Yayın Sırasına Eklendi!</b>\n\n"
+                    f"<b>Başlık:</b> {html.escape(draft_data['title'])}\n"
+                    f"<b>Kategori:</b> {category.upper()}\n\n"
+                    f"<b>Editörün Görüşü:</b> <i>{html.escape(user_comment)}</i>\n\n"
+                    "Haber yayın sırasına alındı. Bir sonraki otomatik tarama/derleme çalışmasında (en geç 30 dakika içinde) toplu olarak yayına alınacaktır."
+                )
+                
+                if telegram_message_id:
+                    try:
+                        edit_message_text(success_text + " Bu pencereyi kapatabilirsiniz.", telegram_message_id)
+                    except Exception as e:
+                        print(f"Error editing original telegram message: {e}")
                         
-                        # Yeniden derleme tetikle
-                        try:
-                            trigger_github_workflow()
-                        except Exception as e:
-                            print(f"Trigger workflow error: {e}")
-                            
-                        # Orijinal Telegram bildirim mesajını güncelle
-                        telegram_message_id = draft_data.get("telegram_message_id")
-                        if telegram_message_id:
-                            success_text = (
-                                "✅ <b>Haber Kişisel Yorumunuzla Birlikte Yayınlandı! (Görüş Kutucuğu İle)</b>\n\n"
-                                f"<b>Yeni Başlık:</b> {html.escape(new_title)}\n"
-                                f"<b>Kategori:</b> {category.upper()}\n\n"
-                                f"<b>Editörün Görüşü:</b> <i>{html.escape(user_comment)}</i>\n\n"
-                                "🚀 Makale GitHub deposuna başarıyla yazıldı. Canlı site 1-2 dakika içinde güncellenecektir."
-                            )
-                            try:
-                                edit_message_text(success_text, telegram_message_id)
-                            except Exception as e:
-                                print(f"Error editing original telegram message: {e}")
-                                
-                        send_message(f"🎉 <b>{html.escape(new_title)}</b> başlığıyla haber başarıyla yayına alındı!")
-                        self.wfile.write(json.dumps({"status": "success"}).encode())
-                    else:
-                        self.wfile.write(json.dumps({"status": "error", "error": "Zenginleştirilmiş haber GitHub'a yazılamadı."}).encode())
-                else:
-                    self.wfile.write(json.dumps({"status": "error", "error": "Gemma zenginleştirme adımı başarısız oldu."}).encode())
-                    
+                if web_message_id and str(web_message_id) != str(telegram_message_id):
+                    success_text_detail = success_text + "\n\nBu pencereyi kapatıp, aşağıdaki butondan listeye geri dönebilirsiniz."
+                    keyboard_detail = {
+                        "inline_keyboard": [
+                            [{"text": "🔙 Bekleyenler Listesine Dön", "callback_data": "menu:bekleyenler"}]
+                        ]
+                    }
+                    try:
+                        edit_message_text(success_text_detail, web_message_id, reply_markup=keyboard_detail)
+                    except Exception as e:
+                        print(f"Error editing webapp-origin telegram message: {e}")
+                        
+                send_message(f"✍️ <b>{html.escape(draft_data['title'])}</b> haberi için görüşünüz alındı ve yayın sırasına eklendi!")
+                self.wfile.write(json.dumps({"status": "success"}).encode())
+                
             except Exception as e:
                 import traceback
-                print(f"Error publishing draft via WebApp: {e}\n{traceback.format_exc()}")
+                print(f"Error queueing draft via WebApp: {e}\n{traceback.format_exc()}")
                 self.wfile.write(json.dumps({"status": "error", "error": f"Kritik hata oluştu: {str(e)}"}).encode())
             return
             
@@ -3672,80 +3645,29 @@ sourceUrl: "{source_url}"
                 
                 # Kullanıcının yazdığı yorum
                 user_comment = text
+                category = draft_data.get("category", "pc")
                 
-                # Gemma 4 31B ile başlık ve içeriği zenginleştir
-                send_message("🧠 <b>Yorumunuz alındı. Gemma 31B ile başlık ve içerik zenginleştiriliyor...</b>")
+                # 1. Update status to queued_for_publish immediately
+                draft_doc.reference.update({
+                    "status": "queued_for_publish",
+                    "user_comment": user_comment,
+                    "approved_at": time.time()
+                })
                 
+                # 2. Update the original Telegram notification message immediately
+                success_text = (
+                    "✍️ <b>Görüşünüz Alındı ve Yayın Sırasına Eklendi!</b>\n\n"
+                    f"<b>Başlık:</b> {html.escape(draft_data['title'])}\n"
+                    f"<b>Kategori:</b> {category.upper()}\n\n"
+                    f"<b>Editörün Görüşü:</b> <i>{html.escape(user_comment)}</i>\n\n"
+                    "Haber yayın sırasına alındı. Bir sonraki otomatik tarama/derleme çalışmasında (en geç 20-30 dakika içinde) toplu olarak yayına alınacaktır."
+                )
                 try:
-                    enriched_data = enrich_news_with_comment(draft_data, user_comment)
-                    if enriched_data:
-                        # Yeni başlık ve içeriği hazırla
-                        new_title = enriched_data["title"]
-                        new_content = enriched_data["content"]
-                        
-                        # Markdown içeriğini güncelle
-                        keywords = draft_data.get("keywords", [])
-                        category = draft_data.get("category", "pc")
-                        astro_image_path = draft_data.get("heroImage", "/images/default-news.png")
-                        source_name = draft_data.get("sourceName", "AI")
-                        source_url = draft_data.get("sourceUrl", "")
-                        slug = draft_data["slug"]
-                        
-                        # Define timezone locally
-                        from datetime import timezone, timedelta
-                        tr_tz = timezone(timedelta(hours=3))
-                        
-                        updated_markdown = f"""---
-title: "{new_title}"
-description: "{draft_data['description']}"
-pubDate: "{datetime.now(tr_tz).strftime('%Y-%m-%dT%H:%M:%S')}"
-heroImage: "{astro_image_path}"
-category: "{category}"
-tags: {json.dumps(keywords, ensure_ascii=False)}
-sourceName: "{source_name}"
-sourceUrl: "{source_url}"
----
-{new_content}
-"""
-                        # GitHub'a yaz
-                        success = publish_markdown_to_github(slug, updated_markdown)
-                        if success:
-                            # Firestore taslağı sil veya durumunu "published" yap
-                            db.collection("pending_posts").document(doc_id).update({
-                                "status": "published", 
-                                "published_at": time.time(),
-                                "title": new_title,
-                                "markdown_content": updated_markdown,
-                                "content": new_content
-                            })
-                            
-                            # Yeniden derleme tetikle
-                            try:
-                                trigger_github_workflow()
-                            except Exception as e:
-                                print(f"Trigger workflow error: {e}")
-                                
-                            success_text = (
-                                "✅ <b>Haber Kişisel Yorumunuzla Birlikte Yayınlandı!</b>\n\n"
-                                f"<b>Yeni Başlık:</b> {html.escape(new_title)}\n"
-                                f"<b>Kategori:</b> {category.upper()}\n\n"
-                                "🚀 Makale GitHub deposuna başarıyla yazıldı. Canlı site 1-2 dakika içinde güncellenecektir."
-                            )
-                            # Orijinal Telegram bildirim mesajını güncelle
-                            try:
-                                edit_message_text(success_text, reply_msg_id)
-                            except Exception as e:
-                                print(f"Error editing original telegram message: {e}")
-                                
-                            send_message("🎉 <b>Haber başarıyla yayına alındı!</b>")
-                        else:
-                            send_message("❌ <b>Hata:</b> Zenginleştirilmiş haber GitHub'a yazılamadı.")
-                        return
-                    else:
-                        send_message("❌ <b>Hata:</b> Gemma 31B zenginleştirme adımı başarısız oldu.")
+                    edit_message_text(success_text, reply_msg_id)
                 except Exception as e:
-                    send_message(f"❌ <b>Hata oluştu:</b> <code>{e}</code>")
-                
+                    print(f"Error editing original telegram message: {e}")
+                    
+                send_message(f"✍️ <b>{html.escape(draft_data['title'])}</b> haberi için görüşünüz alındı ve yayın sırasına eklendi!")
                 self.wfile.write(json.dumps({"status": "processed"}).encode())
                 return
 

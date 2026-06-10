@@ -2,8 +2,8 @@ name: Autonomous RSS & Deploy
 
 on:
   schedule:
-    # Her 10 dakikada bir tetiklenir (Firestore üzerinden aralık kontrolü yapacak)
-    - cron: '*/10 * * * *'
+    # Her 30 dakikada bir tetiklenir (Firestore üzerinden aralık kontrolü yapacak)
+    - cron: '*/30 * * * *'
   push:
     branches:
       - main

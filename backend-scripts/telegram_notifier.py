@@ -98,3 +98,27 @@ def send_pending_post_notification(title, summary, category, doc_id):
     except Exception as e:
         print(f"Hata: Telegram mesajı gönderilemedi. Detay: {e}")
     return None
+
+def edit_message_text(text, message_id, reply_markup=None, chat_id=None):
+    """Telegram'da gönderilmiş bir mesajın içeriğini günceller."""
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        return False
+    c_id = chat_id or TELEGRAM_CHAT_ID
+    url = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN.strip()}/editMessageText"
+    payload = {
+        "chat_id": c_id.strip(),
+        "message_id": int(message_id),
+        "text": text,
+        "parse_mode": "HTML",
+        "disable_web_page_preview": True
+    }
+    if reply_markup:
+        payload["reply_markup"] = reply_markup
+        
+    try:
+        response = requests.post(url, json=payload, timeout=10)
+        return response.status_code == 200
+    except Exception as e:
+        print(f"Hata: Telegram mesajı güncellenemedi. Detay: {e}")
+        return False
+

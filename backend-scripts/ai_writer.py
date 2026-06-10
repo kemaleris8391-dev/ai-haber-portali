@@ -670,3 +670,86 @@ def research_topic_with_gemini(user_prompt):
                 
             rotate_key()
     return None
+
+def enrich_news_with_comment_in_writer(draft_data, user_comment, model_name="gemma-4-31b-it"):
+    """
+    Gemma kullanarak editoryal görüşü haber metnine zenginleştirici olarak ekler.
+    """
+    prompt = f"""
+Aşağıda yapay zeka tarafından yazılmış bir haber makalesi ve bu makalenin en tepesine eklenecek olan editörün kişisel tecrübesi/görüşü yer almaktadır.
+
+GÖREVİN:
+1. Editörün kişisel tecrübesini/görüşünü incele. Harf hataları veya basit yazım hataları varsa düzelt ancak konuşma tonunu, teknik üslubunu, samimiyetini, argolarını, teknik terimlerini ve düşüncelerini KESİNLİKLE değiştirme, yumuşatma veya resmileştirme. Onun usta ve tecrübeli editör kimliğini, samimi sesini aynen koru.
+2. Bu yorumu makale metninin EN TEPESİNE (ilk paragrafa), yapay zeka tarafından yazılmadığı, bizzat bir insan görüşü olduğu açıkça anlaşılan özel bir stil halinde ekle:
+   > 💬 **Editörün Kaleminden:** [Editörün yorumunu/görüşünü kelimesi kelimesine, tonunu bozmadan buraya yerleştir]
+   
+   Ardından bir boşluk bırakıp makalenin orijinal içeriğini devam ettir.
+3. Haberin başlığını, editörün kişisel tecrübesinin/görüşünün ana fikrini içerecek veya onun görüşünü yansıtacak şekilde güncelle. Başlığın en başında veya içinde editörün görüşü ana fikir olmalıdır.
+4. Çıktıyı kesinlikle aşağıdaki JSON formatında ver (başka açıklama ekleme, markdown kod bloğu içinde olmalıdır):
+```json
+{{
+  "title": "[Yeni Başlık]",
+  "content": "[Yeni İçerik]"
+}}
+```
+
+Makale Başlığı: {draft_data['title']}
+Makale İçeriği:
+{draft_data['content']}
+
+Editörün Kişisel Görüşü:
+{user_comment}
+"""
+
+    max_retries = len(API_KEYS) if API_KEYS else 3
+    last_error = "Bilinmeyen API Hatası"
+    models_to_try = [model_name, "gemma-4-26b-a4b-it", "gemma-4-26b-it", "gemini-2.5-flash"]
+    
+    for attempt in range(max_retries):
+        client = get_next_client()
+        
+        for current_model in models_to_try:
+            try:
+                print(f"Gemma ile yorum zenginleştirme deneniyor: Model={current_model} (Deneme {attempt + 1}/{max_retries})...")
+                try:
+                    response = client.models.generate_content(
+                        model=current_model,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(
+                            response_mime_type="application/json",
+                            thinking_config=types.ThinkingConfig(
+                                thinking_level="HIGH"
+                            )
+                        )
+                    )
+                except Exception as thinking_err:
+                    print(f"Model {current_model} thinking_config hatası. Normal modda deneniyor...")
+                    response = client.models.generate_content(
+                        model=current_model,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(
+                            response_mime_type="application/json"
+                        )
+                    )
+                
+                text = response.text
+                if not text:
+                    continue
+                    
+                if "```json" in text:
+                    text = text.split("```json")[1].split("```")[0].strip()
+                elif "```" in text:
+                    text = text.split("```")[1].split("```")[0].strip()
+                    
+                data = json.loads(text.strip())
+                if data.get("title") and data.get("content"):
+                    return data
+            except Exception as e:
+                last_error = str(e)
+                print(f"Model {current_model} zenginleştirme hatası: {last_error}")
+                continue
+                
+        rotate_key()
+        
+    raise Exception(f"Gemma Zenginleştirme Hatası: {last_error}")
+
