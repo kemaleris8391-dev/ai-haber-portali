@@ -392,3 +392,29 @@ def update_research_config(interval_hours=None, last_run_time=None, is_running=N
     if update_data:
         doc_ref.set(update_data, merge=True)
         print(f"Firestore otonom araştırma ayarları güncellendi: {update_data}")
+
+def get_pending_posts_info():
+    """Queries pending_posts collection in Firestore and returns a tuple:
+    (pending_titles_list, pending_source_urls_set)
+    """
+    db = init_firebase()
+    pending_ref = db.collection("pending_posts")
+    docs = pending_ref.stream()
+    
+    pending_titles = []
+    pending_source_urls = set()
+    
+    for doc in docs:
+        data = doc.to_dict()
+        status = data.get("status")
+        if status in ["pending_approval", "queued_for_deletion"]:
+            title = data.get("title")
+            source_url = data.get("sourceUrl")
+            if title:
+                pending_titles.append(title)
+            if source_url:
+                pending_source_urls.add(source_url)
+                
+    print(f"Pending/Queued posts loaded: {len(pending_titles)} titles, {len(pending_source_urls)} links.")
+    return pending_titles, pending_source_urls
+

@@ -89,7 +89,98 @@ def rebuild_posts_index_locally():
     except Exception as fs_err:
         print(f"Error saving posts index to Firestore: {fs_err}")
 
+def process_daily_deletions():
+    print("Daily deletion queue check started...")
+    try:
+        import firebase_helper
+        from datetime import datetime, timezone, timedelta
+        tr_tz = timezone(timedelta(hours=3))
+        now_tr = datetime.now(tr_tz)
+        current_date_str = now_tr.strftime("%Y-%m-%d")
+        
+        db = firebase_helper.init_firebase()
+        
+        # Get scheduler config to read last_deletion_date
+        sched_ref = db.collection("system_config").document("scheduler")
+        sched_doc = sched_ref.get()
+        last_deletion_date = ""
+        if sched_doc.exists:
+            last_deletion_date = sched_doc.to_dict().get("last_deletion_date", "")
+            
+        print(f"Current TR Date: {current_date_str}, Last Deletion Date: {last_deletion_date}")
+        
+        # Check if we transitioned to a new day
+        if last_deletion_date == current_date_str:
+            print("Daily deletions already processed for today. Skipping.")
+            return
+            
+        print(f"New day detected ({current_date_str}). Processing deletion queue...")
+        
+        # Fetch pending items from deletion_queue
+        queue_ref = db.collection("deletion_queue")
+        pending_deletions = queue_ref.where("status", "==", "pending").stream()
+        
+        deleted_count = 0
+        for doc in pending_deletions:
+            data = doc.to_dict()
+            slug = data.get("slug")
+            image_name = data.get("image_name")
+            del_type = data.get("type", "draft")
+            
+            print(f"Processing deletion for slug={slug}, image={image_name}, type={del_type}")
+            
+            # Delete markdown file if type is published
+            if del_type == "published" and slug:
+                clean_slug = slug.replace(".md", "")
+                md_local_path = os.path.abspath(os.path.join(base_dir, f"../web-portal/src/content/blog/{clean_slug}.md"))
+                if os.path.exists(md_local_path):
+                    os.remove(md_local_path)
+                    print(f"Deleted markdown file: {md_local_path}")
+                    
+            # Delete image file if present
+            if image_name:
+                img_local_path = os.path.abspath(os.path.join(base_dir, f"../web-portal/public/images/news/{image_name}"))
+                if os.path.exists(img_local_path):
+                    os.remove(img_local_path)
+                    print(f"Deleted image file: {img_local_path}")
+                    
+            # Delete from pending_posts if it is a draft
+            if del_type == "draft" and slug:
+                try:
+                    pending_ref = db.collection("pending_posts")
+                    drafts = pending_ref.where("slug", "==", slug).stream()
+                    for d in drafts:
+                        d.reference.delete()
+                        print(f"Deleted draft document from pending_posts: {d.id}")
+                except Exception as e:
+                    print(f"Error deleting draft document from Firestore: {e}")
+            
+            # Update deletion_queue status
+            doc.reference.update({
+                "status": "processed",
+                "processed_at": time.time()
+            })
+            deleted_count += 1
+            
+        print(f"Deletion queue processing completed. Total processed: {deleted_count}")
+        
+        # If any file was deleted, rebuild index locally
+        if deleted_count > 0:
+            rebuild_posts_index_locally()
+            
+        # Update last_deletion_date in scheduler document
+        sched_ref.set({"last_deletion_date": current_date_str}, merge=True)
+        print(f"Updated last_deletion_date to {current_date_str} in Firestore.")
+        
+    except Exception as e:
+        print(f"Error processing daily deletions: {e}")
+        import traceback
+        traceback.print_exc()
+
 def main():
+    # 0. Günlük silme kuyruğunu çalıştır
+    process_daily_deletions()
+
     # 1. Parametre Kontrolü
     force_run = "--force" in sys.argv
     cleanup_force = "--cleanup" in sys.argv

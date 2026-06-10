@@ -1710,8 +1710,8 @@ def handle_confirm_callback(callback_query, p_id):
     message_id = callback_query["message"]["message_id"]
     callback_id = callback_query["id"]
     
-    edit_message_text("⏳ <b>Haber buluttan siliniyor, lütfen bekleyin...</b>\n(Dosyalar kaldırılıyor ve canlı site yeniden derleniyor)", message_id)
-    answer_callback_query(callback_id, "Silme başlatıldı.")
+    edit_message_text("⏳ <b>Haber silme kuyruğuna alınıyor, lütfen bekleyin...</b>", message_id)
+    answer_callback_query(callback_id, "Silme işlemi başlatıldı.")
     
     try:
         index_data = get_posts_index()
@@ -1722,22 +1722,54 @@ def handle_confirm_callback(callback_query, p_id):
             edit_message_text("❌ Hata: Haber bilgisi güncel indeks içinde bulunamadı.", message_id)
             return
             
-        execute_github_deletion(p)
+        slug = p["slug"]
+        image_url = p.get("image", "")
+        img_name = os.path.basename(image_url) if image_url else ""
+        
+        db = init_firebase()
+        
+        # 1. Add to deletion queue in Firestore
+        db.collection("deletion_queue").add({
+            "slug": slug,
+            "image_name": img_name,
+            "type": "published",
+            "status": "pending",
+            "queued_at": time.time()
+        })
+        
+        # 2. Fetch markdown from GitHub (read-only) to extract sourceUrl for blacklist
+        blacklist_status = "Bulunamadı"
+        try:
+            owner = "kemaleris8391-dev"
+            repo = "ai-haber-portali"
+            md_path = f"web-portal/src/content/blog/{slug}"
+            md_url = f"https://api.github.com/repos/{owner}/{repo}/contents/{md_path}"
+            headers = get_github_headers()
+            r_get = requests.get(md_url, headers=headers, timeout=10)
+            if r_get.status_code == 200:
+                content_b64 = r_get.json().get("content", "")
+                if content_b64:
+                    import base64
+                    md_text = base64.b64decode(content_b64).decode("utf-8")
+                    import re
+                    src_match = re.search(r'^sourceUrl:\s*["\']?(.*?)["\']?\s*$', md_text, re.MULTILINE)
+                    if src_match:
+                        source_url = src_match.group(1).strip()
+                        if source_url:
+                            if add_to_blacklist_in_webhook(source_url):
+                                blacklist_status = "Aktif (URL Engellendi)"
+        except Exception as e:
+            print(f"Error blacklisting single published post {slug}: {e}")
+            
+        # 3. Remove from index locally in Firestore
         remove_posts_from_index_locally([p_id])
         
-        # Trigger build and deployment workflow
-        try:
-            trigger_github_workflow()
-        except Exception as trigger_err:
-            print(f"Error triggering build workflow: {trigger_err}")
-            
         escaped_title = html.escape(p['title'])
         success_msg = (
-            "✅ <b>Haber Başarıyla Silindi!</b>\n\n"
+            "🗑️ <b>Haber Silme Kuyruğuna Alındı!</b>\n\n"
             f"<b>Silinen Haber:</b> {escaped_title}\n"
-            f"<b>Silinen Dosya:</b> <code>{p['slug']}</code>\n\n"
-            "🚀 Haber ve görsel dosyaları buluttan (GitHub) başarıyla temizlendi.\n"
-            "⚡ Canlı site otomatik olarak yeniden derlenip güncellenecektir (yaklaşık 1-2 dakika sürer)."
+            f"<b>Kara Liste:</b> <code>{blacklist_status}</code>\n\n"
+            "Haber listeden kaldırıldı ve gece yarısından sonra otomatik olarak temizlenecektir."
         )
         keyboard = [[{"text": "🔙 Ana Menüye Dön", "callback_data": "menu:yardim"}]]
         edit_message_text(success_msg, message_id, reply_markup={"inline_keyboard": keyboard})
@@ -1870,7 +1902,7 @@ def handle_execute_multi_del(callback_query):
     message_id = callback_query["message"]["message_id"]
     callback_id = callback_query["id"]
     
-    edit_message_text("⏳ <b>Haberler buluttan siliniyor, lütfen bekleyin...</b>\n(Dosyalar paralel olarak kaldırılıyor)", message_id)
+    edit_message_text("⏳ <b>Haberler silme kuyruğuna alınıyor, lütfen bekleyin...</b>", message_id)
     answer_callback_query(callback_id, "Silme işlemi başlatıldı.")
     
     try:
@@ -1890,62 +1922,73 @@ def handle_execute_multi_del(callback_query):
         index_data = get_posts_index()
         posts = index_data.get("posts", {})
         
-        success_deleted = []
-        failed_deleted = []
+        success_queued = []
         
-        # Parallel Deletion of selected posts using ThreadPoolExecutor
-        import concurrent.futures
-        with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-            futures = {}
-            for p_id in selected_ids:
-                p = posts.get(p_id)
-                if not p:
-                    failed_deleted.append((p_id, "Haber indekste bulunamadı."))
-                    continue
-                futures[executor.submit(execute_github_deletion, p)] = (p_id, p)
+        owner = "kemaleris8391-dev"
+        repo = "ai-haber-portali"
+        headers = get_github_headers()
+        
+        for p_id in selected_ids:
+            p = posts.get(p_id)
+            if not p:
+                continue
                 
-            for future in concurrent.futures.as_completed(futures):
-                p_id, p = futures[future]
-                try:
-                    future.result()
-                    success_deleted.append(p)
-                except Exception as github_err:
-                    print(f"Error deleting post {p_id} ({p['slug']}) from GitHub: {github_err}")
-                    failed_deleted.append((p_id, str(github_err)))
-                    
-        # Remove successfully deleted posts from Firestore posts_index document locally in-memory
-        if success_deleted:
-            success_ids = [p_id for p_id in selected_ids if p_id not in [f[0] for f in failed_deleted]]
-            remove_posts_from_index_locally(success_ids)
+            slug = p["slug"]
+            image_url = p.get("image", "")
+            img_name = os.path.basename(image_url) if image_url else ""
             
-            # Trigger build and deployment workflow
+            # 1. Add to deletion queue in Firestore
+            db.collection("deletion_queue").add({
+                "slug": slug,
+                "image_name": img_name,
+                "type": "published",
+                "status": "pending",
+                "queued_at": time.time()
+            })
+            
+            # 2. Fetch markdown from GitHub (read-only) to extract sourceUrl for blacklist
             try:
-                trigger_github_workflow()
-            except Exception as trigger_err:
-                print(f"Error triggering build workflow: {trigger_err}")
+                md_path = f"web-portal/src/content/blog/{slug}"
+                md_url = f"https://api.github.com/repos/{owner}/{repo}/contents/{md_path}"
+                r_get = requests.get(md_url, headers=headers, timeout=10)
+                if r_get.status_code == 200:
+                    content_b64 = r_get.json().get("content", "")
+                    if content_b64:
+                        import base64
+                        md_text = base64.b64decode(content_b64).decode("utf-8")
+                        import re
+                        src_match = re.search(r'^sourceUrl:\s*["\']?(.*?)["\']?\s*$', md_text, re.MULTILINE)
+                        if src_match:
+                            source_url = src_match.group(1).strip()
+                            if source_url:
+                                add_to_blacklist_in_webhook(source_url)
+            except Exception as e:
+                print(f"Error blacklisting published post {slug}: {e}")
+                
+            success_queued.append(p)
+            
+        # Remove from index immediately so they disappear from frontend listings
+        if success_queued:
+            success_ids = [p_id for p_id in selected_ids if posts.get(p_id)]
+            remove_posts_from_index_locally(success_ids)
             
         # Clear bot state
         db.collection("system_config").document("bot_state").delete()
         
         report_msg = ""
-        if success_deleted:
-            success_details = "\n".join([f"• {html.escape(p['title'])}" for p in success_deleted])
-            report_msg += f"✅ <b>Silinen Haberler ({len(success_deleted)} adet):</b>\n{success_details}\n\n"
-            
-        if failed_deleted:
-            failed_details = "\n".join([f"• <b>ID: {fid}</b>: {err}" for fid, err in failed_deleted])
-            report_msg += f"❌ <b>Silinemeyen Haberler ({len(failed_deleted)} adet):</b>\n{failed_details}\n\n"
-            
-        if report_msg:
+        if success_queued:
+            success_details = "\n".join([f"• {html.escape(p['title'])}" for p in success_queued])
+            report_msg += f"✅ <b>Silme Kuyruğuna Alınan Haberler ({len(success_queued)} adet):</b>\n{success_details}\n\n"
             report_msg += (
-                "🚀 Başarıyla silinen haber dosyaları buluttan (GitHub) temizlendi.\n"
-                "⚡ Canlı site otomatik olarak yeniden derlenip güncellenecektir (yaklaşık 1-2 dakika sürer)."
+                "Haberler listeden kaldırıldı ve gece yarısından sonra otomatik olarak temizlenecektir.\n"
+                "Ayrıca tekrar taranmamaları için kaynak URL'leri kara listeye eklenmiştir."
             )
-            keyboard = [[{"text": "🔙 Ana Menüye Dön", "callback_data": "menu:yardim"}]]
-            edit_message_text(report_msg, message_id, reply_markup={"inline_keyboard": keyboard})
         else:
-            edit_message_text("❌ Hiçbir haber silinemedi.", message_id)
+            report_msg = "❌ Hiçbir haber silinemedi veya seçilen haberler bulunamadı."
             
+        keyboard = [[{"text": "🔙 Ana Menüye Dön", "callback_data": "menu:yardim"}]]
+        edit_message_text(report_msg, message_id, reply_markup={"inline_keyboard": keyboard})
+        
     except Exception as e:
         send_error("Çoklu Haber Silme Başarısız", f"Silme işlemi sırasında kritik hata: {e}")
         edit_message_text(f"❌ Haberler silinirken hata oluştu: <code>{e}</code>", message_id)
@@ -2018,12 +2061,40 @@ def handle_approve_direct(callback_query, doc_id):
     edit_message_text(warning_text, message_id)
     answer_callback_query(callback_id, "Bu özellik devre dışıdır.", show_alert=True)
 
+def add_to_blacklist_in_webhook(source_url):
+    try:
+        db = init_firebase()
+        doc_ref = db.collection("system_config").document("blacklisted_links")
+        doc = doc_ref.get()
+        now = time.time()
+        
+        current_links = {}
+        if doc.exists:
+            data = doc.to_dict()
+            links_data = data.get("links", {})
+            if isinstance(links_data, dict):
+                current_links = links_data
+            elif isinstance(links_data, list):
+                current_links = {link: now for link in links_data}
+                
+        if source_url not in current_links:
+            current_links[source_url] = now
+            doc_ref.set({
+                "links": current_links,
+                "last_updated": now
+            })
+            print(f"URL blacklisted successfully in webhook: {source_url}")
+            return True
+    except Exception as e:
+        print(f"Error adding to blacklist in webhook: {e}")
+    return False
+
 def handle_approve_delete(callback_query, doc_id):
     message_id = callback_query["message"]["message_id"]
     callback_id = callback_query["id"]
     
-    edit_message_text("⏳ <b>Taslak siliniyor, lütfen bekleyin...</b>", message_id)
-    answer_callback_query(callback_id, "Silme başlatıldı.")
+    edit_message_text("⏳ <b>Taslak silme kuyruğuna alınıyor, lütfen bekleyin...</b>", message_id)
+    answer_callback_query(callback_id, "Silme işlemi başlatıldı.")
     
     try:
         db = init_firebase()
@@ -2036,21 +2107,36 @@ def handle_approve_delete(callback_query, doc_id):
         post_data = doc.to_dict()
         slug = post_data["slug"]
         image_url = post_data.get("heroImage", "")
+        source_url = post_data.get("sourceUrl", "")
         
-        doc_ref.delete()
+        # 1. Update draft status in pending_posts to queued_for_deletion
+        doc_ref.update({
+            "status": "queued_for_deletion",
+            "queued_for_deletion_at": time.time()
+        })
         
-        if "/images/news/" in image_url:
-            img_name = os.path.basename(image_url)
-            try:
-                delete_file_from_github(f"web-portal/public/images/news/{img_name}", f"style: delete pending draft image '{img_name}'")
-            except Exception as e:
-                print(f"Pending image deletion error: {e}")
+        # 2. Add to deletion queue
+        img_name = os.path.basename(image_url) if image_url else ""
+        db.collection("deletion_queue").add({
+            "slug": slug,
+            "image_name": img_name,
+            "type": "draft",
+            "status": "pending",
+            "queued_at": time.time()
+        })
+        
+        # 3. Add to blacklist immediately so crawler skips it
+        blacklist_status = "Başarısız"
+        if source_url:
+            if add_to_blacklist_in_webhook(source_url):
+                blacklist_status = "Aktif (URL Engellendi)"
                 
         success_text = (
-            "🗑️ <b>Taslak Haber Silindi!</b>\n\n"
+            "🗑️ <b>Taslak Haber Silme Kuyruğuna Alındı!</b>\n\n"
             f"<b>Başlık:</b> {html.escape(post_data['title'])}\n"
-            f"<b>Kategori:</b> {post_data['category'].upper()}\n\n"
-            "Taslak haber ve indirilmiş olan kapak görseli başarıyla kaldırıldı."
+            f"<b>Kategori:</b> {post_data['category'].upper()}\n"
+            f"<b>Kara Liste:</b> <code>{blacklist_status}</code>\n\n"
+            "Taslak haber silinmek üzere kuyruğa alındı ve gece yarısından sonra otomatik olarak temizlenecektir."
         )
         keyboard = [
             [{"text": "🔙 Bekleyenler Listesine Dön", "callback_data": "menu:bekleyenler"}],

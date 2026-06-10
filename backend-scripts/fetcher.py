@@ -192,9 +192,24 @@ def fetch_new_news():
     # Katman 1: Firestore kara listesini yükle (tek read)
     blacklisted_links = firebase_helper.get_blacklisted_links()
     
+    # Onay bekleyen ve silme kuyruğundaki haberleri Firestore'dan yükle
+    try:
+        pending_titles, pending_urls = firebase_helper.get_pending_posts_info()
+    except Exception as e:
+        print(f"UYARI: Onay bekleyen haber bilgileri alınamadı: {e}")
+        pending_titles, pending_urls = [], set()
+        
+    # Onay bekleyen linkleri de atlanacak linkler listesine ekle
+    if pending_urls:
+        blacklisted_links = blacklisted_links.union(pending_urls)
+    
     # Katman 2 için: Geriye dönük son 30 saatlik haber başlıklarını al
     existing_titles = get_existing_titles(hours_back=30)
     
+    # Onay bekleyen başlıkları da benzerlik ve mükerrerlik kontrolleri için mevcut başlıklar listesine ekle
+    if pending_titles:
+        existing_titles.extend(pending_titles)
+        
     new_news_list = []
     newly_blacklisted = []  # Bu çalışmada elenen linkler (toplu kara liste yazımı için)
     blacklist_skipped = 0   # Kara liste sayesinde atlanan haber sayısı
