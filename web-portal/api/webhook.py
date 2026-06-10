@@ -1070,8 +1070,9 @@ def handle_review_pending_post(callback_query, doc_id):
             return
             
         data = doc.to_dict()
-        if data.get("status") != "pending":
-            answer_callback_query(callback_id, "⚠️ Bu taslak zaten silinmiş veya işlemde!", show_alert=True)
+        current_status = data.get("status", "Bilinmiyor")
+        if current_status != "pending_approval":
+            answer_callback_query(callback_id, f"⚠️ Bu taslak zaten silinmiş veya işlemde! (Durum: {current_status})", show_alert=True)
             handle_pending_posts_list(callback_query, chat_id)
             return
             
