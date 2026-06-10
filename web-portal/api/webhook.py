@@ -1096,6 +1096,9 @@ def handle_review_pending_post(callback_query, doc_id):
             ],
             [
                 {"text": "🗑️ İptal Et / Sil", "callback_data": f"approve_delete:{doc_id}"},
+                {"text": "🚫 İstenmeyen Olarak Sil", "callback_data": f"unwanted_delete:{doc_id}"}
+            ],
+            [
                 {"text": "🔙 Listeye Dön", "callback_data": "menu:bekleyenler"}
             ]
         ]
@@ -2322,6 +2325,73 @@ def handle_approve_delete(callback_query, doc_id):
     except Exception as e:
         edit_message_text(f"❌ Taslak silinirken hata oluştu: <code>{e}</code>", message_id)
 
+def handle_unwanted_delete(callback_query, doc_id):
+    message_id = callback_query["message"]["message_id"]
+    callback_id = callback_query["id"]
+    
+    edit_message_text("⏳ <b>Haber siliniyor ve istenmeyen olarak işaretleniyor...</b>", message_id)
+    answer_callback_query(callback_id, "Silme ve işaretleme işlemi başlatıldı.")
+    
+    try:
+        db = init_firebase()
+        doc_ref = db.collection("pending_posts").document(doc_id)
+        doc = doc_ref.get()
+        if not doc.exists:
+            edit_message_text("❌ Hata: Taslak haber bulunamadı veya zaten silinmiş.", message_id)
+            return
+            
+        post_data = doc.to_dict()
+        slug = post_data["slug"]
+        image_url = post_data.get("heroImage", "")
+        source_url = post_data.get("sourceUrl", "")
+        
+        # 1. Update draft status in pending_posts to queued_for_deletion
+        doc_ref.update({
+            "status": "queued_for_deletion",
+            "queued_for_deletion_at": time.time()
+        })
+        
+        # 2. Add to deletion queue
+        img_name = os.path.basename(image_url) if image_url else ""
+        db.collection("deletion_queue").add({
+            "slug": slug,
+            "image_name": img_name,
+            "type": "draft",
+            "status": "pending",
+            "queued_at": time.time()
+        })
+        
+        # 3. Add to blacklist immediately so crawler skips it
+        blacklist_status = "Başarısız"
+        if source_url:
+            if add_to_blacklist_in_webhook(source_url):
+                blacklist_status = "Aktif (URL Engellendi)"
+                
+        # 4. Save to unwanted_posts in Firestore
+        db.collection("unwanted_posts").add({
+            "title": post_data.get("title", ""),
+            "category": post_data.get("category", ""),
+            "description": post_data.get("description", ""),
+            "sourceUrl": source_url,
+            "added_at": time.time()
+        })
+        
+        success_text = (
+            "🚫🗑️ <b>Haber Silindi & İstenmeyen Olarak Kaydedildi!</b>\n\n"
+            f"<b>Başlık:</b> {html.escape(post_data['title'])}\n"
+            f"<b>Kategori:</b> {post_data['category'].upper()}\n"
+            f"<b>Kara Liste:</b> <code>{blacklist_status}</code>\n\n"
+            "Haber silinmek üzere kuyruğa alındı ve veri tabanına istenmeyen haber olarak kaydedildi. Yapay zeka benzer haberleri otomatik eleyecektir."
+        )
+        keyboard = [
+            [{"text": "🔙 Bekleyenler Listesine Dön", "callback_data": "menu:bekleyenler"}],
+            [{"text": "🔙 Ana Menüye Dön", "callback_data": "menu:yardim"}]
+        ]
+        edit_message_text(success_text, message_id, reply_markup={"inline_keyboard": keyboard})
+        
+    except Exception as e:
+        edit_message_text(f"❌ İstenmeyen işaretlemesi ve silme sırasında hata oluştu: <code>{e}</code>", message_id)
+
 def enrich_news_with_comment(draft_data, user_comment):
     api_keys = get_gemini_api_keys()
     if not api_keys:
@@ -2543,6 +2613,9 @@ def handle_callback_query_routing(callback_query):
     elif data.startswith("approve_delete:"):
         doc_id = data.split(":", 1)[1]
         handle_approve_delete(callback_query, doc_id)
+    elif data.startswith("unwanted_delete:"):
+        doc_id = data.split(":", 1)[1]
+        handle_unwanted_delete(callback_query, doc_id)
     elif data == "menu:bekleyenler":
         handle_pending_posts_list(callback_query)
     elif data.startswith("review_pending:"):

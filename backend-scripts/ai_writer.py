@@ -181,7 +181,28 @@ def check_news_semantic_duplicates(candidates, existing_titles, model_name="gemm
     existing_titles_str = json.dumps(recent_existing, ensure_ascii=False, indent=2)
     candidates_str = json.dumps([{"id": c["id"], "title": c["title"], "category": c.get("category"), "summary": c.get("summary")} for c in candidates], ensure_ascii=False, indent=2)
     
-    prompt = prompt.replace("{existing_titles}", existing_titles_str).replace("{candidates}", candidates_str)
+    # Fetch unwanted posts references from Firestore
+    unwanted_str = "Henüz istenmeyen/engellenmiş haber kaydı bulunmuyor."
+    try:
+        import firebase_helper
+        db = firebase_helper.init_firebase()
+        unwanted_ref = db.collection("unwanted_posts")
+        # Get last 20 unwanted posts
+        unwanted_docs = unwanted_ref.order_by("added_at", direction="DESCENDING").limit(20).get()
+        if unwanted_docs:
+            unwanted_list = []
+            for doc in unwanted_docs:
+                d = doc.to_dict()
+                unwanted_list.append({
+                    "title": d.get("title", "Başlıksız"),
+                    "category": d.get("category", "Bilinmeyen"),
+                    "summary": d.get("description", "Özet yok")
+                })
+            unwanted_str = json.dumps(unwanted_list, ensure_ascii=False, indent=2)
+    except Exception as fs_err:
+        print(f"Firestore'dan istenmeyen haberler çekilirken hata oluştu: {fs_err}")
+        
+    prompt = prompt.replace("{existing_titles}", existing_titles_str).replace("{candidates}", candidates_str).replace("{unwanted_posts}", unwanted_str)
     
     max_retries = len(API_KEYS) if API_KEYS else 3
     last_error = "Bilinmeyen API Hatası"
