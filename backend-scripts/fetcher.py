@@ -107,6 +107,33 @@ def get_existing_titles(limit=40, hours_back=30):
     latest_titles = [post[1] for post in parsed_posts[:limit]]
     return latest_titles
 
+def get_all_published_urls():
+    """Astro blog klasöründeki tüm yayınlanmış haberlerin orijinal kaynak URL'lerini çeker."""
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    blog_dir = os.path.abspath(os.path.join(base_dir, "../web-portal/src/content/blog"))
+    
+    if not os.path.exists(blog_dir):
+        return set()
+        
+    md_files = [f for f in os.listdir(blog_dir) if f.endswith(".md")]
+    published_urls = set()
+    
+    for file in md_files:
+        file_path = os.path.join(blog_dir, file)
+        try:
+            with open(file_path, "r", encoding="utf-8") as f:
+                content = f.read(1000) # Read only frontmatter
+                
+            url_match = re.search(r'^sourceUrl:\s*["\']?(.*?)["\']?\s*$', content, re.MULTILINE)
+            if url_match:
+                url = url_match.group(1).strip()
+                if url:
+                    published_urls.add(url)
+        except Exception as e:
+            print(f"BİLGİ: {file} kaynak URL okunamadı: {e}")
+            
+    return published_urls
+
 def is_similar_to_existing(new_title, existing_titles, word_threshold=0.30, char_threshold=0.38):
     """Yeni başlığın mevcut başlıklarla olan Jaccard benzerliğini hem kelime hem de karakter N-Gram düzeyinde denetler."""
     import re
@@ -202,6 +229,14 @@ def fetch_new_news():
     # Onay bekleyen linkleri de atlanacak linkler listesine ekle
     if pending_urls:
         blacklisted_links = blacklisted_links.union(pending_urls)
+        
+    # Yayınlanmış tüm haberlerin linklerini de atlanacak listeye ekle
+    try:
+        published_urls = get_all_published_urls()
+        blacklisted_links = blacklisted_links.union(published_urls)
+        print(f"Yayınlanmış haberlerden {len(published_urls)} adet link atlanacaklar listesine eklendi.")
+    except Exception as e:
+        print(f"UYARI: Yayınlanmış haber linkleri alınamadı: {e}")
     
     # Katman 2 için: Geriye dönük son 30 saatlik haber başlıklarını al
     existing_titles = get_existing_titles(hours_back=30)
