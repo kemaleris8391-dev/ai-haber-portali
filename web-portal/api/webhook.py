@@ -1148,6 +1148,31 @@ def handle_durum_callback(callback_query):
         last_run_str = datetime.fromtimestamp(last_run_val, tz=tr_tz).strftime("%d.%m.%Y %H:%M:%S")
         next_run_str = (datetime.now(tr_tz) + timedelta(minutes=next_run_min)).strftime("%d.%m.%Y %H:%M:%S")
         
+        research_conf = get_research_config()
+        r_active = research_conf["is_active"]
+        r_running = research_conf["is_running"]
+        r_interval = research_conf["interval_hours"]
+        r_last_run = research_conf["last_run_time"]
+        r_insp_hours = research_conf["inspiration_hours"]
+        r_max_topics = research_conf["max_topics"]
+        
+        r_elapsed_min = (time.time() - r_last_run) / 60.0
+        r_interval_min = r_interval * 60.0
+        r_next_run_min = max(0.0, r_interval_min - r_elapsed_min)
+        
+        if r_last_run > 0.0:
+            r_last_run_str = datetime.fromtimestamp(r_last_run, tz=tr_tz).strftime("%d.%m.%Y %H:%M:%S")
+            r_next_run_str = (datetime.now(tr_tz) + timedelta(minutes=r_next_run_min)).strftime("%d.%m.%Y %H:%M:%S")
+            
+            if r_next_run_min >= 60.0:
+                r_remaining_str = f"~{int(r_next_run_min // 60)} saat {int(r_next_run_min % 60)} dakika sonra"
+            else:
+                r_remaining_str = f"~{int(r_next_run_min)} dakika sonra"
+        else:
+            r_last_run_str = "Hiç çalışmadı"
+            r_next_run_str = "İlk tetikleme bekleniyor"
+            r_remaining_str = "Süre dolduğunda çalışacak"
+            
         status_msg = (
             "📊 <b>Sistem Durum Raporu (Bulut Entegreli)</b>\n\n"
             "📡 <b>RSS TARAYICI VE YAZICI:</b>\n"
@@ -1156,6 +1181,14 @@ def handle_durum_callback(callback_query):
             f"• <b>Tarama Sıklığı:</b> {interval_val} dakikada bir\n"
             f"• <b>Son Tarama Zamanı:</b> {last_run_str}\n"
             f"• <b>Sonraki Tarama:</b> {next_run_str} (~{int(next_run_min)} dakika sonra)\n\n"
+            "🧠 <b>OTONOM ARAŞTIRMA (GEMINI DESTEKLİ):</b>\n"
+            f"• <b>Otonom Araştırma:</b> {'🟢 Aktif' if r_active else '🔴 Pasif'}\n"
+            f"• <b>Çalışma Durumu:</b> {'⚡ Araştırma Yapılıyor...' if r_running else '💤 Beklemede'}\n"
+            f"• <b>Araştırma Sıklığı:</b> {r_interval} saatte bir\n"
+            f"• <b>İlham Süresi:</b> {r_insp_hours} saatlik haberler\n"
+            f"• <b>Konu Limiti:</b> {r_max_topics} adet\n"
+            f"• <b>Son Araştırma:</b> {r_last_run_str}\n"
+            f"• <b>Sonraki Araştırma:</b> {r_next_run_str} ({r_remaining_str})\n\n"
             f"📰 <b>Toplam Yayınlanan Haber:</b> {get_total_posts_count()} adet\n\n"
             f"🔗 <b>Canlı Site:</b> https://aihaberler.web.app"
         )

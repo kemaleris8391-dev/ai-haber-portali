@@ -127,6 +127,13 @@ Firestore üzerinde kullanılan koleksiyonlar ve belge yapıları şöyledir:
   * `interval_minutes` (number): Otomatik tarama aralığı (Varsayılan: 20).
   * `last_run_time` (timestamp): En son başarılı haber taramasının yapıldığı zaman damgası.
   * `is_running` (boolean): Bulut sunucusunun o an tarama/derleme yapıp yapmadığını belirten kilit bayrağı (lock).
+* Belge: **`autonomous_research`**
+  * `is_active` (boolean): Otonom araştırmanın aktif/pasif durumu.
+  * `interval_hours` (number): Otonom araştırma sıklığı (saat cinsinden).
+  * `last_run_time` (timestamp/number): En son otonom haber araştırmasının yapıldığı zaman damgası.
+  * `is_running` (boolean): Otonom araştırma sürecinin o an aktif olup olmadığını belirten kilit bayrağı (lock).
+  * `inspiration_hours` (number): Araştırma fikirleri üretilirken son kaç saatlik haberlerin ilham kaynağı olarak alınacağını belirten süre.
+  * `max_topics` (number): Tek seferde üretilecek maksimum araştırma konusu adeti.
 
 ### `custom_requests` Koleksiyonu:
 * Belgeler: Otomatik üretilen ID'ler.
