@@ -459,18 +459,37 @@ def get_posts_index(force_rebuild=False):
     doc_ref = db.collection("system_config").document("posts_index")
     doc = doc_ref.get()
     
+    index_data = {}
     if doc.exists and not force_rebuild:
-        return doc.to_dict()
-            
-    print("Rebuilding posts index...")
+        index_data = doc.to_dict()
+    else:
+        print("Rebuilding posts index...")
+        try:
+            index_data = rebuild_posts_index()
+        except Exception as e:
+            print(f"Error rebuilding index: {e}")
+            if doc.exists:
+                print("Falling back to existing Firestore index.")
+                index_data = doc.to_dict()
+            else:
+                raise e
+
+    # Filter out posts that are in the deletion queue (pending)
     try:
-        return rebuild_posts_index()
-    except Exception as e:
-        print(f"Error rebuilding index: {e}")
-        if doc.exists:
-            print("Falling back to existing Firestore index.")
-            return doc.to_dict()
-        raise e
+        deletion_ref = db.collection("deletion_queue")
+        pending_deletions = deletion_ref.where("status", "==", "pending").get()
+        pending_slugs = {d.to_dict().get("slug") for d in pending_deletions if d.to_dict().get("slug")}
+        
+        if pending_slugs and index_data and "posts" in index_data:
+            filtered_posts = {}
+            for p_id, p in index_data["posts"].items():
+                if p.get("slug") not in pending_slugs:
+                    filtered_posts[p_id] = p
+            index_data["posts"] = filtered_posts
+    except Exception as filter_err:
+        print(f"Error filtering pending deletions from posts index: {filter_err}")
+        
+    return index_data
 
 def remove_posts_from_index_locally(p_ids):
     """Removes a list of post IDs from the Firestore posts_index document locally in-memory."""
