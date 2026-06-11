@@ -295,5 +295,32 @@
     "editor_comment": "Bu maliyet azaltmalar neden son dönemlerde yükseldi acaba yapay zekanın bu konuda bir rolü olabilir mi.",
     "slug": "ubisoftun-maliyet-azaltma-operasyonu-suruyor-iki-studyo-daha",
     "source_url": "https://www.ign.com/articles/ubisoft-closing-2-more-studios-amid-further-cuts-and-job-losses"
+  },
+  {
+    "timestamp": "2026-06-11T17:12:23.364788+03:00",
+    "category": "plc",
+    "title": "Cognex, AI Destekli Yüksek Hızlı Yeni Nesil Makine Görüsü Sistemi In-Sight 3900'ü Tanıttı",
+    "summary": "Cognex, Qualcomm teknolojisiyle güçlendirilen, harici PC gerektirmeyen AI destekli In-Sight 3900 makine görüsü sistemini duyurdu.",
+    "editor_comment": "Şahsen kullanıp da deneyimlediğim bir kamera olarak bunun daha önceki modellerinde şöyle bir durum oluştuğunu fark ettim kamera yüksek hızlı iş yapan makinalarda belirli bir süre gayet iyi iş çıkarıyor ancak aradan birkaç ay geçtikten sonra ısınma sorunları vesaire de görüntüde donmalar aslında görüntüyü işleyememeler gibi problemler çıkardığını görüyorum bu muhtemelen her türlü modeli kamerada oluyordur sonuçta elektronik bir cihaz ısındığında her türlü problemi verir yazılımcılar olarak burada dikkat etmemiz gereken kitlenme problemlerinde kodlara uygun koşulları ekleyerek bu tarz sorunları üretim riski olmadan çözüme ulaştırmaktır",
+    "slug": "cognex-ai-destekli-yuksek-hizli-yeni-nesil-makine-gorusu-sis",
+    "source_url": "https://control.com/news/cognex-launches-a-high-speed-ai-powered-machine-vision-system/"
+  },
+  {
+    "timestamp": "2026-06-11T17:13:01.004666+03:00",
+    "category": "oyun",
+    "title": "1666: Amsterdam Geliştiricisi Yapay Zeka Kullanımını Kabul Ederek Özür Diledi",
+    "summary": "1666: Amsterdam geliştiricisi, oyunun PC prolog sürümünde yapay zeka varlıkları kullandığını kabul ederek özür diledi ve bu içerikleri değiştireceğini açıkladı.",
+    "editor_comment": "Neden özür dilendiğini anlamadım sonuçta yapay zekayı herkes kullanıyor eğer profesyonel bir şekilde kullanıp güzel bir iş ortaya çıkıyorsa özür dilenecek bir durum yok tabii ki de insan müdahalesi maksimum düzeyde olmalı ancak işlerin kolaylaşması ekonomik olarak kuduz amaçlı açısından eğer bu da gerekliyse yapılabilir",
+    "slug": "1666-amsterdam-gelistiricisi-yapay-zeka-kullanimini-kabul-ed",
+    "source_url": "https://www.ign.com/articles/1666-amsterdam-developer-admits-using-ai-assets-and-apologizes-says-theyll-now-be-replaced"
+  },
+  {
+    "timestamp": "2026-06-11T17:13:39.152343+03:00",
+    "category": "pc",
+    "title": "Elektrikli Araç Bataryalarını Ev Tipi Enerji Depolama Sistemlerinde Kullanmak: Güvenlik ve Verimlilik",
+    "summary": "Eski elektrikli araç bataryalarını ev tipi güneş enerjisi depolama sistemlerinde güvenle kullanmanın yolları ve dikkat edilmesi gereken teknik detaylar.",
+    "editor_comment": "Her ne kadar basit bir işlem gibi görünse de bataryadaki yüksek akım , yangın , can sağlığını riskle atmaktadır. Ancak profesyonel kişiler tarafından hazırlanan bir sistem ile bu tarz atıl durumda olan bataryaların geri dönüşü kullanımı hem çevre hemde ekonomi açısından çok guzle bir haber.",
+    "slug": "elektrikli-arac-bataryalarini-ev-tipi-enerji-depolama-sistem",
+    "source_url": "https://hackaday.com/2026/06/10/safely-using-old-ev-batteries-in-your-home-solar-setup/"
   }
 ]
