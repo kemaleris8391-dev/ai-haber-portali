@@ -340,6 +340,31 @@ Daha önce onaylanıp yayınlanan haberlerin RSS crawler veya otonom araştırma
 3. **Telegram Mesaj Güncellemeleri:** 
    Silinen mükerrer taslakların Telegram'daki orijinal onay mesajları otomatik olarak *"⚠️ Bu taslak otomatik olarak iptal edilmiştir. Bu haber zaten onaylanıp başka bir başlıkla yayınlandığı için bu mükerrer taslak kaldırılmıştır."* şeklinde güncellenerek kapatılır.
 
+---
+
+## 17. Yayına Alma Süresi (Toplu Yayın), Model Güncellemeleri ve Zamanlayıcı Hata Düzeltmeleri (Haziran 2026)
+
+Bu bölümde, editörün onayladığı haberlerin yayın sıklığını yönetmek, LLM API yedekliliğini artırmak ve durum raporlamasını zenginleştirmek adına sisteme eklenen özellikler ile yapılan hata düzeltmeleri özetlenmiştir:
+
+### A. Yayına Alma Süresi & Toplu Yayın Entegrasyonu:
+* **Toplu Yayın Modu:** Editörün onayladığı (görüş belirttiği) haberlerin tek tek anında derlenmesi yerine, belirlenen bir bekleme süresi boyunca (`Hemen Yayınla`, `30 dk`, `60 dk`, `120 dk`, `180 dk`) sırada biriktirilip süre sonunda toplu yayınlanması altyapısı kuruldu.
+* **Akıllı Sayaç Tetikleyici:** İlk haber onaylandığında geri sayım başlar ve hedef yayın zamanı Firestore `publish_timer` dokümanına kaydedilir (`process_publish_timer_on_approval`). Süre dolana kadar onaylanan diğer haberler de sıraya eklenir.
+* **Hemen Yayınla İyileştirmesi:** "Hemen Yayınla" modunda manuel tetiklemeye gerek kalmadan onaylanan her haber için GitHub Actions workflow otomatik olarak anında tetiklenir.
+* **Vercel Cron Kontrolü:** `api/cron.py` üzerinden 10-20 dakikada bir yapılan tetiklemelerde, eğer bekleme süresi dolmuşsa bulut derleyicisi tetiklenerek onaylanan haberlerin yayına geçirilmesi otomatikleştirilmiştir.
+
+### B. Gemini 1.5 Flash Yedek Entegrasyonu & Gemma Kullanımı:
+* **Kararlı Model Geçişi:** Metin zenginleştirme (editoryal yorum entegrasyonu vb.) ve webhook süreçlerinde kota veya yoğunluktan kaynaklı çöküşleri engellemek amacıyla, yüksek kararlılık ve düşük yoğunluğa sahip **`gemini-1.5-flash`** modeli LLM fallback listelerine yedek olarak eklenmiştir.
+* **Metin Zenginleştirmede Gemma Önceliği:** İnternet araması gerektirmeyen metin zenginleştirme (Editör görüşü entegrasyonu vb.) adımlarında birincil olarak neredeyse ücretsiz olan ve üstün performans sunan **`gemma-4-31b-it`** modelinin kullanılması sağlanmıştır. İnternet araması gerektiren adımlarda ise `gemini` modellerinin kullanılması kuralı korunmuştur.
+
+### C. Sistem Durumu Raporlama & Arayüz Görselleştirilmesi:
+* **Bağımsız Bölüm Yapısı:** Telegram botunda `📊 Sistem Durumu` veya `/durum` çalıştırıldığında dönen durum raporunda `⏳ YAYINA ALMA SÜRESİ (TOPLU YAYIN):` bilgileri `📡 RSS TARAYICI VE YAZICI` ve `🧠 OTONOM ARAŞTIRMA` bölümleri gibi **ayrı ve belirgin** bir ana başlık altına taşındı.
+* **Rapor Senkronizasyonu:** do_POST `/durum` komutunun rapor yapısı ile callback durum ekranının rapor yapısı tamamen senkronize edildi; böylece her iki ekranda da otonom araştırma ve yayın gecikme detayları aynı görsel standartlarda gösterilmeye başlandı.
+
+### D. Timezone NameError Hata Düzeltmesi:
+* **Hata Tanımı:** Haber onaylandığında yayın süresi zamanlayıcı formatlama adımında (`process_publish_timer_on_approval`) `timezone` sınıfı bulunamadığı için `NameError: name 'timezone' is not defined` hatası alınıyordu.
+* **Çözüm:** `webhook.py` dosyasının en tepesindeki global importlara `timezone` sınıfı eklenerek (`from datetime import datetime, timedelta, timezone`) bu hata tamamen giderilmiştir.
+
+
 
 
 
