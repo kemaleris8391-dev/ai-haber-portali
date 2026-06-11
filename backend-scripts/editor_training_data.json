@@ -250,5 +250,50 @@
     "editor_comment": "Benim şahsen yaşadığım tecrübelere istinaden şunu söyleyebilirim ki bir motoru bir yere bağlamadan önce bu motorun maksimum ne kadar güçlü çalışacağını hesaplayın ve çalışması gereken gücün her zaman bir kademe üzerinde motor seçin ayrıca çalıştığı ortamda tabii ki çok önemli ısı ve titreşimi kontrol altında tutmanız gerekir sırasıyla değecek olursak motorun gücü motorun çalıştığı ortam ve sıcaklık Bu üçü motorların ömrünü uzatmada gerçekten çok önemli oluyor",
     "slug": "endustriyel-elektrik-motorlarinda-maksimum-verim-modern-baki",
     "source_url": "https://control.com/technical-articles/industrial-motor-health-tips-and-iiot-solutions/"
+  },
+  {
+    "timestamp": "2026-06-11T15:41:28.631229+03:00",
+    "category": "oyun",
+    "title": "PlayStation Plus Haziran 2026 Kataloğu Belli Oldu: Dev Yapımlar Listede",
+    "summary": "PlayStation Plus Haziran 2026 kataloğu belli oldu! Final Fantasy 16 ve Kingdom Come: Deliverance gibi dev yapımlar aboneleri bekliyor.",
+    "editor_comment": "Valla ne diyelim oynayanlar için iyi eğlenceler .",
+    "slug": "playstation-plus-haziran-2026-katalogu-belli-oldu-dev-yapiml",
+    "source_url": "https://www.ign.com/articles/playstation-plus-game-catalog-for-june-2026-headlined-by-final-fantasy-16-and-kingdom-come-deliverance"
+  },
+  {
+    "timestamp": "2026-06-11T15:42:35.861645+03:00",
+    "category": "yapay-zeka",
+    "title": "Endüstriyel Siber Güvenlikte Yeni Cephe: Yapay Zeka Destekli Operasyonel Teknoloji (OT) Anomali Tespiti",
+    "summary": "OT ağlarında yapay zeka destekli anomali tespiti, endüstriyel siber güvenliği dönüştürüyor. Tehditleri proaktif olarak belirleyerek kritik altyapıları koruyor.",
+    "editor_comment": "Anlık veri izleme ve sistem takibi ile yapay zekanın insandan daha hızlı olduğu konularda bu tarz gelişmiş bir sistemin özellikle plc tabanlı ve donanımlara doğrudan komut veren yapılarda hayati önemi olduğunu düşünüyorum. Eğer sisteminiz dış ağa açılmıyor olsa bile yerel de kullanılması gerekli olabilir. Zira yerel veri çekme işlemlerinde sistem trafiğini kontrol altında tutmyaya ve yükü azaltabilecek önlemler vermeye yarayabilir.",
+    "slug": "endustriyel-siber-guvenlikte-yeni-cephe-yapay-zeka-destekli",
+    "source_url": "https://aihaberler.web.app"
+  },
+  {
+    "timestamp": "2026-06-11T15:43:27.636590+03:00",
+    "category": "pc",
+    "title": "Karbonun Ötesinde: Nanoteknolojide Boron Buckyball Dönemi",
+    "summary": "Nanoteknolojide yeni bir dönem: Karbon yerine bor atomlarının kullanıldığı Boron Buckyball'lar, malzeme biliminde ve donanım teknolojilerinde yeni kapılar açıyor.",
+    "editor_comment": "Ülkemizde yeterince çıkan bor ile ilgili gerekli çalışmaları yapılmalı özellikle teknoloji geliştirmesi konusunda borun kullanımının arttırılması gerektiğini düşünüyorum Bir materyali ne kadar iyi kullanabilirsek teknolojide ne kadar ilerleyebilirsek o kadar katma değerinin artacağına inanıyorum",
+    "slug": "karbonun-otesinde-nanoteknolojide-boron-buckyball-donemi",
+    "source_url": "https://hackaday.com/2026/06/10/introducing-boron-buckyballs/"
+  },
+  {
+    "timestamp": "2026-06-11T15:44:19.327825+03:00",
+    "category": "pc",
+    "title": "Saniyede 4 Milyar Piksel: 16 Kamera ile Güçlendirilmiş İnovatif V-Tubing Sistemi",
+    "summary": "Yapımcı Dennis, 16 DIY kamera kullanarak saniyede 4 milyar piksel işleyen, yüksek performanslı ve inovatif bir V-Tubing sistemi geliştirdi.",
+    "editor_comment": "Kişisel bireylerin tabiri caizse kendi garajlarinda bu tarz mucizevi teknolojileri imza atması beni çok heyecanladiriyor. Buradan elde edilen verilerle eminim yapay zekalar daha farklı eğitilecek ve önümüzde ki günlerde yapay zeka ile video üreten sistemlerin daha da gelişmiş hareketlerle videoları üretebileceğini tahmin edebiliyorum",
+    "slug": "saniyede-4-milyar-piksel-16-kamera-ile-guclendirilmis-inovat",
+    "source_url": "https://hackaday.com/2026/06/10/process-4-billion-pixels-per-second-from-16-diy-cameras-for-the-best-v-tubing-rig-ever/"
+  },
+  {
+    "timestamp": "2026-06-11T15:45:01.917115+03:00",
+    "category": "oyun",
+    "title": "Ubisoft'un Maliyet Azaltma Operasyonu Sürüyor: İki Stüdyo Daha Kapanıyor",
+    "summary": "Ubisoft, maliyet azaltma önlemleri kapsamında iki stüdyosunu daha kapatma kararı aldı. Oyun dünyasında yankı uyandıran gelişmenin detayları burada.",
+    "editor_comment": "Bu maliyet azaltmalar neden son dönemlerde yükseldi acaba yapay zekanın bu konuda bir rolü olabilir mi.",
+    "slug": "ubisoftun-maliyet-azaltma-operasyonu-suruyor-iki-studyo-daha",
+    "source_url": "https://www.ign.com/articles/ubisoft-closing-2-more-studios-amid-further-cuts-and-job-losses"
   }
 ]
