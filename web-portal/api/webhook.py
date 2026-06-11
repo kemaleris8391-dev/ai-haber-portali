@@ -1253,12 +1253,19 @@ def handle_durum_callback(callback_query):
                 elapsed = (time.time() - timer_start_val) / 60.0
                 remaining = max(0.0, delay_val - elapsed)
                 publish_time_str = datetime.fromtimestamp(next_publish_val, tz=tr_tz).strftime("%H:%M:%S")
-                timer_status_str = f"⏳ Aktif Sayaç (Kalan: ~{int(remaining)} dk, Yayın: {publish_time_str})"
+                timer_status_str = f"⏳ Aktif Sayaç (Kalan: ~{int(remaining)} dk, Yayın Saati: {publish_time_str})"
             else:
-                timer_status_str = "💤 Hazır (Sayaç başlamadı, ilk onayda başlayacak)"
-            publish_delay_info = f"• <b>Yayına Alma Süresi:</b> {delay_val} dk Gecikmeli\n• <b>Sayaç Durumu:</b> {timer_status_str}"
+                timer_status_str = "💤 Hazır (Geri sayım başlamadı, ilk haber onayında başlayacak)"
+            publish_delay_info = (
+                "⏳ <b>YAYINA ALMA SÜRESİ (TOPLU YAYIN):</b>\n"
+                f"• <b>Yayın Modu:</b> {delay_val} dakika gecikmeli\n"
+                f"• <b>Zamanlayıcı Durumu:</b> {timer_status_str}"
+            )
         else:
-            publish_delay_info = "• <b>Yayına Alma Süresi:</b> ⚡ Hemen Yayınla (Gecikmesiz)"
+            publish_delay_info = (
+                "⏳ <b>YAYINA ALMA SÜRESİ (TOPLU YAYIN):</b>\n"
+                "• <b>Yayın Modu:</b> ⚡ Hemen Yayınla (Onaylanan her haber 2-3 dk içinde anında yayına alınır)"
+            )
             
         status_msg = (
             "📊 <b>Sistem Durum Raporu (Bulut Entegreli)</b>\n\n"
@@ -1267,7 +1274,7 @@ def handle_durum_callback(callback_query):
             f"• <b>Çalışma Durumu:</b> {'⚡ Tarama Yapılıyor...' if is_running_val else '💤 Beklemede'}\n"
             f"• <b>Tarama Sıklığı:</b> {interval_val} dakikada bir\n"
             f"• <b>Son Tarama Zamanı:</b> {last_run_str}\n"
-            f"• <b>Sonraki Tarama:</b> {next_run_str} (~{int(next_run_min)} dakika sonra)\n"
+            f"• <b>Sonraki Tarama:</b> {next_run_str} (~{int(next_run_min)} dakika sonra)\n\n"
             f"{publish_delay_info}\n\n"
             "🧠 <b>OTONOM ARAŞTIRMA (GEMINI DESTEKLİ):</b>\n"
             f"• <b>Otonom Araştırma:</b> {'🟢 Aktif' if r_active else '🔴 Pasif'}\n"
@@ -4229,6 +4236,31 @@ class handler(BaseHTTPRequestHandler):
                     last_run_str = datetime.fromtimestamp(last_run_val, tz=tr_tz).strftime("%d.%m.%Y %H:%M:%S")
                     next_run_str = (datetime.now(tr_tz) + timedelta(minutes=next_run_min)).strftime("%d.%m.%Y %H:%M:%S")
                     
+                    research_conf = get_research_config()
+                    r_active = research_conf["is_active"]
+                    r_running = research_conf["is_running"]
+                    r_interval = research_conf["interval_hours"]
+                    r_last_run = research_conf["last_run_time"]
+                    r_insp_hours = research_conf["inspiration_hours"]
+                    r_max_topics = research_conf["max_topics"]
+                    
+                    r_elapsed_min = (time.time() - r_last_run) / 60.0
+                    r_interval_min = r_interval * 60.0
+                    r_next_run_min = max(0.0, r_interval_min - r_elapsed_min)
+                    
+                    if r_last_run > 0.0:
+                        r_last_run_str = datetime.fromtimestamp(r_last_run, tz=tr_tz).strftime("%d.%m.%Y %H:%M:%S")
+                        r_next_run_str = (datetime.now(tr_tz) + timedelta(minutes=r_next_run_min)).strftime("%d.%m.%Y %H:%M:%S")
+                        
+                        if r_next_run_min >= 60.0:
+                            r_remaining_str = f"~{int(r_next_run_min // 60)} saat {int(r_next_run_min % 60)} dakika sonra"
+                        else:
+                            r_remaining_str = f"~{int(r_next_run_min)} dakika sonra"
+                    else:
+                        r_last_run_str = "Hiç çalışmadı"
+                        r_next_run_str = "İlk tetikleme bekleniyor"
+                        r_remaining_str = "Süre dolduğunda çalışacak"
+                        
                     timer_conf = get_publish_timer_config()
                     delay_val = timer_conf.get("delay_minutes", 0)
                     timer_start_val = timer_conf.get("timer_start_time", 0.0)
@@ -4239,21 +4271,37 @@ class handler(BaseHTTPRequestHandler):
                             elapsed = (time.time() - timer_start_val) / 60.0
                             remaining = max(0.0, delay_val - elapsed)
                             publish_time_str = datetime.fromtimestamp(next_publish_val, tz=tr_tz).strftime("%H:%M:%S")
-                            timer_status_str = f"⏳ Aktif Sayaç (Kalan: ~{int(remaining)} dk, Yayın: {publish_time_str})"
+                            timer_status_str = f"⏳ Aktif Sayaç (Kalan: ~{int(remaining)} dk, Yayın Saati: {publish_time_str})"
                         else:
-                            timer_status_str = "💤 Hazır (Sayaç başlamadı, ilk onayda başlayacak)"
-                        publish_delay_info = f"• <b>Yayına Alma Süresi:</b> {delay_val} dk Gecikmeli\n• <b>Sayaç Durumu:</b> {timer_status_str}"
+                            timer_status_str = "💤 Hazır (Geri sayım başlamadı, ilk haber onayında başlayacak)"
+                        publish_delay_info = (
+                            "⏳ <b>YAYINA ALMA SÜRESİ (TOPLU YAYIN):</b>\n"
+                            f"• <b>Yayın Modu:</b> {delay_val} dakika gecikmeli\n"
+                            f"• <b>Zamanlayıcı Durumu:</b> {timer_status_str}"
+                        )
                     else:
-                        publish_delay_info = "• <b>Yayına Alma Süresi:</b> Hemen Yayınla (Gecikmesiz)"
+                        publish_delay_info = (
+                            "⏳ <b>YAYINA ALMA SÜRESİ (TOPLU YAYIN):</b>\n"
+                            "• <b>Yayın Modu:</b> ⚡ Hemen Yayınla (Onaylanan her haber 2-3 dk içinde anında yayına alınır)"
+                        )
                         
                     status_msg = (
                         "📊 <b>Sistem Durum Raporu (Bulut Entegreli)</b>\n\n"
-                        f"🟢 <b>Otonom Tarayıcı:</b> {'Aktif (Otomatik Çalışıyor)' if is_active_val else 'Durduruldu (Askıya Alındı)'}\n"
-                        f"⚡ <b>Çalışma Durumu:</b> {'Tarama Yapılıyor...' if is_running_val else 'Beklemede'}\n"
-                        f"⏱️ <b>Tarama Sıklığı:</b> Her {interval_val} dakikada bir\n"
-                        f"📅 <b>Son Tarama Zamanı:</b> {last_run_str}\n"
-                        f"⏳ <b>Sonraki Tarama:</b> {next_run_str} (~{int(next_run_min)} dakika sonra)\n"
+                        "📡 <b>RSS TARAYICI VE YAZICI:</b>\n"
+                        f"• <b>Otonom Tarayıcı:</b> {'🟢 Aktif' if is_active_val else '🔴 Pasif'}\n"
+                        f"• <b>Çalışma Durumu:</b> {'⚡ Tarama Yapılıyor...' if is_running_val else '💤 Beklemede'}\n"
+                        f"• <b>Tarama Sıklığı:</b> {interval_val} dakikada bir\n"
+                        f"• <b>Son Tarama Zamanı:</b> {last_run_str}\n"
+                        f"• <b>Sonraki Tarama:</b> {next_run_str} (~{int(next_run_min)} dakika sonra)\n\n"
                         f"{publish_delay_info}\n\n"
+                        "🧠 <b>OTONOM ARAŞTIRMA (GEMINI DESTEKLİ):</b>\n"
+                        f"• <b>Otonom Araştırma:</b> {'🟢 Aktif' if r_active else '🔴 Pasif'}\n"
+                        f"• <b>Çalışma Durumu:</b> {'⚡ Araştırma Yapılıyor...' if r_running else '💤 Beklemede'}\n"
+                        f"• <b>Araştırma Sıklığı:</b> {r_interval} saatte bir\n"
+                        f"• <b>İlham Süresi:</b> {r_insp_hours} saatlik haberler\n"
+                        f"• <b>Konu Limiti:</b> {r_max_topics} adet\n"
+                        f"• <b>Son Araştırma:</b> {r_last_run_str}\n"
+                        f"• <b>Sonraki Araştırma:</b> {r_next_run_str} ({r_remaining_str})\n\n"
                         f"📰 <b>Toplam Yayınlanan Haber:</b> {get_total_posts_count()} adet\n\n"
                         f"🔗 <b>Canlı Site:</b> https://aihaberler.web.app"
                     )
