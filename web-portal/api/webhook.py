@@ -1443,12 +1443,15 @@ def process_publish_timer_on_approval(category, title, user_comment):
                 f"📅 **Yayınlanma Zamanı:** Saat <b>{publish_time_str}</b>"
             )
     else:
+        # Hemen yayınla modu: Bulut derleyicisini anında tetikle
+        trigger_github_workflow()
         success_text = (
-            "✍️ <b>Görüşünüz Alındı ve Yayın Sırasına Eklendi!</b>\n\n"
+            "⚡ <b>Haber Onaylandı ve Yayınlama Başlatıldı!</b>\n\n"
             f"<b>Başlık:</b> {html.escape(title)}\n"
             f"<b>Kategori:</b> {category.upper()}\n\n"
             f"<b>Editörün Görüşü:</b> <i>{html.escape(user_comment)}</i>\n\n"
-            "Haber yayın sırasına alındı. Bir sonraki otomatik tarama/derleme çalışmasında (en geç 20-30 dakika içinde) yayına alınacaktır."
+            "🚀 Gecikmesiz mod aktif olduğu için bulut derleme sunucusu anında tetiklendi. "
+            "Haberiniz yaklaşık 2-3 dakika içinde sitede canlıya geçecektir."
         )
         
     return success_text
