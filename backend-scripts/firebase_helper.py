@@ -141,6 +141,46 @@ def update_cleanup_config(interval_hours=None, last_cleanup_time=None, is_active
         doc_ref.set(update_data, merge=True)
         print(f"Firestore otonom temizlik ayarları güncellendi: {update_data}")
 
+def get_publish_timer_config():
+    """Firestore'dan yayına alma zamanlayıcı ayarlarını çeker. Yoksa varsayılan oluşturur."""
+    db = init_firebase()
+    doc_ref = db.collection("system_config").document("publish_timer")
+    doc = doc_ref.get()
+    
+    if doc.exists:
+        data = doc.to_dict()
+        return {
+            "delay_minutes": int(data.get("delay_minutes", 0)),
+            "timer_start_time": float(data.get("timer_start_time", 0.0)),
+            "next_publish_time": float(data.get("next_publish_time", 0.0))
+        }
+    else:
+        default_config = {
+            "delay_minutes": 0,
+            "timer_start_time": 0.0,
+            "next_publish_time": 0.0
+        }
+        doc_ref.set(default_config)
+        print("Firestore üzerinde varsayılan yayına alma zamanlayıcı ayarları oluşturuldu.")
+        return default_config
+
+def update_publish_timer_config(delay_minutes=None, timer_start_time=None, next_publish_time=None):
+    """Firestore'daki yayına alma zamanlayıcı ayarlarını günceller."""
+    db = init_firebase()
+    doc_ref = db.collection("system_config").document("publish_timer")
+    
+    update_data = {}
+    if delay_minutes is not None:
+        update_data["delay_minutes"] = int(delay_minutes)
+    if timer_start_time is not None:
+        update_data["timer_start_time"] = float(timer_start_time)
+    if next_publish_time is not None:
+        update_data["next_publish_time"] = float(next_publish_time)
+        
+    if update_data:
+        doc_ref.set(update_data, merge=True)
+        print(f"Firestore yayına alma zamanlayıcı ayarları güncellendi: {update_data}")
+
 def get_rss_sources():
     """Firestore'dan RSS kaynaklarını çeker. Boşsa yerel config.json'dan göç (migration) yapar."""
     db = init_firebase()

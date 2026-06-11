@@ -254,6 +254,25 @@ def process_publish_queue():
     print("Checking publish queue for approved drafts...")
     try:
         import firebase_helper
+        import sys
+        
+        # Yayın zamanlayıcı kontrolü
+        try:
+            timer_conf = firebase_helper.get_publish_timer_config()
+            delay_val = timer_conf.get("delay_minutes", 0)
+            timer_start_val = timer_conf.get("timer_start_time", 0.0)
+            next_publish_val = timer_conf.get("next_publish_time", 0.0)
+            
+            force_run = "--force" in sys.argv
+            
+            if delay_val > 0 and timer_start_val > 0.0 and not force_run:
+                now = time.time()
+                if now < next_publish_val:
+                    remaining_min = int((next_publish_val - now) / 60.0)
+                    print(f"Yayın zamanlayıcı aktif ve henüz süresi dolmadı. Kalan: {remaining_min} dakika. Yayın sırası atlanıyor.")
+                    return
+        except Exception as timer_err:
+            print(f"Yayın zamanlayıcı kontrolü sırasında hata: {timer_err}")
         from ai_writer import enrich_news_with_comment_in_writer
         from telegram_notifier import edit_message_text, send_message
         import json

@@ -221,6 +221,44 @@ def update_research_config(interval_hours=None, last_run_time=None, is_running=N
     if update_data:
         doc_ref.set(update_data, merge=True)
 
+def get_publish_timer_config():
+    """Gets publish timer config from Firestore."""
+    db = init_firebase()
+    doc_ref = db.collection("system_config").document("publish_timer")
+    doc = doc_ref.get()
+    
+    if doc.exists:
+        data = doc.to_dict()
+        return {
+            "delay_minutes": int(data.get("delay_minutes", 0)),
+            "timer_start_time": float(data.get("timer_start_time", 0.0)),
+            "next_publish_time": float(data.get("next_publish_time", 0.0))
+        }
+    else:
+        default_config = {
+            "delay_minutes": 0,
+            "timer_start_time": 0.0,
+            "next_publish_time": 0.0
+        }
+        doc_ref.set(default_config)
+        return default_config
+
+def update_publish_timer_config(delay_minutes=None, timer_start_time=None, next_publish_time=None):
+    """Updates publish timer config in Firestore."""
+    db = init_firebase()
+    doc_ref = db.collection("system_config").document("publish_timer")
+    
+    update_data = {}
+    if delay_minutes is not None:
+        update_data["delay_minutes"] = int(delay_minutes)
+    if timer_start_time is not None:
+        update_data["timer_start_time"] = float(timer_start_time)
+    if next_publish_time is not None:
+        update_data["next_publish_time"] = float(next_publish_time)
+        
+    if update_data:
+        doc_ref.set(update_data, merge=True)
+
 def get_rss_sources():
     """Fetches RSS sources from Firestore."""
     db = init_firebase()
@@ -932,14 +970,17 @@ def send_professional_help_dashboard(message_id=None):
         ],
         [
             {"text": "⏱️ Tarama Sıklığı", "callback_data": "menu:sure"},
-            {"text": "🟢🔴 Otonom Aç/Kapa", "callback_data": "menu:otonom"}
+            {"text": "⏳ Yayına Alma Süresi", "callback_data": "menu:yayinsuresi"}
         ],
         [
-            {"text": "📋 RSS Kaynakları", "callback_data": "menu:rss"},
-            {"text": "🗑️ Haber Sil (İnteraktif)", "callback_data": "menu:sil"}
+            {"text": "🟢🔴 Otonom Aç/Kapa", "callback_data": "menu:otonom"},
+            {"text": "📋 RSS Kaynakları", "callback_data": "menu:rss"}
         ],
         [
-            {"text": "🔍 Benzer Haber Ara", "callback_data": "menu:benzer"},
+            {"text": "🗑️ Haber Sil (İnteraktif)", "callback_data": "menu:sil"},
+            {"text": "🔍 Benzer Haber Ara", "callback_data": "menu:benzer"}
+        ],
+        [
             {"text": "🧠 Otonom Araştırma", "callback_data": "menu:otoarastirma"}
         ]
     ]
@@ -1287,6 +1328,130 @@ def handle_frequency_setting(callback_query, minutes):
         edit_message_text(success_text, message_id, reply_markup={"inline_keyboard": keyboard})
     except Exception as e:
         send_error("Ayar Güncelleme Hatası", f"Hata: {e}")
+
+def send_publish_timer_menu(callback_query=None):
+    db = init_firebase()
+    config = get_publish_timer_config()
+    delay = config["delay_minutes"]
+    
+    current_status = f"⏳ {delay} Dakika Gecikmeli" if delay > 0 else "⚡ Hemen Yayınla (Gecikmesiz)"
+    
+    text = (
+        "⏳ <b>Yayına Alma Süresi Ayarı</b>\n\n"
+        f"🎯 <b>Mevcut Ayar:</b> <code>{current_status}</code>\n\n"
+        "Görüş yazıp onayladığınız haberlerin ne kadar süre bekletildikten sonra toplu olarak yayına alınacağını seçin:\n"
+        "💡 <i>(İlk haber onaylandığında geri sayım başlar ve süre sonunda onaylı tüm haberler birlikte yayına verilir)</i>"
+    )
+    
+    keyboard = [
+        [
+            {"text": "⚡ Hemen Yayınla", "callback_data": "set_yayinsure:0"},
+            {"text": "⏳ 30 Dakika", "callback_data": "set_yayinsure:30"}
+        ],
+        [
+            {"text": "⏳ 60 Dakika (1 Saat)", "callback_data": "set_yayinsure:60"},
+            {"text": "⏳ 120 Dakika (2 Saat)", "callback_data": "set_yayinsure:120"}
+        ],
+        [
+            {"text": "⏳ 180 Dakika (3 Saat)", "callback_data": "set_yayinsure:180"}
+        ],
+        [
+            {"text": "🔙 GERİ DÖN", "callback_data": "menu:yardim"}
+        ]
+    ]
+    
+    reply_markup = {"inline_keyboard": keyboard}
+    if callback_query:
+        message_id = callback_query["message"]["message_id"]
+        callback_id = callback_query["id"]
+        edit_message_text(text, message_id, reply_markup=reply_markup)
+        answer_callback_query(callback_id)
+    else:
+        bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
+        chat_id = os.getenv("TELEGRAM_CHAT_ID")
+        url = f"https://api.telegram.org/bot{bot_token.strip()}/sendMessage"
+        payload = {
+            "chat_id": chat_id.strip(),
+            "text": text,
+            "parse_mode": "HTML",
+            "reply_markup": reply_markup
+        }
+        requests.post(url, json=payload, timeout=10)
+
+def handle_publish_timer_setting(callback_query, minutes):
+    message_id = callback_query["message"]["message_id"]
+    callback_id = callback_query["id"]
+    
+    try:
+        update_publish_timer_config(delay_minutes=minutes)
+        update_publish_timer_config(timer_start_time=0.0, next_publish_time=0.0)
+        
+        status_desc = f"<b>{minutes} dakika gecikmeli</b>" if minutes > 0 else "<b>Hemen Yayınla (Gecikmesiz)</b>"
+        answer_callback_query(callback_id, f"Yayın süresi güncellendi: {minutes} dk")
+        
+        success_text = (
+            "✅ <b>Yayına Alma Süresi Güncellendi!</b>\n\n"
+            f"Haberlerin onaylandıktan sonra toplu yayına alınma süresi başarıyla {status_desc} olarak ayarlandı.\n\n"
+            "Mevcut aktif sayaçlar sıfırlandı ve yeni ayara göre çalışacaktır."
+        )
+        keyboard = [[{"text": "🔙 Ana Menüye Dön", "callback_data": "menu:yardim"}]]
+        edit_message_text(success_text, message_id, reply_markup={"inline_keyboard": keyboard})
+    except Exception as e:
+        send_error("Yayın Süresi Güncelleme Hatası", f"Hata: {e}")
+
+def process_publish_timer_on_approval(category, title, user_comment):
+    config = get_publish_timer_config()
+    delay = config.get("delay_minutes", 0)
+    timer_start = config.get("timer_start_time", 0.0)
+    next_publish = config.get("next_publish_time", 0.0)
+    
+    now = time.time()
+    
+    if delay > 0:
+        if timer_start == 0.0:
+            timer_start = now
+            next_publish = now + (delay * 60.0)
+            update_publish_timer_config(timer_start_time=timer_start, next_publish_time=next_publish)
+            
+            tr_offset = timedelta(hours=3)
+            publish_time_dt = datetime.fromtimestamp(next_publish, tz=timezone(tr_offset))
+            publish_time_str = publish_time_dt.strftime("%H:%M:%S")
+            
+            success_text = (
+                "⏱️ <b>Toplu Yayınlama Geri Sayımı Başladı!</b>\n\n"
+                f"<b>Başlık:</b> {html.escape(title)}\n"
+                f"<b>Kategori:</b> {category.upper()}\n\n"
+                f"<b>Editörün Görüşü:</b> <i>{html.escape(user_comment)}</i>\n\n"
+                f"⏳ Seçtiğiniz <b>{delay} dakikalık</b> bekleme süresi tetiklendi.\n"
+                f"📅 **Yayınlanma Zamanı:** Bugün saat <b>{publish_time_str}</b>\n\n"
+                f"📂 Bu süre dolana kadar onaylayacağınız diğer tüm haberler sırada biriktirilecek ve bu saatte toplu yayınlanacaktır."
+            )
+        else:
+            remaining_sec = max(0.0, next_publish - now)
+            remaining_min = int(remaining_sec / 60.0)
+            
+            tr_offset = timedelta(hours=3)
+            publish_time_dt = datetime.fromtimestamp(next_publish, tz=timezone(tr_offset))
+            publish_time_str = publish_time_dt.strftime("%H:%M:%S")
+            
+            success_text = (
+                "⏳ <b>Haber Onaylandı ve Yayın Sırasına Eklendi!</b>\n\n"
+                f"<b>Başlık:</b> {html.escape(title)}\n"
+                f"<b>Kategori:</b> {category.upper()}\n\n"
+                f"<b>Editörün Görüşü:</b> <i>{html.escape(user_comment)}</i>\n\n"
+                f"⏱️ Toplu yayınlanmasına yaklaşık <b>{remaining_min} dakika</b> kaldı.\n"
+                f"📅 **Yayınlanma Zamanı:** Saat <b>{publish_time_str}</b>"
+            )
+    else:
+        success_text = (
+            "✍️ <b>Görüşünüz Alındı ve Yayın Sırasına Eklendi!</b>\n\n"
+            f"<b>Başlık:</b> {html.escape(title)}\n"
+            f"<b>Kategori:</b> {category.upper()}\n\n"
+            f"<b>Editörün Görüşü:</b> <i>{html.escape(user_comment)}</i>\n\n"
+            "Haber yayın sırasına alındı. Bir sonraki otomatik tarama/derleme çalışmasında (en geç 20-30 dakika içinde) yayına alınacaktır."
+        )
+        
+    return success_text
 
 def handle_otonom_switch(callback_query):
     message_id = callback_query["message"]["message_id"]
@@ -2424,7 +2589,7 @@ Editörün Kişisel Görüşü:
 {user_comment}
 """
 
-    models_to_try = ["gemma-4-31b-it", "gemma-4-26b-a4b-it", "gemma-4-26b-it", "gemini-2.5-flash"]
+    models_to_try = ["gemma-4-31b-it", "gemma-4-26b-a4b-it", "gemma-4-26b-it", "gemini-2.5-flash", "gemini-1.5-flash"]
     last_err = "Bilinmeyen API Hatası"
     
     for key in api_keys:
@@ -2499,6 +2664,11 @@ def handle_callback_query_routing(callback_query):
     elif data.startswith("set_sure:"):
         mins = int(data.split(":", 1)[1])
         handle_frequency_setting(callback_query, mins)
+    elif data == "menu:yayinsuresi":
+        send_publish_timer_menu(callback_query)
+    elif data.startswith("set_yayinsure:"):
+        mins = int(data.split(":", 1)[1])
+        handle_publish_timer_setting(callback_query, mins)
     elif data == "menu:otonom":
         handle_otonom_switch(callback_query)
     elif data.startswith("otonom_toggle:"):
@@ -3242,17 +3412,23 @@ class handler(BaseHTTPRequestHandler):
         if not draft_id_list:
             self.send_response(400)
             self.send_header('Content-type', 'text/html; charset=utf-8')
+            self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
             self.end_headers()
             self.wfile.write("❌ <b>Hata:</b> Geçersiz istek. Lütfen geçerli bir draft_id belirtin.".encode('utf-8'))
             return
             
         draft_id = draft_id_list[0].strip()
         db = init_firebase()
+        print(f"DEBUG: Firestore project is '{db.project}', draft_id is '{draft_id}'")
         doc = db.collection("pending_posts").document(draft_id).get()
+        print(f"DEBUG: Document exists in Firestore: {doc.exists}")
+        if doc.exists:
+            print(f"DEBUG: Document data: status={doc.to_dict().get('status')}, title='{doc.to_dict().get('title', '')[:30]}'")
         
         if not doc.exists:
             self.send_response(404)
             self.send_header('Content-type', 'text/html; charset=utf-8')
+            self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
             self.end_headers()
             self.wfile.write(f"❌ <b>Hata:</b> {draft_id} kimlikli taslak haber bulunamadı veya zaten yayınlandı/silindi.".encode('utf-8'))
             return
@@ -3502,6 +3678,7 @@ class handler(BaseHTTPRequestHandler):
 """
             self.send_response(200)
             self.send_header('Content-type', 'text/html; charset=utf-8')
+            self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
             self.end_headers()
             self.wfile.write(html_page.encode('utf-8'))
             return
@@ -3753,6 +3930,7 @@ class handler(BaseHTTPRequestHandler):
 """
         self.send_response(200)
         self.send_header('Content-type', 'text/html; charset=utf-8')
+        self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
         self.end_headers()
         self.wfile.write(html_page.encode('utf-8'))
 
@@ -3807,13 +3985,7 @@ class handler(BaseHTTPRequestHandler):
                 # 2. Update the original Telegram notification message immediately
                 telegram_message_id = draft_data.get("telegram_message_id")
                 
-                success_text = (
-                    "✍️ <b>Görüşünüz Alındı ve Yayın Sırasına Eklendi!</b>\n\n"
-                    f"<b>Başlık:</b> {html.escape(draft_data['title'])}\n"
-                    f"<b>Kategori:</b> {category.upper()}\n\n"
-                    f"<b>Editörün Görüşü:</b> <i>{html.escape(user_comment)}</i>\n\n"
-                    "Haber yayın sırasına alındı. Bir sonraki otomatik tarama/derleme çalışmasında (en geç 30 dakika içinde) toplu olarak yayına alınacaktır."
-                )
+                success_text = process_publish_timer_on_approval(category, draft_data.get("title", ""), user_comment)
                 
                 if telegram_message_id:
                     try:
@@ -3904,13 +4076,7 @@ class handler(BaseHTTPRequestHandler):
                 })
                 
                 # 2. Update the original Telegram notification message immediately
-                success_text = (
-                    "✍️ <b>Görüşünüz Alındı ve Yayın Sırasına Eklendi!</b>\n\n"
-                    f"<b>Başlık:</b> {html.escape(draft_data['title'])}\n"
-                    f"<b>Kategori:</b> {category.upper()}\n\n"
-                    f"<b>Editörün Görüşü:</b> <i>{html.escape(user_comment)}</i>\n\n"
-                    "Haber yayın sırasına alındı. Bir sonraki otomatik tarama/derleme çalışmasında (en geç 20-30 dakika içinde) toplu olarak yayına alınacaktır."
-                )
+                success_text = process_publish_timer_on_approval(category, draft_data.get("title", ""), user_comment)
                 try:
                     edit_message_text(success_text, reply_msg_id)
                 except Exception as e:

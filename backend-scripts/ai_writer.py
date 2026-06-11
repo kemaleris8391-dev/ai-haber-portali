@@ -652,44 +652,50 @@ def research_topic_with_gemini(user_prompt):
         prompt = prompt.replace("{user_prompt}", user_prompt)
 
     max_retries = len(API_KEYS) if API_KEYS else 3
+    models_to_try = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]
+    err_msg = "Gemini ile araştırma yapılamadı."
+    
     for attempt in range(max_retries):
         client = get_next_client()
-        try:
-            if is_detailed_research:
-                print(f"Gemini ile konu yazılıyor (Detaylı araştırma metni algılandı, Google Search devre dışı)...")
-                response = client.models.generate_content(
-                    model="gemini-2.5-flash",
-                    contents=prompt
-                )
-            else:
-                print(f"Gemini ile konu araştırılıyor (Google Search Grounding aktif)...")
-                response = client.models.generate_content(
-                    model="gemini-2.5-flash",
-                    contents=prompt,
-                    config=types.GenerateContentConfig(
-                        tools=[{"google_search": {}}]
+        for model_name in models_to_try:
+            try:
+                if is_detailed_research:
+                    print(f"Gemini ile konu yazılıyor: Model={model_name} (Detaylı araştırma metni algılandı, Google Search devre dışı)...")
+                    response = client.models.generate_content(
+                        model=model_name,
+                        contents=prompt
                     )
-                )
-            
-            text = response.text
-            if "```json" in text:
-                text = text.split("```json")[1].split("```")[0].strip()
-            elif "```" in text:
-                text = text.split("```")[1].split("```")[0].strip()
+                else:
+                    print(f"Gemini ile konu araştırılıyor: Model={model_name} (Google Search Grounding aktif)...")
+                    response = client.models.generate_content(
+                        model=model_name,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(
+                            tools=[{"google_search": {}}]
+                        )
+                    )
                 
-            data = json.loads(text.strip())
-            return data
-        except Exception as e:
-            err_msg = str(e)
-            print(f"Hata (Gemini Araştırma - Deneme {attempt + 1}/{max_retries}): {err_msg}")
-            
-            # Başarısız olan API anahtarını maskeleyip listeye ekle
-            failed_key = API_KEYS[current_key_idx] if API_KEYS else "GEMINI_API_KEY"
-            masked = mask_key(failed_key)
-            if (masked, err_msg) not in FAILED_KEYS_THIS_RUN:
-                FAILED_KEYS_THIS_RUN.append((masked, err_msg))
+                text = response.text
+                if "```json" in text:
+                    text = text.split("```json")[1].split("```")[0].strip()
+                elif "```" in text:
+                    text = text.split("```")[1].split("```")[0].strip()
+                    
+                data = json.loads(text.strip())
+                return data
+            except Exception as e:
+                err_msg = str(e)
+                print(f"Model {model_name} araştırma hatası: {err_msg}")
+                continue
                 
-            rotate_key()
+        # Eğer bu anahtarda hiçbir model çalışmadıysa anahtar rotasyonu yap
+        print(f"Hata (Anahtar Denemesi {attempt + 1}/{max_retries}): {err_msg}")
+        failed_key = API_KEYS[current_key_idx] if API_KEYS else "GEMINI_API_KEY"
+        masked = mask_key(failed_key)
+        if (masked, err_msg) not in FAILED_KEYS_THIS_RUN:
+            FAILED_KEYS_THIS_RUN.append((masked, err_msg))
+            
+        rotate_key()
     return None
 
 def enrich_news_with_comment_in_writer(draft_data, user_comment, model_name="gemma-4-31b-it"):
@@ -724,7 +730,7 @@ Editörün Kişisel Görüşü:
 
     max_retries = len(API_KEYS) if API_KEYS else 3
     last_error = "Bilinmeyen API Hatası"
-    models_to_try = [model_name, "gemma-4-26b-a4b-it", "gemma-4-26b-it", "gemini-2.5-flash"]
+    models_to_try = [model_name, "gemma-4-26b-a4b-it", "gemma-4-26b-it", "gemini-2.5-flash", "gemini-1.5-flash"]
     
     for attempt in range(max_retries):
         client = get_next_client()

@@ -136,49 +136,55 @@ YAYIN POLİTİKASI VEYA KATEGORİ KURALLARI:
 """
     max_retries = len(ai_writer.API_KEYS) if ai_writer.API_KEYS else 3
     last_error = "Gemini ile fikir üretilemedi."
+    models_to_try = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-1.5-flash"]
 
     for attempt in range(max_retries):
         client = ai_writer.get_next_client()
-        try:
-            print(f"Gemini ile otonom araştırma fikirleri üretiliyor (Deneme {attempt + 1}/{max_retries})...")
-            response = client.models.generate_content(
-                model="gemini-2.5-flash",
-                contents=prompt
-            )
-            
-            text = response.text
-            if "```json" in text:
-                text = text.split("```json")[1].split("```")[0].strip()
-            elif "```" in text:
-                text = text.split("```")[1].split("```")[0].strip()
-            
-            data = json.loads(text.strip())
-            topics = data.get("topics", [])
-            
-            # Kategori ve veri kontrolü
-            valid_topics = []
-            ALLOWED_CATEGORIES = {"plc", "pc", "endustriyel-makinalar", "oyun", "yapay-zeka", "akilli-ev"}
-            for t in topics:
-                title = t.get("title")
-                query = t.get("query")
-                category = t.get("category", "").strip().lower()
+        for model_name in models_to_try:
+            try:
+                print(f"Gemini ile otonom araştırma fikirleri üretiliyor: Model={model_name} (Deneme {attempt + 1}/{max_retries})...")
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=prompt
+                )
                 
-                if category not in ALLOWED_CATEGORIES:
-                    category = "pc"
+                text = response.text
+                if "```json" in text:
+                    text = text.split("```json")[1].split("```")[0].strip()
+                elif "```" in text:
+                    text = text.split("```")[1].split("```")[0].strip()
                 
-                if title and query:
-                    valid_topics.append({
-                        "title": title.strip(),
-                        "query": query.strip(),
-                        "category": category
-                    })
-            
-            print(f"Üretilen otonom araştırma konuları: {valid_topics}")
-            return valid_topics
-        except Exception as e:
-            last_error = str(e)
-            print(f"Hata (Gemini Fikir Üretimi): {last_error}")
-            ai_writer.rotate_key()
+                data = json.loads(text.strip())
+                topics = data.get("topics", [])
+                
+                # Kategori ve veri kontrolü
+                valid_topics = []
+                ALLOWED_CATEGORIES = {"plc", "pc", "endustriyel-makinalar", "oyun", "yapay-zeka", "akilli-ev"}
+                for t in topics:
+                    title = t.get("title")
+                    query = t.get("query")
+                    category = t.get("category", "").strip().lower()
+                    
+                    if category not in ALLOWED_CATEGORIES:
+                        category = "pc"
+                    
+                    if title and query:
+                        valid_topics.append({
+                            "title": title.strip(),
+                            "query": query.strip(),
+                            "category": category
+                        })
+                
+                print(f"Üretilen otonom araştırma konuları: {valid_topics}")
+                return valid_topics
+            except Exception as e:
+                last_error = str(e)
+                print(f"Model {model_name} hatası: {last_error}")
+                continue
+                
+        # Eğer bu anahtarda hiçbir model çalışmadıysa anahtar rotasyonu yap
+        print(f"Hata (Anahtar Denemesi {attempt + 1}/{max_retries}): {last_error}")
+        ai_writer.rotate_key()
             
     print(f"HATA: Otonom araştırma konuları üretilemedi. Detay: {last_error}")
     return []

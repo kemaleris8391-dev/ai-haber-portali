@@ -77,6 +77,44 @@ def update_scheduler_config(interval_minutes=None, last_run_time=None, is_runnin
     if update_data:
         doc_ref.update(update_data)
 
+def get_publish_timer_config():
+    """Gets publish timer config from Firestore."""
+    db = init_firebase()
+    doc_ref = db.collection("system_config").document("publish_timer")
+    doc = doc_ref.get()
+    
+    if doc.exists:
+        data = doc.to_dict()
+        return {
+            "delay_minutes": int(data.get("delay_minutes", 0)),
+            "timer_start_time": float(data.get("timer_start_time", 0.0)),
+            "next_publish_time": float(data.get("next_publish_time", 0.0))
+        }
+    else:
+        default_config = {
+            "delay_minutes": 0,
+            "timer_start_time": 0.0,
+            "next_publish_time": 0.0
+        }
+        doc_ref.set(default_config)
+        return default_config
+
+def update_publish_timer_config(delay_minutes=None, timer_start_time=None, next_publish_time=None):
+    """Updates publish timer config in Firestore."""
+    db = init_firebase()
+    doc_ref = db.collection("system_config").document("publish_timer")
+    
+    update_data = {}
+    if delay_minutes is not None:
+        update_data["delay_minutes"] = int(delay_minutes)
+    if timer_start_time is not None:
+        update_data["timer_start_time"] = float(timer_start_time)
+    if next_publish_time is not None:
+        update_data["next_publish_time"] = float(next_publish_time)
+        
+    if update_data:
+        doc_ref.set(update_data, merge=True)
+
 def send_message(text):
     bot_token = os.getenv("TELEGRAM_BOT_TOKEN")
     chat_id = os.getenv("TELEGRAM_CHAT_ID")
@@ -165,9 +203,36 @@ class handler(BaseHTTPRequestHandler):
         """Processes incoming Vercel Cron GET requests."""
         self.send_response(200)
         self.send_header('Content-type', 'application/json')
+        self.send_header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
         self.end_headers()
         
         try:
+            # 0. Yayınlama Zamanlayıcı (publish_timer) Kontrolü
+            try:
+                timer_conf = get_publish_timer_config()
+                delay_val = timer_conf.get("delay_minutes", 0)
+                timer_start_val = timer_conf.get("timer_start_time", 0.0)
+                next_publish_val = timer_conf.get("next_publish_time", 0.0)
+                
+                now = time.time()
+                
+                if delay_val > 0 and timer_start_val > 0.0 and now >= next_publish_val:
+                    print("Yayın zamanlayıcı süresi doldu! Toplu yayın tetikleniyor...")
+                    update_publish_timer_config(timer_start_time=0.0, next_publish_time=0.0)
+                    
+                    success = trigger_github_workflow()
+                    if success:
+                        update_scheduler_config(last_run_time=now, is_running=False)
+                        send_message(
+                            "⏱️ <b>Toplu Yayınlama Süresi Doldu!</b>\n\n"
+                            f"Seçtiğiniz <b>{delay_val} dakikalık</b> bekleme süresi sona erdi. "
+                            "Görüş yazdığınız tüm haberlerin yayına alınması için bulut derleyicisi tetiklendi."
+                        )
+                        self.wfile.write(json.dumps({"status": "publish_timer_triggered", "delay": delay_val}).encode())
+                        return
+            except Exception as timer_err:
+                print(f"Cron Publish Timer Hatası: {timer_err}")
+
             # 1. Zamanlayıcı ayarlarını oku
             sched_conf = get_scheduler_config()
             is_active_val = sched_conf.get("is_active", True)
