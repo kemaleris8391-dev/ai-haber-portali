@@ -322,5 +322,14 @@
     "editor_comment": "Her ne kadar basit bir işlem gibi görünse de bataryadaki yüksek akım , yangın , can sağlığını riskle atmaktadır. Ancak profesyonel kişiler tarafından hazırlanan bir sistem ile bu tarz atıl durumda olan bataryaların geri dönüşü kullanımı hem çevre hemde ekonomi açısından çok guzle bir haber.",
     "slug": "elektrikli-arac-bataryalarini-ev-tipi-enerji-depolama-sistem",
     "source_url": "https://hackaday.com/2026/06/10/safely-using-old-ev-batteries-in-your-home-solar-setup/"
+  },
+  {
+    "timestamp": "2026-06-11T18:21:14.427306+03:00",
+    "category": "yapay-zeka",
+    "title": "İlaç Keşfinde Yeni Dönem: Kimya İlkelerini Anlayan Yapay Zeka Modelleri",
+    "summary": "Connor Coley, kimya prensiplerini kavrayan yapay zeka modelleriyle yeni ilaç bileşikleri keşfederek ilaç tasarım süreçlerini dijitalleştiriyor.",
+    "editor_comment": "Yapay zekanın bizim sağlığımız için çalışacağını bilmek beni bir yandan mutlu ediyor Bir yandan da düşündürüyor umarım sadece mutlu eder",
+    "slug": "ilac-kesfinde-yeni-donem-kimya-ilkelerini-anlayan-yapay-zeka",
+    "source_url": "https://news.mit.edu/2026/building-ai-models-with-chemical-principles-connor-coley-0520"
   }
 ]
