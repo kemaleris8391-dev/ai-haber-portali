@@ -367,5 +367,50 @@
     "editor_comment": "Otomatik etiket besleme sistemi için kurduğumuz robot kamera olmasına rağmen hata verip tehlikeli ve saçma hareketler yapabiliyor. Sonuçta bir makina onun kodunu yazan kadar zeki olabiliyor. Yapay zekanın devreye girmesi ile iyi eğitilmiş bir modelin bu tarz riskli ve hatalı işlerden kacinacagina inaniyorum.",
     "slug": "festo-gripperai-karmasik-urun-yonetiminde-yapay-zeka-devrimi",
     "source_url": "https://control.com/news/festo-gripperai-automates-mixed-product-robot-handling/"
+  },
+  {
+    "timestamp": "2026-06-12T00:01:42.600234+03:00",
+    "category": "plc",
+    "title": "Sanyo Denki, Endüstriyel Otomasyon İçin Yeni Yüksek Torklu Kompakt Step Motorlarını Tanıttı",
+    "summary": "Sanyo Denki'nin yeni Sanmotion F serisi 5 fazlı step motorları, endüstriyel otomasyonda yüksek tork yoğunluğu, hassasiyet ve hareket stabilitesi sunuyor.",
+    "editor_comment": "Step motorların en büyük handikapı olan yüksek tork için atilmis güzel bir adım. Servo gereken yerlerde bu tarz step motorlar kullanarak maliyet düşürülebilir.",
+    "slug": "sanyo-denki-endustriyel-otomasyon-icin-yeni-yuksek-torklu-ko",
+    "source_url": "https://control.com/news/sanyo-denki-unveils-compact-high-torque-stepper/"
+  },
+  {
+    "timestamp": "2026-06-12T00:02:21.919527+03:00",
+    "category": "plc",
+    "title": "Konveyör Sistemlerinde Verimlilik Artıyor: Pepperl+Fuchs'tan Yeni G20 Ethernet Motor Kontrol Modülü",
+    "summary": "Pepperl+Fuchs'un yeni G20 Ethernet modülü, tek bir IP adresi üzerinden 120 motor silindirini kontrol ederek konveyör sistemlerinde otomasyonu optimize ediyor.",
+    "editor_comment": "Tek bir IP ile 120 farklı hareketi kontrol etmek muazzam bir mühendislik, ancak iletişim komşu anında tam bir kaosa sebep vermemesi için önlem alındığını düşünmek istiyorum.",
+    "slug": "konveyor-sistemlerinde-verimlilik-artiyor-pepperlfuchstan-ye",
+    "source_url": "https://control.com/news/pepperlfuchs-rolls-out-ethernet-motor-control-module-for-conveyors/"
+  },
+  {
+    "timestamp": "2026-06-12T00:03:00.076914+03:00",
+    "category": "yapay-zeka",
+    "title": "Yapay Zeka Artık Herkes İçin: MIT'den Devrim Niteliğinde 'Universal AI' Programı",
+    "summary": "MIT Open Learning, yapay zeka okuryazarlığını artırmak için kişiselleştirilmiş ve ücretsiz eğitimler sunan 'Universal AI' programını başlattı.",
+    "editor_comment": "Yapay zeka bizim yıllarca biriktirdiğimiz verileri öğrendi şimdi öğretme sırası onlarda. Gelecek değişik bir yere doğru gidiyor.",
+    "slug": "yapay-zeka-artik-herkes-icin-mitden-devrim-niteliginde-unive",
+    "source_url": "https://news.mit.edu/2026/universal-ai-pathway-to-ai-fluency-accessible-to-anyone-0512"
+  },
+  {
+    "timestamp": "2026-06-12T00:03:39.155638+03:00",
+    "category": "pc",
+    "title": "Radyo Frekans Devrelerinde Hassas Bobin Yapımı ve Mekanik Kararlılık",
+    "summary": "RF devrelerinde kullanılan indüktörlerin mekanik stabilitesinin önemi ve frekans kararlılığı üzerindeki etkilerini inceleyen teknik bir analiz.",
+    "editor_comment": "Teknik verilerin bir yere kadar işe yaradığını, el işçiliğinin değerli ve önemli olduğu bir konu. Hiçbir şey dışarıdan göründüğü gibi kolay olmuyor.",
+    "slug": "radyo-frekans-devrelerinde-hassas-bobin-yapimi-ve-mekanik-ka",
+    "source_url": "https://hackaday.com/2026/06/11/mechanical-stability-for-your-coils/"
+  },
+  {
+    "timestamp": "2026-06-12T00:04:47.067110+03:00",
+    "category": "plc",
+    "title": "Endüstriyel Otomasyonda Uç Bilişimin Yükselişi: PLC'ler ve Gerçek Zamanlı Veri İşleme",
+    "summary": "Endüstriyel Edge Computing ve PLC entegrasyonunun gerçek zamanlı veri işleme yeteneklerini nasıl artırdığını ve otomasyonda yeni bir çağ açtığını keşfedin.",
+    "editor_comment": "Bulut sunucudan gelen verilere göre bilgi edinip müdahale etmek yerine doğrudan sistemin kalbinden anlık olarak haber almak ve anında müdahale etmek gerçekten arıza müdahale süresini , önceden parça hazırlama stresini ortadan kaldırılacaktır.",
+    "slug": "endustriyel-otomasyonda-uc-bilisimin-yukselisi-plcler-ve-ger",
+    "source_url": "https://aihaberler.web.app"
   }
 ]
