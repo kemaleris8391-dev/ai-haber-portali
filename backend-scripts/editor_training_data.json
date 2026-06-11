@@ -178,5 +178,77 @@
     "editor_comment": "Nesnelerin interneti kulağa bilimkurgu  filmlerden fırlamış bir düşünce gibi gelsede artık günümüzde yavaş yavaş bu sisteme geçiş başladı. Bundan birkaç yıl sonra standart hale gelebilecek bir teknoloji. Veri güvenliğini ustvduzey arttıran bu sistemlere daha çok ihtiyacımız olacak.",
     "slug": "endustriyel-aglarda-yeni-donem-opc-ua-fx-ve-tsn-ile-gercek-z",
     "source_url": "https://aihaberler.web.app"
+  },
+  {
+    "timestamp": "2026-06-11T15:11:20.989236+03:00",
+    "category": "yapay-zeka",
+    "title": "Küçük Model, Büyük Başarı: MIT Yapay Zekayı 'Amiral Battı' ile Eğitti",
+    "summary": "MIT araştırmacıları, 'Amiral Battı' oyunuyla küçük AI modellerinin dev rakiplerini %1 maliyetle geride bırakabildiğini kanıtladı.",
+    "editor_comment": "Bu enteresan bir haber , zira daha büyük ve akıllı modellerin daha önde olması gerekmiyor mu. Demek ki veri seti büyüklüğünden ziyade kalitesi de önemli. Ayrıca set büyüdüğü zaman odak aslında kayıp mı oluyor. Bu bilgi bazı şeyleri yeniden sorgulamamız gerektirdgini düşündürüyor .",
+    "slug": "kucuk-model-buyuk-basari-mit-yapay-zekayi-amiral-batti-ile-e",
+    "source_url": "https://news.mit.edu/2026/teaching-ai-agents-ask-better-questions-playing-battleship-0603"
+  },
+  {
+    "timestamp": "2026-06-11T15:12:08.423113+03:00",
+    "category": "akilli-ev",
+    "title": "Amazon’dan Akıllı Evlerde Dev Ekran Dönemi: Yeni Echo Show 21 ve Echo Show 15 Tanıtıldı",
+    "summary": "Amazon, en büyük akıllı ekranı Echo Show 21 ve yenilenen Echo Show 15'i tanıttı. Matter desteği, Wi-Fi 6E ve gelişmiş ses özelliklerini keşfedin.",
+    "editor_comment": "Ekranlar büyüdükçe yetenekleri de artacaktır umarım yoksa sadece odada yer kaplayan elektronik bir donanımdan başka bir işe yarayacaklarını sanmıyorum",
+    "slug": "amazondan-akilli-evlerde-dev-ekran-donemi-yeni-echo-show-21",
+    "source_url": "https://www.techhive.com/article/2527165/amazon-just-revealed-its-biggest-echo-show-smart-display-yet.html"
+  },
+  {
+    "timestamp": "2026-06-11T15:12:49.259448+03:00",
+    "category": "plc",
+    "title": "Endüstriyel Güvenlikte Hassasiyet: SICK deTec4 Işık Bariyeri Kurulumu ve Konfigürasyonu",
+    "summary": "SICK deTec4 ışık bariyerleri ve DCM4 modülü ile endüstriyel güvenlik sistemlerinin kurulumu, hizalanması ve gelişmiş parametre konfigürasyonlarını keşfedin.",
+    "editor_comment": "Şahsen kullanmış olduğumuz bu ışık bariyerleri ile ilgili en önemli problem hizalama problemleri bazen mesafeler uzadıkça bu hizalama sıkıntı olmaya başlıyor ve makine titreşimlerinden bile etkilenebiliyor eğer bu tarz sorunları üzerinden görsel olarak hızlı bir şekilde çözebilecek bir sistem geliştirilirse ki yapılmış gibi duruyor çok daha iyi olacaktır",
+    "slug": "endustriyel-guvenlikte-hassasiyet-sick-detec4-isik-bariyeri",
+    "source_url": "https://control.com/technical-articles/tutorial-how-to-set-up-a-light-curtain/"
+  },
+  {
+    "timestamp": "2026-06-11T15:13:22.424427+03:00",
+    "category": "pc",
+    "title": "Yapay Zekada Doğa İlhamı: Çince-İngilizce Çevirilerde Osprey Algoritması",
+    "summary": "Balıkçıl kuşu avlanma davranışları ve kuantum hesaplama ile geliştirilen yeni algoritma, Çince-İngilizce teknik çevirilerde yüksek doğruluk sağlıyor.",
+    "editor_comment": "İnsanoğlunun doğadan öğreneceği çok şey var kuantum emrini zaten ayrı bir alem o konuda şimdi hiç girmeye gerek yok ancak doğa bakalım daha ne tarz mucizelerle dolu",
+    "slug": "yapay-zekada-doga-ilhami-cince-ingilizce-cevirilerde-osprey",
+    "source_url": "https://techxplore.com/news/2026-06-osprey-algorithm-chinese-english-accuracy.html"
+  },
+  {
+    "timestamp": "2026-06-11T15:14:22.139012+03:00",
+    "category": "oyun",
+    "title": "Efsane Geri Dönüyor: The Legend of Zelda: Ocarina of Time Remake Oyun Dünyasını Salladı",
+    "summary": "Nintendo Direct ile duyurulan The Legend of Zelda: Ocarina of Time Remake, oyun dünyasında büyük yankı uyandırdı. Teknik detaylar ve analizler burada.",
+    "editor_comment": "Her ne kadar benim tarzım olmasa da oynayanlar için güzel bir yemek olacağını ümit ediyorum.",
+    "slug": "efsane-geri-donuyor-the-legend-of-zelda-ocarina-of-time-rema",
+    "source_url": "https://www.ign.com/articles/the-internet-reacts-to-the-legend-of-zelda-ocarina-of-time-remake"
+  },
+  {
+    "timestamp": "2026-06-11T15:14:59.543912+03:00",
+    "category": "yapay-zeka",
+    "title": "Ferveret: Yapay Zeka Veri Merkezleri İçin Nükleer İlhamlı Sürdürülebilir Soğutma Sistemi",
+    "summary": "MIT araştırmacıları tarafından kurulan Ferveret, nükleer teknolojiden ilham alan soğutma sistemiyle AI veri merkezlerinde enerji ve su tüketimini düşürüyor.",
+    "editor_comment": "İlerleyen teknoloji ile AI sistemlerde güç tüketimi düşecek ve bu tarz ekstra soğutma için güç harcamaya gerek kalmayacağını düşünüyorum.",
+    "slug": "ferveret-yapay-zeka-veri-merkezleri-icin-nukleer-ilhamli-sur",
+    "source_url": "https://news.mit.edu/2026/nuclear-inspired-cooling-system-ferveret-could-make-data-centers-more-sustainable-0610"
+  },
+  {
+    "timestamp": "2026-06-11T15:15:27.521014+03:00",
+    "category": "yapay-zeka",
+    "title": "Yapay Zekanın Fizik Keşiflerindeki Gücü Artıyor: MIT Liderliğindeki IAIFI’ye Yeni Destek",
+    "summary": "MIT liderliğindeki IAIFI, NSF'den aldığı yeni destekle yapay zeka ve temel fizik araştırmalarında ikinci fazına geçerek bilimsel keşifleri hızlandırmayı hedefliyor.",
+    "editor_comment": "Yapay zekayı dış ortama bağlamayı öğrendikçe bu tarz haberlerin daha da artacağına inanıyorum.",
+    "slug": "yapay-zekanin-fizik-kesiflerindeki-gucu-artiyor-mit-liderlig",
+    "source_url": "https://news.mit.edu/2026/nsf-renews-support-mit-led-ai-and-physics-institute-0604"
+  },
+  {
+    "timestamp": "2026-06-11T15:16:10.601779+03:00",
+    "category": "plc",
+    "title": "Endüstriyel Elektrik Motorlarında Maksimum Verim: Modern Bakım ve Sağlık Stratejileri",
+    "summary": "Endüstriyel elektrik motorlarının ömrünü uzatmak ve verimliliği artırmak için uygulanması gereken modern bakım yöntemleri ve teknik stratejiler.",
+    "editor_comment": "Benim şahsen yaşadığım tecrübelere istinaden şunu söyleyebilirim ki bir motoru bir yere bağlamadan önce bu motorun maksimum ne kadar güçlü çalışacağını hesaplayın ve çalışması gereken gücün her zaman bir kademe üzerinde motor seçin ayrıca çalıştığı ortamda tabii ki çok önemli ısı ve titreşimi kontrol altında tutmanız gerekir sırasıyla değecek olursak motorun gücü motorun çalıştığı ortam ve sıcaklık Bu üçü motorların ömrünü uzatmada gerçekten çok önemli oluyor",
+    "slug": "endustriyel-elektrik-motorlarinda-maksimum-verim-modern-baki",
+    "source_url": "https://control.com/technical-articles/industrial-motor-health-tips-and-iiot-solutions/"
   }
 ]
