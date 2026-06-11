@@ -5,7 +5,7 @@ import re
 import difflib
 import concurrent.futures
 import html
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from http.server import BaseHTTPRequestHandler
 import requests
 import feedparser
