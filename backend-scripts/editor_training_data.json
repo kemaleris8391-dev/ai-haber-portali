@@ -412,5 +412,50 @@
     "editor_comment": "Bulut sunucudan gelen verilere göre bilgi edinip müdahale etmek yerine doğrudan sistemin kalbinden anlık olarak haber almak ve anında müdahale etmek gerçekten arıza müdahale süresini , önceden parça hazırlama stresini ortadan kaldırılacaktır.",
     "slug": "endustriyel-otomasyonda-uc-bilisimin-yukselisi-plcler-ve-ger",
     "source_url": "https://aihaberler.web.app"
+  },
+  {
+    "timestamp": "2026-06-13T04:41:26.740673+03:00",
+    "category": "pc",
+    "title": "3D Baskılara Ağırlık Katmanın Pratik Yolu: Alçı Tekniği ile Daha Stabil Modeller",
+    "summary": "3D yazıcı ile üretilen modellerin ağırlığını artırmak için Joe Fedewa'nın önerdiği temiz ve etkili alçı (Plaster of Paris) tekniğini keşfedin.",
+    "editor_comment": "3d yazıcılarda uretilenler artık bir süs eşyası değil gerçek anlamda bir işlev gören materyal haline geliyor",
+    "slug": "3d-baskilara-agirlik-katmanin-pratik-yolu-alci-teknigi-ile-d",
+    "source_url": "https://hackaday.com/2026/06/12/adding-weight-to-a-3d-print-with-plaster-of-paris-cleanly/"
+  },
+  {
+    "timestamp": "2026-06-13T04:42:14.188716+03:00",
+    "category": "pc",
+    "title": "Dijital Dünyanın Köprüsü: Analog-Dijital Dönüştürücülerin (ADC) Kritik Rolü",
+    "summary": "Analog-Dijital Dönüştürücüler (ADC) nedir? Fiziksel dünyadaki analog verilerin dijital sistemlere nasıl aktarıldığını ve teknik önemini keşfedin.",
+    "editor_comment": "Yüksek hızlı ADC dönüştürücü özellikle senkron çalışması gereken sistemlerin hata vermeden çalışmasına yardımcı olması açısından mükemmel bir çözüm olacaklardır",
+    "slug": "dijital-dunyanin-koprusu-analog-dijital-donusturuculerin-adc",
+    "source_url": "https://hackaday.com/2026/06/11/so-many-analog-to-digital-converters/"
+  },
+  {
+    "timestamp": "2026-06-13T04:43:06.667470+03:00",
+    "category": "endustriyel-makinalar",
+    "title": "Pnömatik Sistemlerde Görünmez Arızaları Önlemek: Akıllı Sensörlerle Yapay Zeka Destekli Tahminsel Bakım",
+    "summary": "Yapay zeka, uç bilişim ve sensörler ile endüstriyel pnömatik sistemlerde kestirimci bakımın nasıl dönüştüğünü, verimliliği ve güvenliği artırdığını keşfedin.",
+    "editor_comment": "Pnömatik bir sistemin arızasını çözmek çoğu teknisyen açısından zorlayıcı bir durum olmuştur. Problemin valften mı yoksa hava hattı veya sensorlerden mı kaynaklandığını anlamak için hatanın takibi ve izlemek gerekebilir. Bu sistem sayesinde bu tarz gecikme ve iş kaybinin azalacağını düşünüyorum.",
+    "slug": "pnomatik-sistemlerde-gorunmez-arizalari-onlemek-akilli-senso",
+    "source_url": "https://aihaberler.web.app"
+  },
+  {
+    "timestamp": "2026-06-13T04:43:44.591746+03:00",
+    "category": "yapay-zeka",
+    "title": "Yapay Zeka Güç Tüketimini Saniyeler İçinde Hesaplayan Yeni 'EnergAIzer' Yöntemi Tanıtıldı",
+    "summary": "Yeni geliştirilen EnergAIzer yöntemi, yapay zeka modellerinin güç tüketimini saniyeler içinde tahmin ederek veri merkezlerinde enerji verimliliği sağlıyor.",
+    "editor_comment": "Yapay zekanın harcadığı gücü ölçmek için yapay zeka güç harcaması yapacak.",
+    "slug": "yapay-zeka-guc-tuketimini-saniyeler-icinde-hesaplayan-yeni-e",
+    "source_url": "https://news.mit.edu/2026/faster-way-to-estimate-ai-power-consumption-0427"
+  },
+  {
+    "timestamp": "2026-06-13T04:44:42.737035+03:00",
+    "category": "pc",
+    "title": "Retro Oyun Dünyasına Dönüş: 3dfx Voodoo 2 GPU'lar SLI ile Yeniden Canlanıyor",
+    "summary": "Retro oyun tutkunlarını heyecanlandıran gelişme: İki adet 3dfx Voodoo 2 GPU, profesyonel onarımlar sonrası SLI kurulumu ile yeniden hayat buluyor.",
+    "editor_comment": "Software moddan Hardware moda geçişte ilk ekran kartım 16 MB 3ddx voodo banshee olmuştu. Gözlerime inanmamıştım. Güzel bir çalışma olmuş.",
+    "slug": "retro-oyun-dunyasina-donus-3dfx-voodoo-2-gpular-sli-ile-yeni",
+    "source_url": "https://hackaday.com/2026/06/11/repairing-a-pair-of-voodoo-2-gpus-for-some-sli-action/"
   }
 ]
