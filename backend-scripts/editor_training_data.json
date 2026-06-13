@@ -583,5 +583,41 @@
     "editor_comment": "İnsanlar açısından yüksek tehlike arz eden fırınlarda yapay zekanın görevi üstlenip bu sorumluluğu insanlardan alması harika bir haber",
     "slug": "deniz-altinda-yeni-donem-insan-ve-otonom-araclar-arasinda-ya",
     "source_url": "https://news.mit.edu/2026/human-machine-teaming-dives-underwater-0414"
+  },
+  {
+    "timestamp": "2026-06-13T23:41:24.421155+03:00",
+    "category": "yapay-zeka",
+    "title": "Yapay Zeka Modellerinde Yeni Dönem: Eğitim Sürecinde Optimizasyon ile Maksimum Verimlilik",
+    "summary": "Yapay zeka modellerini eğitim sırasında optimize eden yeni teknik, performans kaybı olmadan hesaplama maliyetlerini düşürerek daha hızlı modeller sunuyor.",
+    "editor_comment": "Bu harika bir haber. Bir eğitimin bitmesini beklemeden alınan sonuçlara göre eğitim sırasında ince ayar yapmak hem zaman hem maliyet açısından güzel bir ilerleme sağlayacaktır",
+    "slug": "yapay-zeka-modellerinde-yeni-donem-egitim-surecinde-optimiza",
+    "source_url": "https://news.mit.edu/2026/new-technique-makes-ai-models-leaner-faster-while-still-learning-0409"
+  },
+  {
+    "timestamp": "2026-06-13T23:42:12.060283+03:00",
+    "category": "pc",
+    "title": "Siber Güvenlikte Yeni Dönem: PhishLumos Oltalama Altyapılarını Deşifre Ediyor",
+    "summary": "Tokyo Metropolitan Üniversitesi tarafından geliştirilen PhishLumos, oltalama altyapılarını analiz ederek 190 bin zararlı URL'yi uzmanlardan daha hızlı tespit etti.",
+    "editor_comment": "Yapay zekanın faydalı alanlarda kullanıldığını görmek beni mutlu ediyor. Konularında uzman İnsanların günlerce sürecek işlerini bir çırpıda hallediyor. Hemde daha doğruluk payı ile.",
+    "slug": "siber-guvenlikte-yeni-donem-phishlumos-oltalama-altyapilarin",
+    "source_url": "https://techxplore.com/news/2026-06-phishlumos-phishing-infrastructure-urls-months.html"
+  },
+  {
+    "timestamp": "2026-06-13T23:42:52.557017+03:00",
+    "category": "pc",
+    "title": "Çinko-Hava Bataryalarda Verimlilik Sıçraması: Oksijen İndirgeme Reaksiyonu Hızlanıyor",
+    "summary": "Çinko-hava bataryaların enerji verimliliğini artıran yeni bir strateji geliştirildi. Oksijen indirgeme reaksiyonu (ORR) hızlanarak performans artırılıyor.",
+    "editor_comment": "Tek fark ile yıllarca kullanabileceğimiz elektronik cihazların batarya sistemlerine ne zaman ulaşacağız acaba. Tabiki güvenlik herşeyden önce gelir.",
+    "slug": "cinko-hava-bataryalarda-verimlilik-sicramasi-oksijen-indirge",
+    "source_url": "https://techxplore.com/news/2026-06-strategy-oxygen-reduction-zinc-air.html"
+  },
+  {
+    "timestamp": "2026-06-13T23:43:32.027760+03:00",
+    "category": "plc",
+    "title": "Weidmuller'dan Endüstriyel Etiketleme Çözümü: PrintJet MINI Tanıtıldı",
+    "summary": "Weidmuller, pano imalatı ve endüstriyel etiketleme için tasarlanan kompakt ve taşınabilir UV mürekkepli yazıcı PrintJet MINI'yi piyasaya sürdü.",
+    "editor_comment": "Pano imalatında etiketleme çok önemlidir. Hatta o kadar önemli ki çalışmasından bile daha değerli olabilir. Bunu en iyi arıza sırasında devre takibi yapan teknisyenler bilir. Projesi olmayan etiketi olmayan bir panoda devre takibi yapmak samanyolu galaksisinde dünyanın yerini bulmak kadar zordur.",
+    "slug": "weidmullerdan-endustriyel-etiketleme-cozumu-printjet-mini-ta",
+    "source_url": "https://control.com/news/weidmuller-releases-a-compact-and-portable-industrial-printer/"
   }
 ]
