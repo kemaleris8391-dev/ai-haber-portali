@@ -556,5 +556,32 @@
     "editor_comment": "Herşeyi bildiğini sanan modellerden bilmediğini bilen akıllı modellere doğru giden çok önemli bir yol olduğunu düşünüyorum",
     "slug": "yapay-zeka-modellerinde-yeni-donem-emin-degilim-diyebilen-da",
     "source_url": "https://news.mit.edu/2026/teaching-ai-models-to-say-im-not-sure-0422"
+  },
+  {
+    "timestamp": "2026-06-13T18:21:29.013039+03:00",
+    "category": "pc",
+    "title": "Eski Bilgisayarlara Hayat Veren Hafif İşletim Sistemi: GentleOS",
+    "summary": "Eski bilgisayarları canlandıran minimalist işletim sistemi GentleOS, düşük kaynak tüketimiyle eski donanımlarda yüksek performans ve akıcılık sağlıyor.",
+    "editor_comment": "Uygulama desteği sorunu olmuyorsa şahsen bende denemek isterim. Donanım uyumsuzluğu olmuyor, kasma, kitlenme olmuyorsa gerçekten kullanmaya değer. Bunu deneyimlemek isterim.",
+    "slug": "eski-bilgisayarlara-hayat-veren-hafif-isletim-sistemi-gentle",
+    "source_url": "https://hackaday.com/2026/06/13/gentleos-a-simple-os-for-your-old-pc/"
+  },
+  {
+    "timestamp": "2026-06-13T18:22:11.115504+03:00",
+    "category": "pc",
+    "title": "E-ink Ekranlarda Devrim: 60 Hz Yenileme Hızına Sahip Monitör",
+    "summary": "E-ink ekranların en büyük sorunu olan düşük yenileme hızı tarih mi oluyor? 60 Hz yenileme hızına ulaşan yeni E-ink monitör teknolojisini keşfedin.",
+    "editor_comment": "Günümüz teknolojisinde artık 60 Hz in çoktan standart olması gerekiyordu. Bence geç kalınmış bir standart olmuş.",
+    "slug": "e-ink-ekranlarda-devrim-60-hz-yenileme-hizina-sahip-monitor",
+    "source_url": "https://hackaday.com/2026/06/13/behold-a-60-hz-refresh-rate-e-ink-monitor/"
+  },
+  {
+    "timestamp": "2026-06-13T18:23:06.171650+03:00",
+    "category": "yapay-zeka",
+    "title": "Deniz Altında Yeni Dönem: İnsan ve Otonom Araçlar Arasında Yapay Zeka İş Birliği",
+    "summary": "Araştırmacılar, su altı görevlerinde dalgıçlar ve otonom araçlar arasındaki iş birliğini optimize eden yeni yapay zeka algoritmaları ve donanımlar geliştiriyor.",
+    "editor_comment": "İnsanlar açısından yüksek tehlike arz eden fırınlarda yapay zekanın görevi üstlenip bu sorumluluğu insanlardan alması harika bir haber",
+    "slug": "deniz-altinda-yeni-donem-insan-ve-otonom-araclar-arasinda-ya",
+    "source_url": "https://news.mit.edu/2026/human-machine-teaming-dives-underwater-0414"
   }
 ]
