@@ -529,5 +529,32 @@
     "editor_comment": "Bunda sasirilacak birşey yok sonuçta onlar sadece makine. Bir insanın duygu ve düşünceleri var. Ve her zaman mantiklari ile kararlar vermezler.",
     "slug": "yapay-zeka-kaosu-ongorebiliyor-ancak-sosyal-sinyalleri-okuma",
     "source_url": "https://techxplore.com/news/2026-06-robots-chaos-human.html"
+  },
+  {
+    "timestamp": "2026-06-13T08:51:47.403488+03:00",
+    "category": "plc",
+    "title": "Endüstriyel Kontrolde Yeni Sınır: PLC'lerde Yapay Zeka Destekli Gerçek Zamanlı Kalite Kontrolün Yükselişi",
+    "summary": "Endüstriyel PLC'lerde yapay zeka çıkarımı, gerçek zamanlı kalite kontrolüyle üretim süreçlerinde verimliliği ve hata tespitini artırıyor, maliyetleri azaltıyor.",
+    "editor_comment": "Doğrudan işlenen veriler ile anında hatalı ürünün saptanması hem müşteri şikayetlerini bitirmek hemde hatalı ürün için ekstra enerji hacanmasini ortadan kaldıracaktır.",
+    "slug": "endustriyel-kontrolde-yeni-sinir-plclerde-yapay-zeka-destekl",
+    "source_url": "https://aihaberler.web.app"
+  },
+  {
+    "timestamp": "2026-06-13T08:52:18.338883+03:00",
+    "category": "oyun",
+    "title": "Capcom, Resident Evil Veronica'nın Hikayesini Serinin Zaman Çizelgesine Uygun Şekilde Güncelliyor",
+    "summary": "Capcom, Resident Evil Veronica'nın hikayesini serinin genel zaman çizelgesine uyumlu hale getirmek ve kronolojik netliği sağlamak için yeniden düzenliyor.",
+    "editor_comment": "Capcim bu işinde altından hakkıyla kalkacaktır. Bu güne kadar oynadığım tüm oyunlarını beğendiğim bir şirket. Yine harika işlere imza atacaktır.",
+    "slug": "capcom-resident-evil-veronicanin-hikayesini-serinin-zaman-ci",
+    "source_url": "https://www.ign.com/articles/resident-evil-veronica-producer-says-capcom-will-adjust-the-story-to-fit-series-timeline"
+  },
+  {
+    "timestamp": "2026-06-13T08:52:51.137890+03:00",
+    "category": "yapay-zeka",
+    "title": "Yapay Zeka Modellerinde Yeni Dönem: 'Emin Değilim' Diyebilen Daha Güvenilir Sistemler",
+    "summary": "Yapay zeka modellerinin halüsinasyon sorununu çözen ve sistemlerin belirsizlik durumunda 'emin değilim' demesini sağlayan yeni eğitim yöntemi tanıtıldı.",
+    "editor_comment": "Herşeyi bildiğini sanan modellerden bilmediğini bilen akıllı modellere doğru giden çok önemli bir yol olduğunu düşünüyorum",
+    "slug": "yapay-zeka-modellerinde-yeni-donem-emin-degilim-diyebilen-da",
+    "source_url": "https://news.mit.edu/2026/teaching-ai-models-to-say-im-not-sure-0422"
   }
 ]
