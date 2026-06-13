@@ -457,5 +457,77 @@
     "editor_comment": "Software moddan Hardware moda geçişte ilk ekran kartım 16 MB 3ddx voodo banshee olmuştu. Gözlerime inanmamıştım. Güzel bir çalışma olmuş.",
     "slug": "retro-oyun-dunyasina-donus-3dfx-voodoo-2-gpular-sli-ile-yeni",
     "source_url": "https://hackaday.com/2026/06/11/repairing-a-pair-of-voodoo-2-gpus-for-some-sli-action/"
+  },
+  {
+    "timestamp": "2026-06-13T07:01:27.985048+03:00",
+    "category": "yapay-zeka",
+    "title": "Yapay Zeka Eğitiminde Gizlilik Devrimi: Artık Günlük Cihazlarda Mümkün",
+    "summary": "Günlük cihazlarda gizliliği koruyarak yapay zeka eğitimi sağlayan yeni yöntem, sağlık ve finans gibi kritik sektörlerde yüksek verimlilik vaat ediyor.",
+    "editor_comment": "Gündelik kullandığımız modeller özellikle ücretsiz sürümlerde bilgilerimizden eğitim verileri oluşturabiliyor. Bu yüzden zaten ücretsiz kullanabiliyoruz. Bu yönden gizlilik devrimi geç bile kaldı diyebiliriz.",
+    "slug": "yapay-zeka-egitiminde-gizlilik-devrimi-artik-gunluk-cihazlar",
+    "source_url": "https://news.mit.edu/2026/enabling-privacy-preserving-ai-training-everyday-devices-0429"
+  },
+  {
+    "timestamp": "2026-06-13T07:02:08.596385+03:00",
+    "category": "yapay-zeka",
+    "title": "Yapay Zeka Görsel Modellerinde Önyargı Problemi WRING Tekniği ile Çözülüyor",
+    "summary": "Yapay zeka görsel modellerindeki önyargıları gideren yeni WRING tekniği, hataları zincirleme olarak artırmadan daha adil ve tutarlı sonuçlar elde etmeyi sağlıyor.",
+    "editor_comment": "Bu yenibyintem ile geliştirilen video modellerinin görsel algılama ve üretme modellerinin daha başarılı olacağı aşikar",
+    "slug": "yapay-zeka-gorsel-modellerinde-onyargi-problemi-wring-teknig",
+    "source_url": "https://news.mit.edu/2026/smarter-way-to-debias-ai-vision-models-0429"
+  },
+  {
+    "timestamp": "2026-06-13T07:02:51.246475+03:00",
+    "category": "yapay-zeka",
+    "title": "Kuantum ve Yapay Zekanın Kesişimi: MIT ve IBM'den Yeni Araştırma Laboratuvarı",
+    "summary": "MIT ve IBM, yapay zeka ve kuantum hesaplamanın geleceğini şekillendirmek amacıyla yeni bir araştırma laboratuvarı kurdu. Teknoloji dünyasında yeni bir dönem başlıyor.",
+    "editor_comment": "Bakalım yapay zeka kuantum evreninin sırlarını anlamada ve bize yol gösterici olarak nasıl işler başaracak merak ediyorum",
+    "slug": "kuantum-ve-yapay-zekanin-kesisimi-mit-ve-ibmden-yeni-arastir",
+    "source_url": "https://news.mit.edu/2026/mit-ibm-computing-research-lab-launches-0429"
+  },
+  {
+    "timestamp": "2026-06-13T07:03:35.912122+03:00",
+    "category": "yapay-zeka",
+    "title": "Yapay Zeka ile Uyku Sırasında Beyin Haritalama: Beacon Biosignals'dan Yeni Atılım",
+    "summary": "Beacon Biosignals, MIT kökenli uzmanlar tarafından geliştirilen yapay zeka tabanlı platformuyla uyku sırasında beyin haritalama teknolojisine öncülük ediyor.",
+    "editor_comment": "İnsan beyni hâlâ bir bilinmez. Yapay zekanın nimetleri ile daha detaylı bilgi edinmemiz mükemmel olacaktır. Bakalım yapay zekanın daha nasıl nimetlerinden insanoğlu olarak fayda sağlayabileceğiz",
+    "slug": "yapay-zeka-ile-uyku-sirasinda-beyin-haritalama-beacon-biosig",
+    "source_url": "https://news.mit.edu/2026/beacon-biosignals-maps-brain-during-sleep-0501"
+  },
+  {
+    "timestamp": "2026-06-13T07:04:39.441118+03:00",
+    "category": "pc",
+    "title": "Su ile Enerji Depolama Dönemi: 1 Nanometre Kanallar ve Yeni Nesil Süperkapasitörler",
+    "summary": "Hamburg Teknoloji Üniversitesi, 1 nanometre kanallara hapsedilmiş su ile daha güvenli ve verimli enerji depolayan yeni bir süperkapasitör geliştirdi.",
+    "editor_comment": "Su tabanlı üretilen bir sistemin ısınma sorununa nasıl bir çözüm bulacağını merak ediyorum. İlerleyen dönemler de kullanım durumlarında sonuçlarını merak ediyorum.",
+    "slug": "su-ile-enerji-depolama-donemi-1-nanometre-kanallar-ve-yeni-n",
+    "source_url": "https://techxplore.com/news/2026-06-nanometer-channels-enable-safer-energy.html"
+  },
+  {
+    "timestamp": "2026-06-13T07:05:13.376192+03:00",
+    "category": "yapay-zeka",
+    "title": "MIT'den Yapay Zeka İçin Dev Adım: Dünyanın En Büyük Olimpiyat Düzeyi Matematik Veri Seti Yayınlandı",
+    "summary": "MIT araştırmacıları, yapay zeka modellerini geliştirmek için 47 ülkeden 30.000'den fazla olimpiyat düzeyi matematik sorusu içeren dev bir veri seti yayınladı.",
+    "editor_comment": "Yapay zekayı mükemmelliğe yine insan  müdahalesi taşıyacak. Takı artık ihtiyaç kalmayacağı ana kadar. Bakalım bu serüven ne kadar ilerleyecek heyecanla bekliyorum",
+    "slug": "mitden-yapay-zeka-icin-dev-adim-dunyanin-en-buyuk-olimpiyat",
+    "source_url": "https://news.mit.edu/2026/mit-scientists-build-worlds-largest-collection-olympiad-level-math-problems-open-0424"
+  },
+  {
+    "timestamp": "2026-06-13T07:05:47.674287+03:00",
+    "category": "plc",
+    "title": "FANUC ve Google İş Birliğiyle Robotik Sistemlerde 'Physical AI' Dönemi Başlıyor",
+    "summary": "FANUC ve Google, ROS entegrasyonu ve gelişmiş yapay zeka ile endüstriyel robotikte 'Physical AI' dönemini başlatarak üretim verimliliğini artırmayı hedefliyor.",
+    "editor_comment": "AI studio da kullanılan LLM nodeli de bu işbirliğinin bir parçası olmalı. Robotik kontrolün gelişmesi açısından harika bir haber.",
+    "slug": "fanuc-ve-google-is-birligiyle-robotik-sistemlerde-physical-a",
+    "source_url": "https://control.com/news/fanuc-and-google-advance-physical-ai-for-manufacturing/"
+  },
+  {
+    "timestamp": "2026-06-13T07:06:54.329697+03:00",
+    "category": "pc",
+    "title": "Yapay Zeka Kaosu Öngörebiliyor Ancak Sosyal Sinyalleri Okumakta Hâlâ Yetersiz",
+    "summary": "Cornell araştırmacıları, VLM modellerinin sosyal zekasını test etti. Robotlar fiziksel kaosu öngörse de insani sinyalleri anlamakta zorlanıyor.",
+    "editor_comment": "Bunda sasirilacak birşey yok sonuçta onlar sadece makine. Bir insanın duygu ve düşünceleri var. Ve her zaman mantiklari ile kararlar vermezler.",
+    "slug": "yapay-zeka-kaosu-ongorebiliyor-ancak-sosyal-sinyalleri-okuma",
+    "source_url": "https://techxplore.com/news/2026-06-robots-chaos-human.html"
   }
 ]
